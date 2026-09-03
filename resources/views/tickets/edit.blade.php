@@ -295,7 +295,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-bold">
                                 Rp
                             </div>
-                            <input type="number" step="1000" min="0" id="amount" name="amount" value="{{ old('amount', $ticket->amount) }}" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm font-mono @error('amount') border-rose-500 @enderror">
+                            <input type="number" step="any" min="0" id="amount" name="amount" value="{{ old('amount', $ticket->amount) }}" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm font-mono @error('amount') border-rose-500 @enderror">
                         </div>
                         @error('amount')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
