@@ -94,36 +94,72 @@
     </div>
 
     <!-- Filter & Search Toolbar -->
-    <div class="glass-card p-5 rounded-2xl mb-8">
+    <div class="glass-card p-5 rounded-2xl mb-8 relative z-20">
         <form action="{{ route('tickets.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-end">
-            <div class="lg:col-span-4">
+            <div class="lg:col-span-3">
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">Pencarian Keyword</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                         <i class="fa-solid fa-magnifying-glass text-sm"></i>
                     </div>
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari kode, kota, penumpang, pemesan, pembayar..." class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm placeholder-slate-500">
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari kode, kota, penumpang..." class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm placeholder-slate-500">
                 </div>
             </div>
 
-            <div class="lg:col-span-2">
-                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Moda Transportasi</label>
-                <select name="transport_type" class="w-full glass-input rounded-xl px-3 py-2.5 text-sm bg-slate-900">
-                    <option value="">Semua Transportasi</option>
+            <!-- Moda Transportasi (Multi-select) -->
+            <div x-data="{ open: false, selected: {{ json_encode($transportType) }} }" class="lg:col-span-3 transition-all" :class="open ? 'relative z-50' : 'relative z-10'">
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                    <span>Moda Transportasi</span>
+                    <template x-if="selected.length > 0">
+                        <span class="text-[10px] text-sky-400 font-mono font-bold" x-text="selected.length + ' Dipilih'"></span>
+                    </template>
+                </label>
+
+                <button type="button" @click="open = !open" @click.outside="open = false" class="w-full h-[42px] glass-input rounded-xl px-3 text-sm bg-slate-900 flex items-center justify-between text-left focus:border-sky-400">
+                    <span class="truncate text-slate-200 block" x-text="selected.length > 0 ? selected.join(', ') : 'Semua Transportasi'"></span>
+                    <i class="fa-solid fa-chevron-down text-xs text-slate-400 ml-2 shrink-0 transition-transform" :class="open ? 'rotate-180 text-sky-400' : ''"></i>
+                </button>
+
+                <div x-show="open" x-cloak x-transition class="absolute z-50 left-0 right-0 mt-1.5 p-2 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-1 max-h-48 overflow-y-auto">
+                    <label class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs font-semibold text-sky-400 border-b border-slate-800/80 mb-1">
+                        <input type="checkbox" @change="selected = $event.target.checked ? {{ json_encode($transportOptions) }} : []" :checked="selected.length === {{ count($transportOptions) }}" class="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-0">
+                        <span>Pilih Semua</span>
+                    </label>
                     @foreach($transportOptions as $option)
-                        <option value="{{ $option }}" {{ $transportType == $option ? 'selected' : '' }}>{{ $option }}</option>
+                        <label class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs text-slate-200">
+                            <input type="checkbox" name="transport_type[]" value="{{ $option }}" x-model="selected" class="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-0">
+                            <span>{{ $option }}</span>
+                        </label>
                     @endforeach
-                </select>
+                </div>
             </div>
 
-            <div class="lg:col-span-2">
-                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Status Pembayaran</label>
-                <select name="status" class="w-full glass-input rounded-xl px-3 py-2.5 text-sm bg-slate-900">
-                    <option value="">Semua Status</option>
+            <!-- Status Pembayaran (Multi-select) -->
+            <div x-data="{ open: false, selected: {{ json_encode($status) }} }" class="lg:col-span-2 transition-all" :class="open ? 'relative z-50' : 'relative z-10'">
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                    <span>Status</span>
+                    <template x-if="selected.length > 0">
+                        <span class="text-[10px] text-emerald-400 font-mono font-bold" x-text="selected.length + ' Dipilih'"></span>
+                    </template>
+                </label>
+
+                <button type="button" @click="open = !open" @click.outside="open = false" class="w-full h-[42px] glass-input rounded-xl px-3 text-sm bg-slate-900 flex items-center justify-between text-left focus:border-emerald-400">
+                    <span class="truncate text-slate-200 block" x-text="selected.length > 0 ? selected.join(', ') : 'Semua Status'"></span>
+                    <i class="fa-solid fa-chevron-down text-xs text-slate-400 ml-2 shrink-0 transition-transform" :class="open ? 'rotate-180 text-emerald-400' : ''"></i>
+                </button>
+
+                <div x-show="open" x-cloak x-transition class="absolute z-50 left-0 right-0 mt-1.5 p-2 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-1 max-h-48 overflow-y-auto">
+                    <label class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs font-semibold text-emerald-400 border-b border-slate-800/80 mb-1">
+                        <input type="checkbox" @change="selected = $event.target.checked ? {{ json_encode($statusOptions) }} : []" :checked="selected.length === {{ count($statusOptions) }}" class="rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0">
+                        <span>Pilih Semua</span>
+                    </label>
                     @foreach($statusOptions as $optStatus)
-                        <option value="{{ $optStatus }}" {{ $status == $optStatus ? 'selected' : '' }}>{{ $optStatus }}</option>
+                        <label class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs text-slate-200">
+                            <input type="checkbox" name="status[]" value="{{ $optStatus }}" x-model="selected" class="rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0">
+                            <span>{{ $optStatus }}</span>
+                        </label>
                     @endforeach
-                </select>
+                </div>
             </div>
 
             <div class="lg:col-span-2">

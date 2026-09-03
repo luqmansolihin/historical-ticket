@@ -86,4 +86,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(TicketHistory::class, 'paid_by_user_id');
     }
+
+    /**
+     * Get CSS badge class for user role
+     */
+    public function getRoleBadgeClassAttribute(): string
+    {
+        return match ($this->role) {
+            'admin' => 'bg-amber-500/10 text-amber-300 border-amber-500/30',
+            'booker' => 'bg-sky-500/10 text-sky-300 border-sky-500/30',
+            'payer' => 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
+            default => 'bg-slate-500/10 text-slate-300 border-slate-500/30',
+        };
+    }
 }

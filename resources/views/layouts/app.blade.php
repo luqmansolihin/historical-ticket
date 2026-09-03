@@ -78,8 +78,8 @@
 
                     @auth
                         @if(Auth::user()->isAdmin())
-                            <a href="{{ route('users.create') }}" class="px-3.5 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('users.create') ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
-                                <i class="fa-solid fa-user-plus mr-1.5 text-indigo-400"></i> Buat Akun User
+                            <a href="{{ route('users.index') }}" class="px-3.5 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('users.*') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
+                                <i class="fa-solid fa-users-gear mr-1.5 text-sky-400"></i> Daftar Akun
                             </a>
                         @endif
                     @endauth

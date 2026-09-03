@@ -3,6 +3,19 @@
 @section('title', 'Edit Tiket - ' . $ticket->ticket_code)
 
 @section('content')
+@php
+    $isAdmin = Auth::user()->isAdmin();
+    $isBooker = Auth::user()->isBooker() && !$isAdmin;
+    $isPayer = Auth::user()->isPayer() && !$isAdmin;
+    $isLunas = $ticket->status === 'Lunas';
+    
+    $isBookerLunas = $isBooker && $isLunas;
+    $isPayerLunas = $isPayer && $isLunas;
+    $isDataLocked = ($isBookerLunas || $isPayerLunas);
+    
+    $isBookerUnpaid = $isBooker && $ticket->status === 'Belum Bayar';
+@endphp
+
 <div class="max-w-4xl mx-auto">
     <div class="mb-6">
         <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
@@ -13,6 +26,24 @@
     </div>
 
     <div class="glass-card p-6 sm:p-8 rounded-2xl shadow-2xl">
+        @if($isBookerLunas)
+            <div class="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-3">
+                <i class="fa-solid fa-lock text-xl text-amber-400 shrink-0"></i>
+                <div>
+                    <span class="font-bold block text-sm">Tiket Berstatus Lunas — Mode Read-Only (Booker)</span>
+                    <span>Data rute, penumpang, dan biaya tiket telah dikunci karena pembayaran sudah <strong>Lunas</strong>. Sebagai Booker, Anda hanya diperbolehkan mengubah status menjadi <strong>Dibatalkan</strong> jika terjadi pembatalan.</span>
+                </div>
+            </div>
+        @elseif($isPayerLunas)
+            <div class="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-3">
+                <i class="fa-solid fa-lock text-xl text-amber-400 shrink-0"></i>
+                <div>
+                    <span class="font-bold block text-sm">Tiket Berstatus Lunas — Mode Pembatasan Akses (Payer)</span>
+                    <span>Data rute, penumpang, dan biaya tiket telah dikunci. Sebagai Payer, Anda hanya diperbolehkan mengedit <strong>Tanggal Pembayaran</strong> atau mengubah status menjadi <strong>Dibatalkan</strong>.</span>
+                </div>
+            </div>
+        @endif
+
         <form action="{{ route('tickets.update', $ticket->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT')
@@ -28,7 +59,7 @@
                         <label for="ticket_date" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Tanggal Tiket / Keberangkatan <span class="text-rose-400">*</span>
                         </label>
-                        <input type="date" id="ticket_date" name="ticket_date" value="{{ old('ticket_date', $ticket->ticket_date ? $ticket->ticket_date->format('Y-m-d') : '') }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('ticket_date') border-rose-500 @enderror">
+                        <input type="date" id="ticket_date" name="ticket_date" value="{{ old('ticket_date', $ticket->ticket_date ? $ticket->ticket_date->format('Y-m-d') : '') }}" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('ticket_date') border-rose-500 @enderror">
                         @error('ticket_date')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -38,7 +69,7 @@
                         <label for="ticket_code" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Kode Tiket / Ref Booking <span class="text-rose-400">*</span>
                         </label>
-                        <input type="text" id="ticket_code" name="ticket_code" value="{{ old('ticket_code', $ticket->ticket_code) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm font-mono @error('ticket_code') border-rose-500 @enderror">
+                        <input type="text" id="ticket_code" name="ticket_code" value="{{ old('ticket_code', $ticket->ticket_code) }}" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl px-4 py-2.5 text-sm font-mono @error('ticket_code') border-rose-500 @enderror">
                         @error('ticket_code')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -48,7 +79,7 @@
                         <label for="origin" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Dari (Lokasi Keberangkatan) <span class="text-rose-400">*</span>
                         </label>
-                        <input type="text" id="origin" name="origin" value="{{ old('origin', $ticket->origin) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('origin') border-rose-500 @enderror">
+                        <input type="text" id="origin" name="origin" value="{{ old('origin', $ticket->origin) }}" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('origin') border-rose-500 @enderror">
                         @error('origin')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -58,7 +89,7 @@
                         <label for="destination" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Ke (Lokasi Tujuan) <span class="text-rose-400">*</span>
                         </label>
-                        <input type="text" id="destination" name="destination" value="{{ old('destination', $ticket->destination) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('destination') border-rose-500 @enderror">
+                        <input type="text" id="destination" name="destination" value="{{ old('destination', $ticket->destination) }}" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('destination') border-rose-500 @enderror">
                         @error('destination')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -68,7 +99,7 @@
                         <label for="transport_type" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Jenis Transportasi <span class="text-rose-400">*</span>
                         </label>
-                        <select id="transport_type" name="transport_type" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('transport_type') border-rose-500 @enderror">
+                        <select id="transport_type" name="transport_type" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('transport_type') border-rose-500 @enderror">
                             @foreach($transportOptions as $option)
                                 <option value="{{ $option }}" {{ old('transport_type', $ticket->transport_type) == $option ? 'selected' : '' }}>{{ $option }}</option>
                             @endforeach
@@ -88,9 +119,11 @@
                     <h3 class="text-sm font-semibold text-sky-400 uppercase tracking-wider flex items-center gap-2">
                         <i class="fa-solid fa-users"></i> Daftar Nama Penumpang (<span x-text="passengers.length"></span> Orang)
                     </h3>
-                    <button type="button" @click="passengers.push('')" class="text-xs font-semibold text-sky-400 hover:text-sky-300 px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-user-plus"></i> Tambah Penumpang
-                    </button>
+                    @if(!$isDataLocked)
+                        <button type="button" @click="passengers.push('')" class="text-xs font-semibold text-sky-400 hover:text-sky-300 px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-plus"></i> Tambah Penumpang
+                        </button>
+                    @endif
                 </div>
 
                 <div class="space-y-3">
@@ -98,11 +131,13 @@
                         <div class="flex items-center gap-2">
                             <div class="relative flex-1">
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-bold" x-text="(index + 1) + '.'"></div>
-                                <input type="text" :name="'passenger_names[' + index + ']'" x-model="passengers[index]" placeholder="Nama Penumpang (Lengkap)" required class="w-full glass-input rounded-xl pl-9 pr-4 py-2.5 text-sm placeholder-slate-600">
+                                <input type="text" :name="'passenger_names[' + index + ']'" x-model="passengers[index]" placeholder="Nama Penumpang (Lengkap)" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl pl-9 pr-4 py-2.5 text-sm placeholder-slate-600">
                             </div>
-                            <button type="button" @click="passengers.splice(index, 1)" x-show="passengers.length > 1" class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm" title="Hapus Penumpang Ini">
-                                <i class="fa-solid fa-trash-can text-sm"></i>
-                            </button>
+                            @if(!$isDataLocked)
+                                <button type="button" @click="passengers.splice(index, 1)" x-show="passengers.length > 1" class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm" title="Hapus Penumpang Ini">
+                                    <i class="fa-solid fa-trash-can text-sm"></i>
+                                </button>
+                            @endif
                         </div>
                     </template>
                 </div>
@@ -120,15 +155,15 @@
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Booker account info in edit -->
-                    @if(Auth::user()->isBooker() && !Auth::user()->isAdmin())
+                    <!-- Booker account info in edit (Locked for Non-Admin) -->
+                    @if(!$isAdmin)
                         <div class="md:col-span-2 bg-sky-500/10 border border-sky-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-sm shrink-0">
                                     <i class="fa-solid fa-user-check"></i>
                                 </div>
                                 <div>
-                                    <div class="text-xs text-sky-400 font-semibold uppercase tracking-wider">Pemesan Tiket (Booker Terhubung)</div>
+                                    <div class="text-xs text-sky-400 font-semibold uppercase tracking-wider">Pemesan Tiket</div>
                                     <div class="text-sm font-bold text-white flex items-center gap-2">
                                         {{ $ticket->booked_by ?: Auth::user()->name }}
                                         @if($ticket->bookerUser)
@@ -168,39 +203,89 @@
                         </div>
                     @endif
 
-                    <div>
-                        <label for="paid_by" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Penanggung Jawab Biaya <span class="text-rose-400">*</span>
-                        </label>
-                        <input type="text" id="paid_by" name="paid_by" value="{{ old('paid_by', $ticket->paid_by) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('paid_by') border-rose-500 @enderror">
-                        @error('paid_by')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <!-- Payer & Payment Date info logic -->
+                    @if($isBookerUnpaid)
+                        <!-- Hidden payment fields for Booker when status is Belum Bayar -->
+                        <input type="hidden" name="paid_by" value="{{ $ticket->paid_by ?: '-' }}">
+                        <input type="hidden" name="paid_by_user_id" value="{{ $ticket->paid_by_user_id }}">
+                        <input type="hidden" name="payment_date" value="">
+                    @elseif($isBookerLunas)
+                        <!-- Read-only payment info for Booker when status is Lunas -->
+                        <div class="md:col-span-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <span class="text-xs text-slate-400 block">Penanggung Jawab Biaya</span>
+                                <span class="text-sm font-semibold text-emerald-400 mt-0.5 block">{{ $ticket->paid_by ?: '-' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400 block">Tanggal Pembayaran</span>
+                                <span class="text-sm font-semibold text-slate-200 mt-0.5 block">{{ $ticket->payment_date ? $ticket->payment_date->format('d M Y') : '-' }}</span>
+                            </div>
+                        </div>
+                    @elseif($isPayer)
+                        <!-- Payer Auto-Linked Card & Editable Payment Date -->
+                        <div class="md:col-span-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm shrink-0">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Penanggung Jawab Biaya (Payer Terhubung)</div>
+                                    <div class="text-sm font-bold text-white flex items-center gap-2">
+                                        {{ Auth::user()->name }}
+                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+                                            ID: #{{ Auth::id() }} • {{ ucfirst(Auth::user()->role) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="paid_by" value="{{ Auth::user()->name }}">
+                            <input type="hidden" name="paid_by_user_id" value="{{ Auth::id() }}">
+                        </div>
 
-                    <div>
-                        <label for="paid_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Linkkan dengan Akun Pembayar (Sistem)
-                        </label>
-                        <select id="paid_by_user_id" name="paid_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
-                            <option value="">-- Pilih Akun User Pembayar --</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}" {{ old('paid_by_user_id', $ticket->paid_by_user_id) == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }} ({{ ucfirst($user->role) }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                        <div class="md:col-span-2">
+                            <label for="payment_date" class="block text-xs font-medium text-slate-300 mb-1.5">
+                                Tanggal Pembayaran <span class="text-slate-400">(Dapat Diubah)</span>
+                            </label>
+                            <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date', $ticket->payment_date ? $ticket->payment_date->format('Y-m-d') : '') }}" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('payment_date') border-rose-500 @enderror">
+                            @error('payment_date')
+                                <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    @else
+                        <div>
+                            <label for="paid_by" class="block text-xs font-medium text-slate-300 mb-1.5">
+                                Penanggung Jawab Biaya <span class="text-rose-400">*</span>
+                            </label>
+                            <input type="text" id="paid_by" name="paid_by" value="{{ old('paid_by', $ticket->paid_by) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('paid_by') border-rose-500 @enderror">
+                            @error('paid_by')
+                                <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                    <div>
-                        <label for="payment_date" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Tanggal Pembayaran
-                        </label>
-                        <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date', $ticket->payment_date ? $ticket->payment_date->format('Y-m-d') : '') }}" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('payment_date') border-rose-500 @enderror">
-                        @error('payment_date')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                        <div>
+                            <label for="paid_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
+                                Linkkan dengan Akun Pembayar (Sistem)
+                            </label>
+                            <select id="paid_by_user_id" name="paid_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
+                                <option value="">-- Pilih Akun User Pembayar --</option>
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}" {{ old('paid_by_user_id', $ticket->paid_by_user_id) == $user->id ? 'selected' : '' }}>
+                                        {{ $user->name }} ({{ ucfirst($user->role) }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label for="payment_date" class="block text-xs font-medium text-slate-300 mb-1.5">
+                                Tanggal Pembayaran
+                            </label>
+                            <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date', $ticket->payment_date ? $ticket->payment_date->format('Y-m-d') : '') }}" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('payment_date') border-rose-500 @enderror">
+                            @error('payment_date')
+                                <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    @endif
 
                     <div>
                         <label for="amount" class="block text-xs font-medium text-slate-300 mb-1.5">
@@ -210,7 +295,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-bold">
                                 Rp
                             </div>
-                            <input type="number" step="1000" min="0" id="amount" name="amount" value="{{ old('amount', $ticket->amount) }}" required class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm font-mono @error('amount') border-rose-500 @enderror">
+                            <input type="number" step="1000" min="0" id="amount" name="amount" value="{{ old('amount', $ticket->amount) }}" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm font-mono @error('amount') border-rose-500 @enderror">
                         </div>
                         @error('amount')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
@@ -221,14 +306,29 @@
                         <label for="status" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Status Pembayaran <span class="text-rose-400">*</span>
                         </label>
-                        @if(Auth::user()->isBooker() && !Auth::user()->isAdmin())
+                        @if($isBooker)
                             <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
                                 @if($ticket->status === 'Lunas')
                                     <option value="Lunas" {{ old('status', $ticket->status) == 'Lunas' ? 'selected' : '' }}>Lunas (Status Saat Ini)</option>
-                                @elseif($ticket->status === 'Belum Bayar')
+                                @else
                                     <option value="Belum Bayar" {{ old('status', $ticket->status) == 'Belum Bayar' ? 'selected' : '' }}>Belum Bayar</option>
                                 @endif
                                 <option value="Dibatalkan" {{ old('status', $ticket->status) == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                            </select>
+                        @elseif($isPayer)
+                            <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
+                                @if($ticket->status === 'Belum Bayar')
+                                    <option value="Belum Bayar" {{ old('status', $ticket->status) == 'Belum Bayar' ? 'selected' : '' }}>Belum Bayar</option>
+                                    <option value="Lunas" {{ old('status', $ticket->status) == 'Lunas' ? 'selected' : '' }}>Lunas (Konfirmasi Pembayaran)</option>
+                                    <option value="Dibatalkan" {{ old('status', $ticket->status) == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                                @elseif($ticket->status === 'Lunas')
+                                    <option value="Lunas" {{ old('status', $ticket->status) == 'Lunas' ? 'selected' : '' }}>Lunas (Status Saat Ini)</option>
+                                    <option value="Dibatalkan" {{ old('status', $ticket->status) == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                                @else
+                                    @foreach($statusOptions as $optStatus)
+                                        <option value="{{ $optStatus }}" {{ old('status', $ticket->status) == $optStatus ? 'selected' : '' }}>{{ $optStatus }}</option>
+                                    @endforeach
+                                @endif
                             </select>
                         @else
                             <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
@@ -242,11 +342,11 @@
                         @enderror
                     </div>
 
-                    <div>
+                    <div class="md:col-span-2">
                         <label for="attachment" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Ganti File Bukti / Nota Tiket <span class="text-slate-500">(Opsional)</span>
                         </label>
-                        <input type="file" id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="w-full glass-input rounded-xl px-3 py-2 text-xs bg-slate-900 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-500/20 file:text-sky-300 hover:file:bg-sky-500/30">
+                        <input type="file" id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png" {{ $isDataLocked ? 'disabled' : '' }} class="w-full glass-input rounded-xl px-3 py-2 text-xs bg-slate-900 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-500/20 file:text-sky-300 hover:file:bg-sky-500/30">
                         @if($ticket->attachment_path)
                             <p class="text-xs text-sky-400 mt-1">
                                 <i class="fa-solid fa-paperclip mr-1"></i> File saat ini: <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank" class="underline">Lihat Lampiran</a>
@@ -265,7 +365,7 @@
                 <label for="notes" class="block text-xs font-medium text-slate-300 mb-1.5">
                     Catatan / Keterangan Tambahan
                 </label>
-                <textarea id="notes" name="notes" rows="3" class="w-full glass-input rounded-xl p-4 text-sm">{{ old('notes', $ticket->notes) }}</textarea>
+                <textarea id="notes" name="notes" rows="3" {{ $isDataLocked ? 'disabled' : '' }} class="w-full glass-input rounded-xl p-4 text-sm">{{ old('notes', $ticket->notes) }}</textarea>
             </div>
 
             <div class="flex items-center justify-end gap-3 pt-4">

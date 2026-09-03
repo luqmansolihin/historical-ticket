@@ -162,24 +162,34 @@ class TicketHistory extends Model
     }
 
     /**
-     * Scope for transport type filter
+     * Scope for transport type filter (supports single string or array of strings)
      */
-    public function scopeFilterTransport($query, ?string $transport)
+    public function scopeFilterTransport($query, string|array|null $transport)
     {
         if (empty($transport)) {
             return $query;
+        }
+
+        if (is_array($transport)) {
+            $filtered = array_values(array_filter($transport));
+            return empty($filtered) ? $query : $query->whereIn('transport_type', $filtered);
         }
 
         return $query->where('transport_type', $transport);
     }
 
     /**
-     * Scope for status filter
+     * Scope for status filter (supports single string or array of strings)
      */
-    public function scopeFilterStatus($query, ?string $status)
+    public function scopeFilterStatus($query, string|array|null $status)
     {
         if (empty($status)) {
             return $query;
+        }
+
+        if (is_array($status)) {
+            $filtered = array_values(array_filter($status));
+            return empty($filtered) ? $query : $query->whereIn('status', $filtered);
         }
 
         return $query->where('status', $status);

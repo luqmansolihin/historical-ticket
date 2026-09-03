@@ -48,6 +48,11 @@ class TicketHistoryPolicy
             return false;
         }
 
+        // Booker CANNOT edit tickets that are already canceled ('Dibatalkan')
+        if (($user->role === 'booker' || $user->isBooker()) && $ticket->status === 'Dibatalkan') {
+            return false;
+        }
+
         // Booker who booked this ticket can edit it
         if ($user->role === 'booker' && $ticket->booked_by_user_id && $ticket->booked_by_user_id === $user->id) {
             return true;
@@ -79,10 +84,20 @@ class TicketHistoryPolicy
 
     /**
      * Determine whether the user can delete the ticket record.
-     * Only Admin can delete ticket records.
+     * Admin can delete any ticket. Booker and Payer can delete tickets if status is 'Belum Bayar'.
      */
     public function delete(User $user, TicketHistory $ticket): bool
     {
-        return $user->isAdmin();
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        if ($ticket->status === 'Belum Bayar') {
+            if ($user->isBooker() || $user->isPayer()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
