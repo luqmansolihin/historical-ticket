@@ -198,11 +198,21 @@
                         <label for="status" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Status Pembayaran <span class="text-rose-400">*</span>
                         </label>
-                        <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
-                            @foreach($statusOptions as $optStatus)
-                                <option value="{{ $optStatus }}" {{ old('status', 'Lunas') == $optStatus ? 'selected' : '' }}>{{ $optStatus }}</option>
-                            @endforeach
-                        </select>
+                        @if(Auth::user()->role === 'booker' || !Auth::user()->isAdmin())
+                            <div class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900/80 flex items-center justify-between border border-rose-500/30">
+                                <span class="inline-flex items-center gap-2 font-semibold text-rose-400">
+                                    <i class="fa-solid fa-hourglass-half text-xs"></i> Belum Bayar
+                                </span>
+                                <span class="text-[10px] text-slate-400 font-mono">⚡ Otomatis untuk Booker</span>
+                            </div>
+                            <input type="hidden" name="status" value="Belum Bayar">
+                        @else
+                            <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
+                                @foreach($statusOptions as $optStatus)
+                                    <option value="{{ $optStatus }}" {{ old('status', 'Belum Bayar') == $optStatus ? 'selected' : '' }}>{{ $optStatus }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                         @error('status')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror

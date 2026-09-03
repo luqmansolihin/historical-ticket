@@ -126,6 +126,11 @@ class TicketHistoryController extends Controller
             $validated['booked_by_user_id'] = Auth::id();
         }
 
+        // Booker creates ticket with initial status 'Belum Bayar'
+        if (Auth::user()->role === 'booker' || !Auth::user()->isAdmin()) {
+            $validated['status'] = 'Belum Bayar';
+        }
+
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('tickets', 'public');
             $validated['attachment_path'] = $path;
