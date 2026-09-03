@@ -119,12 +119,6 @@
                                 </div>
 
                                 <div class="py-1">
-                                    @if(Auth::user()->isAdmin())
-                                        <a href="{{ route('users.create') }}" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-slate-800 flex items-center gap-2 transition-colors">
-                                            <i class="fa-solid fa-user-plus text-indigo-400"></i> Buat Akun User Baru
-                                        </a>
-                                    @endif
-
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
                                         <button type="submit" class="w-full text-left px-4 py-2.5 text-xs text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 transition-colors">
