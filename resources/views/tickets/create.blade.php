@@ -133,14 +133,15 @@
                     </div>
 
                     <div>
-                        <label for="booked_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Linkkan dengan Akun Pemesan (Sistem)
+                        <label for="booked_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5 flex items-center justify-between">
+                            <span>Linkkan dengan Akun Pemesan (Sistem)</span>
+                            <span class="text-[10px] text-sky-400 font-mono font-semibold">⚡ Otomatis Akun Login</span>
                         </label>
                         <select id="booked_by_user_id" name="booked_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
                             <option value="">-- Pilih Akun User Pemesan --</option>
                             @foreach($users as $user)
                                 <option value="{{ $user->id }}" {{ old('booked_by_user_id', Auth::id()) == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }} ({{ ucfirst($user->role) }})
+                                    {{ $user->name }} ({{ ucfirst($user->role) }}) {{ $user->id === Auth::id() ? '★ (Akun Anda)' : '' }}
                                 </option>
                             @endforeach
                         </select>

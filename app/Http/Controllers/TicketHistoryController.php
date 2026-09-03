@@ -120,8 +120,8 @@ class TicketHistoryController extends Controller
             $validated['ticket_code'] = 'TCK-' . strtoupper(Str::random(6));
         }
 
-        // If booked_by_user_id is not selected, try auto-assigning current user if they are booker/admin
-        if (empty($validated['booked_by_user_id']) && Auth::user()->isBooker()) {
+        // Automatically connect Pemesan (booked_by_user_id) to the currently logged in user if empty
+        if (empty($validated['booked_by_user_id'])) {
             $validated['booked_by_user_id'] = Auth::id();
         }
 
