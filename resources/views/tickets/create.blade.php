@@ -4,16 +4,14 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
-    <!-- Breadcrumb & Title -->
     <div class="mb-6">
         <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
         </a>
         <h1 class="font-display text-2xl sm:text-3xl font-bold text-white">Tambah Histori Tiket Baru</h1>
-        <p class="text-slate-400 text-sm mt-1">Masukkan rincian tiket keberangkatan, pemesan, dan informasi pembayaran.</p>
+        <p class="text-slate-400 text-sm mt-1">Masukkan rincian tiket keberangkatan, pemesan (Booker), dan pembayar (Payer).</p>
     </div>
 
-    <!-- Form Container -->
     <div class="glass-card p-6 sm:p-8 rounded-2xl shadow-2xl">
         <form action="{{ route('tickets.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
@@ -25,7 +23,6 @@
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Tanggal Tiket -->
                     <div>
                         <label for="ticket_date" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Tanggal Tiket / Keberangkatan <span class="text-rose-400">*</span>
@@ -36,7 +33,6 @@
                         @enderror
                     </div>
 
-                    <!-- Kode Tiket -->
                     <div>
                         <label for="ticket_code" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Kode Tiket / Ref Booking <span class="text-slate-500">(Opsional, otomatis jika kosong)</span>
@@ -47,7 +43,6 @@
                         @enderror
                     </div>
 
-                    <!-- Dari (Origin) -->
                     <div>
                         <label for="origin" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Dari (Lokasi Keberangkatan) <span class="text-rose-400">*</span>
@@ -58,7 +53,6 @@
                         @enderror
                     </div>
 
-                    <!-- Ke (Destination) -->
                     <div>
                         <label for="destination" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Ke (Lokasi Tujuan) <span class="text-rose-400">*</span>
@@ -69,7 +63,6 @@
                         @enderror
                     </div>
 
-                    <!-- Jenis Transportasi -->
                     <div>
                         <label for="transport_type" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Jenis Transportasi <span class="text-rose-400">*</span>
@@ -85,12 +78,11 @@
                         @enderror
                     </div>
 
-                    <!-- Nama Penumpang -->
                     <div>
                         <label for="passenger_name" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Nama Penumpang <span class="text-rose-400">*</span>
                         </label>
-                        <input type="text" id="passenger_name" name="passenger_name" value="{{ old('passenger_name') }}" placeholder="Nama orang yang bepergian" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('passenger_name') border-rose-500 @enderror">
+                        <input type="text" id="passenger_name" name="passenger_name" value="{{ old('passenger_name', Auth::user()->name) }}" placeholder="Nama orang yang bepergian" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('passenger_name') border-rose-500 @enderror">
                         @error('passenger_name')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -100,33 +92,63 @@
 
             <hr class="border-slate-800/80">
 
-            <!-- Section 2: Pemesanan & Pembayaran -->
+            <!-- Section 2: Pemesanan (Booker) & Pembayaran (Payer) -->
             <div>
                 <h3 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-credit-card"></i> Detail Pemesanan & Pembayaran
+                    <i class="fa-solid fa-credit-card"></i> Detail Booker (Pemesan) & Payer (Pembayar)
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Siapa yang Booking -->
+                    <!-- Siapa yang Booking Text -->
                     <div>
                         <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Siapa yang Booking <span class="text-rose-400">*</span>
+                            Siapa yang Booking (Nama/Instansi) <span class="text-rose-400">*</span>
                         </label>
-                        <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by') }}" placeholder="Nama pemesan tiket (Sekretaris / Diri sendiri)" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('booked_by') border-rose-500 @enderror">
+                        <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by', Auth::user()->name) }}" placeholder="Nama pemesan tiket" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('booked_by') border-rose-500 @enderror">
                         @error('booked_by')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Siapa yang Bayar -->
+                    <!-- Link Akun Booker User -->
+                    <div>
+                        <label for="booked_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Linkkan dengan Akun Booker (Sistem)
+                        </label>
+                        <select id="booked_by_user_id" name="booked_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
+                            <option value="">-- Pilih Akun User Booker --</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}" {{ old('booked_by_user_id', Auth::id()) == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }} ({{ ucfirst($user->role) }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Siapa yang Bayar Text -->
                     <div>
                         <label for="paid_by" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Siapa yang Bayar <span class="text-rose-400">*</span>
+                            Siapa yang Bayar (Nama/Instansi) <span class="text-rose-400">*</span>
                         </label>
-                        <input type="text" id="paid_by" name="paid_by" value="{{ old('paid_by') }}" placeholder="Nama pembayar / Perusahaan / Diri sendiri" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('paid_by') border-rose-500 @enderror">
+                        <input type="text" id="paid_by" name="paid_by" value="{{ old('paid_by', 'PT Corporate Finance') }}" placeholder="Nama pembayar / Perusahaan" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('paid_by') border-rose-500 @enderror">
                         @error('paid_by')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
+                    </div>
+
+                    <!-- Link Akun Payer User -->
+                    <div>
+                        <label for="paid_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Linkkan dengan Akun Payer (Sistem)
+                        </label>
+                        <select id="paid_by_user_id" name="paid_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
+                            <option value="">-- Pilih Akun User Payer --</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}" {{ old('paid_by_user_id') == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }} ({{ ucfirst($user->role) }})
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <!-- Tanggal Bayar -->

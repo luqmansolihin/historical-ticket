@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\TicketHistory;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -21,6 +24,7 @@ class TicketHistoryController extends Controller
         $dateTo = $request->input('date_to');
 
         $query = TicketHistory::query()
+            ->with(['bookerUser', 'payerUser'])
             ->search($search)
             ->filterTransport($transportType)
             ->filterStatus($status);
@@ -71,10 +75,13 @@ class TicketHistoryController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', TicketHistory::class);
+
         $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
         $statusOptions = ['Lunas', 'Belum Bayar', 'Reimburse', 'Dibatalkan'];
+        $users = User::orderBy('name')->get();
 
-        return view('tickets.create', compact('transportOptions', 'statusOptions'));
+        return view('tickets.create', compact('transportOptions', 'statusOptions', 'users'));
     }
 
     /**
@@ -82,6 +89,8 @@ class TicketHistoryController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', TicketHistory::class);
+
         $validated = $request->validate([
             'ticket_code' => 'nullable|string|max:50|unique:ticket_histories,ticket_code',
             'ticket_date' => 'required|date',
@@ -90,7 +99,9 @@ class TicketHistoryController extends Controller
             'transport_type' => 'required|string|max:100',
             'passenger_name' => 'required|string|max:255',
             'booked_by' => 'required|string|max:255',
+            'booked_by_user_id' => 'nullable|exists:users,id',
             'paid_by' => 'required|string|max:255',
+            'paid_by_user_id' => 'nullable|exists:users,id',
             'payment_date' => 'nullable|date',
             'amount' => 'required|numeric|min:0',
             'status' => 'required|string|max:50',
@@ -101,6 +112,11 @@ class TicketHistoryController extends Controller
         // Auto-generate ticket code if not specified
         if (empty($validated['ticket_code'])) {
             $validated['ticket_code'] = 'TCK-' . strtoupper(Str::random(6));
+        }
+
+        // If booked_by_user_id is not selected, try auto-assigning current user if they are booker/admin
+        if (empty($validated['booked_by_user_id']) && Auth::user()->isBooker()) {
+            $validated['booked_by_user_id'] = Auth::id();
         }
 
         if ($request->hasFile('attachment')) {
@@ -115,10 +131,12 @@ class TicketHistoryController extends Controller
     }
 
     /**
-     * Display the specified ticket details (Boarding Pass / E-Ticket View).
+     * Display the specified ticket details.
      */
     public function show(TicketHistory $ticket)
     {
+        $ticket->load(['bookerUser', 'payerUser']);
+
         if (request()->wantsJson()) {
             return response()->json($ticket);
         }
@@ -131,10 +149,13 @@ class TicketHistoryController extends Controller
      */
     public function edit(TicketHistory $ticket)
     {
+        Gate::authorize('update', $ticket);
+
         $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
         $statusOptions = ['Lunas', 'Belum Bayar', 'Reimburse', 'Dibatalkan'];
+        $users = User::orderBy('name')->get();
 
-        return view('tickets.edit', compact('ticket', 'transportOptions', 'statusOptions'));
+        return view('tickets.edit', compact('ticket', 'transportOptions', 'statusOptions', 'users'));
     }
 
     /**
@@ -142,6 +163,8 @@ class TicketHistoryController extends Controller
      */
     public function update(Request $request, TicketHistory $ticket)
     {
+        Gate::authorize('update', $ticket);
+
         $validated = $request->validate([
             'ticket_code' => 'required|string|max:50|unique:ticket_histories,ticket_code,' . $ticket->id,
             'ticket_date' => 'required|date',
@@ -150,7 +173,9 @@ class TicketHistoryController extends Controller
             'transport_type' => 'required|string|max:100',
             'passenger_name' => 'required|string|max:255',
             'booked_by' => 'required|string|max:255',
+            'booked_by_user_id' => 'nullable|exists:users,id',
             'paid_by' => 'required|string|max:255',
+            'paid_by_user_id' => 'nullable|exists:users,id',
             'payment_date' => 'nullable|date',
             'amount' => 'required|numeric|min:0',
             'status' => 'required|string|max:50',
@@ -177,6 +202,8 @@ class TicketHistoryController extends Controller
      */
     public function destroy(TicketHistory $ticket)
     {
+        Gate::authorize('delete', $ticket);
+
         if ($ticket->attachment_path && Storage::disk('public')->exists($ticket->attachment_path)) {
             Storage::disk('public')->delete($ticket->attachment_path);
         }
@@ -225,10 +252,8 @@ class TicketHistoryController extends Controller
 
         $callback = function () use ($tickets) {
             $file = fopen('php://output', 'w');
-            // Add UTF-8 BOM for Excel compatibility
             fputs($file, "\xEF\xBB\xBF");
 
-            // CSV Column Headers
             fputcsv($file, [
                 'Kode Tiket',
                 'Tanggal Tiket',

@@ -4,7 +4,6 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
-    <!-- Breadcrumb & Title -->
     <div class="mb-6">
         <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
@@ -13,7 +12,6 @@
         <p class="text-slate-400 text-sm mt-1">Perbarui data tiket <span class="font-mono text-sky-400 font-semibold">{{ $ticket->ticket_code }}</span></p>
     </div>
 
-    <!-- Form Container -->
     <div class="glass-card p-6 sm:p-8 rounded-2xl shadow-2xl">
         <form action="{{ route('tickets.update', $ticket->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
@@ -26,7 +24,6 @@
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Tanggal Tiket -->
                     <div>
                         <label for="ticket_date" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Tanggal Tiket / Keberangkatan <span class="text-rose-400">*</span>
@@ -37,7 +34,6 @@
                         @enderror
                     </div>
 
-                    <!-- Kode Tiket -->
                     <div>
                         <label for="ticket_code" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Kode Tiket / Ref Booking <span class="text-rose-400">*</span>
@@ -48,7 +44,6 @@
                         @enderror
                     </div>
 
-                    <!-- Dari (Origin) -->
                     <div>
                         <label for="origin" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Dari (Lokasi Keberangkatan) <span class="text-rose-400">*</span>
@@ -59,7 +54,6 @@
                         @enderror
                     </div>
 
-                    <!-- Ke (Destination) -->
                     <div>
                         <label for="destination" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Ke (Lokasi Tujuan) <span class="text-rose-400">*</span>
@@ -70,7 +64,6 @@
                         @enderror
                     </div>
 
-                    <!-- Jenis Transportasi -->
                     <div>
                         <label for="transport_type" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Jenis Transportasi <span class="text-rose-400">*</span>
@@ -85,7 +78,6 @@
                         @enderror
                     </div>
 
-                    <!-- Nama Penumpang -->
                     <div>
                         <label for="passenger_name" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Nama Penumpang <span class="text-rose-400">*</span>
@@ -103,11 +95,10 @@
             <!-- Section 2: Pemesanan & Pembayaran -->
             <div>
                 <h3 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-credit-card"></i> Detail Pemesanan & Pembayaran
+                    <i class="fa-solid fa-credit-card"></i> Detail Booker (Pemesan) & Payer (Pembayar)
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Siapa yang Booking -->
                     <div>
                         <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Siapa yang Booking <span class="text-rose-400">*</span>
@@ -118,7 +109,20 @@
                         @enderror
                     </div>
 
-                    <!-- Siapa yang Bayar -->
+                    <div>
+                        <label for="booked_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Linkkan dengan Akun Booker (Sistem)
+                        </label>
+                        <select id="booked_by_user_id" name="booked_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
+                            <option value="">-- Pilih Akun User Booker --</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}" {{ old('booked_by_user_id', $ticket->booked_by_user_id) == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }} ({{ ucfirst($user->role) }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div>
                         <label for="paid_by" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Siapa yang Bayar <span class="text-rose-400">*</span>
@@ -129,7 +133,20 @@
                         @enderror
                     </div>
 
-                    <!-- Tanggal Bayar -->
+                    <div>
+                        <label for="paid_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Linkkan dengan Akun Payer (Sistem)
+                        </label>
+                        <select id="paid_by_user_id" name="paid_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
+                            <option value="">-- Pilih Akun User Payer --</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}" {{ old('paid_by_user_id', $ticket->paid_by_user_id) == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }} ({{ ucfirst($user->role) }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div>
                         <label for="payment_date" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Tanggal Pembayaran
@@ -140,7 +157,6 @@
                         @enderror
                     </div>
 
-                    <!-- Harga / Biaya (IDR) -->
                     <div>
                         <label for="amount" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Harga / Biaya Tiket (IDR) <span class="text-rose-400">*</span>
@@ -156,7 +172,6 @@
                         @enderror
                     </div>
 
-                    <!-- Status Pembayaran -->
                     <div>
                         <label for="status" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Status Pembayaran <span class="text-rose-400">*</span>
@@ -171,7 +186,6 @@
                         @enderror
                     </div>
 
-                    <!-- Upload Bukti Tiket -->
                     <div>
                         <label for="attachment" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Ganti File Bukti / Nota Tiket <span class="text-slate-500">(Opsional)</span>
@@ -191,7 +205,6 @@
 
             <hr class="border-slate-800/80">
 
-            <!-- Section 3: Catatan Tambahan -->
             <div>
                 <label for="notes" class="block text-xs font-medium text-slate-300 mb-1.5">
                     Catatan / Keterangan Tambahan
@@ -199,7 +212,6 @@
                 <textarea id="notes" name="notes" rows="3" class="w-full glass-input rounded-xl p-4 text-sm">{{ old('notes', $ticket->notes) }}</textarea>
             </div>
 
-            <!-- Submit buttons -->
             <div class="flex items-center justify-end gap-3 pt-4">
                 <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
                     Batal

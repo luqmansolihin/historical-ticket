@@ -14,22 +14,24 @@
                     {{ $totalTickets }} Tiket Terdaftar
                 </span>
             </h1>
-            <p class="text-slate-400 text-sm mt-1">Pencatatan riwayat keberangkatan, pemesan, pembayar, dan status pembayaran tiket.</p>
+            <p class="text-slate-400 text-sm mt-1">Pencatatan riwayat keberangkatan, pemesan (Booker), dan pembayar (Payer).</p>
         </div>
 
         <div class="flex items-center gap-3 flex-wrap">
             <a href="{{ route('tickets.export', request()->query()) }}" class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700/80 transition-all duration-200 shadow-sm">
                 <i class="fa-solid fa-file-csv text-emerald-400 mr-2 text-base"></i> Export CSV
             </a>
-            <a href="{{ route('tickets.create') }}" class="inline-flex items-center px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition-all duration-200 active:scale-95">
-                <i class="fa-solid fa-plus mr-2"></i> Tambah Tiket Baru
-            </a>
+
+            @can('create', App\Models\TicketHistory::class)
+                <a href="{{ route('tickets.create') }}" class="inline-flex items-center px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition-all duration-200 active:scale-95">
+                    <i class="fa-solid fa-plus mr-2"></i> Tambah Tiket Baru
+                </a>
+            @endcan
         </div>
     </div>
 
     <!-- Analytics & Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <!-- Total Tickets -->
         <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
             <div class="flex items-center justify-between">
                 <div>
@@ -45,7 +47,6 @@
             </div>
         </div>
 
-        <!-- Total Cost -->
         <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
             <div class="flex items-center justify-between">
                 <div>
@@ -61,7 +62,6 @@
             </div>
         </div>
 
-        <!-- Tiket Lunas -->
         <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
             <div class="flex items-center justify-between">
                 <div>
@@ -77,7 +77,6 @@
             </div>
         </div>
 
-        <!-- Reimburse & Pending -->
         <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
             <div class="flex items-center justify-between">
                 <div>
@@ -97,7 +96,6 @@
     <!-- Filter & Search Toolbar -->
     <div class="glass-card p-5 rounded-2xl mb-8">
         <form action="{{ route('tickets.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-end">
-            <!-- Keyword Search -->
             <div class="lg:col-span-4">
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">Pencarian Keyword</label>
                 <div class="relative">
@@ -108,7 +106,6 @@
                 </div>
             </div>
 
-            <!-- Transport Type Filter -->
             <div class="lg:col-span-2">
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">Moda Transportasi</label>
                 <select name="transport_type" class="w-full glass-input rounded-xl px-3 py-2.5 text-sm bg-slate-900">
@@ -119,7 +116,6 @@
                 </select>
             </div>
 
-            <!-- Status Filter -->
             <div class="lg:col-span-2">
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">Status Pembayaran</label>
                 <select name="status" class="w-full glass-input rounded-xl px-3 py-2.5 text-sm bg-slate-900">
@@ -130,13 +126,11 @@
                 </select>
             </div>
 
-            <!-- Date From -->
             <div class="lg:col-span-2">
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">Dari Tanggal</label>
                 <input type="date" name="date_from" value="{{ $dateFrom }}" class="w-full glass-input rounded-xl px-3 py-2 text-sm bg-slate-900">
             </div>
 
-            <!-- Date To / Filter Actions -->
             <div class="lg:col-span-2 flex items-center gap-2">
                 <div class="w-full">
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5">Sampai Tanggal</label>
@@ -144,7 +138,6 @@
                 </div>
             </div>
 
-            <!-- Form Action Buttons -->
             <div class="lg:col-span-12 flex items-center justify-end gap-3 pt-2 border-t border-slate-800/50 mt-2">
                 @if($search || $transportType || $status || $dateFrom || $dateTo)
                     <a href="{{ route('tickets.index') }}" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-800 transition-colors">
@@ -168,7 +161,7 @@
                         <th class="py-4 px-4">Tgl Tiket</th>
                         <th class="py-4 px-4">Rute (Dari ➔ Ke)</th>
                         <th class="py-4 px-4">Transportasi</th>
-                        <th class="py-4 px-4">Booking & Bayar</th>
+                        <th class="py-4 px-4">Booker & Payer</th>
                         <th class="py-4 px-4 text-right">Biaya (IDR)</th>
                         <th class="py-4 px-4 text-center">Status</th>
                         <th class="py-4 px-4 text-center">Aksi</th>
@@ -210,10 +203,22 @@
                                 </span>
                             </td>
 
-                            <!-- Booking & Bayar -->
+                            <!-- Booker & Payer -->
                             <td class="py-4 px-4 text-xs">
-                                <div><span class="text-slate-400">Booked:</span> <strong class="text-slate-200">{{ $ticket->booked_by }}</strong></div>
-                                <div class="mt-0.5"><span class="text-slate-400">Paid:</span> <strong class="text-slate-200">{{ $ticket->paid_by }}</strong></div>
+                                <div>
+                                    <span class="text-slate-400">Booker:</span> 
+                                    <strong class="text-indigo-300">{{ $ticket->booked_by }}</strong>
+                                    @if($ticket->bookerUser)
+                                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800">Akun</span>
+                                    @endif
+                                </div>
+                                <div class="mt-0.5">
+                                    <span class="text-slate-400">Payer:</span> 
+                                    <strong class="text-emerald-300">{{ $ticket->paid_by }}</strong>
+                                    @if($ticket->payerUser)
+                                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">Akun</span>
+                                    @endif
+                                </div>
                                 @if($ticket->payment_date)
                                     <div class="text-[11px] text-slate-500 mt-0.5">Tgl Bayar: {{ $ticket->payment_date->format('d/m/Y') }}</div>
                                 @endif
@@ -255,19 +260,27 @@
                                         <i class="fa-solid fa-ticket-simple text-sm"></i>
                                     </button>
 
-                                    <!-- Edit -->
-                                    <a href="{{ route('tickets.edit', $ticket->id) }}" class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white flex items-center justify-center transition-colors" title="Edit Tiket">
-                                        <i class="fa-solid fa-pen-to-square text-sm"></i>
-                                    </a>
+                                    <!-- Edit (Policy Protected) -->
+                                    @can('update', $ticket)
+                                        <a href="{{ route('tickets.edit', $ticket->id) }}" class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white flex items-center justify-center transition-colors" title="Edit Tiket">
+                                            <i class="fa-solid fa-pen-to-square text-sm"></i>
+                                        </a>
+                                    @else
+                                        <span class="w-8 h-8 rounded-lg bg-slate-800 text-slate-600 flex items-center justify-center cursor-not-allowed" title="Anda tidak memiliki akses mengedit tiket ini">
+                                            <i class="fa-solid fa-lock text-xs"></i>
+                                        </span>
+                                    @endcan
 
-                                    <!-- Delete -->
-                                    <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus histori tiket {{ $ticket->ticket_code }}?');" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors" title="Hapus Tiket">
-                                            <i class="fa-solid fa-trash-can text-sm"></i>
-                                        </button>
-                                    </form>
+                                    <!-- Delete (Policy Protected) -->
+                                    @can('delete', $ticket)
+                                        <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus histori tiket {{ $ticket->ticket_code }}?');" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors" title="Hapus Tiket">
+                                                <i class="fa-solid fa-trash-can text-sm"></i>
+                                            </button>
+                                        </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>
@@ -279,9 +292,6 @@
                                 </div>
                                 <p class="text-base font-medium text-slate-400">Tidak ada histori tiket ditemukan</p>
                                 <p class="text-xs text-slate-500 mt-1">Coba sesuaikan kata kunci pencarian atau filter yang Anda pilih.</p>
-                                <a href="{{ route('tickets.create') }}" class="inline-flex items-center mt-4 px-4 py-2 rounded-xl text-xs font-semibold text-sky-400 bg-sky-500/10 border border-sky-500/30 hover:bg-sky-500 hover:text-white transition-all">
-                                    <i class="fa-solid fa-plus mr-1.5"></i> Tambah Tiket Sekarang
-                                </a>
                             </td>
                         </tr>
                     @endforelse
@@ -289,7 +299,6 @@
             </table>
         </div>
 
-        <!-- Pagination -->
         @if($tickets->hasPages())
             <div class="p-4 bg-slate-900/80 border-t border-slate-800">
                 {{ $tickets->links() }}
@@ -297,20 +306,16 @@
         @endif
     </div>
 
-    <!-- Boarding Pass / E-Ticket Modal -->
+    <!-- Boarding Pass Modal -->
     <div x-cloak x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Background overlay -->
             <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showModal = false" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-            <!-- Boarding Pass Card Container -->
             <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-800 relative">
-                
                 <template x-if="selectedTicket">
                     <div class="p-0">
-                        <!-- E-Ticket Header Bar -->
                         <div class="bg-gradient-to-r from-sky-600 to-indigo-700 p-6 text-white relative overflow-hidden">
                             <div class="absolute -right-6 -bottom-6 text-white/10 text-9xl font-bold font-mono select-none">
                                 TCK
@@ -331,7 +336,6 @@
                                 </button>
                             </div>
 
-                            <!-- Route Visual Banner -->
                             <div class="mt-6 pt-4 border-t border-white/20 flex items-center justify-between">
                                 <div class="text-left">
                                     <span class="text-xs text-sky-200 block uppercase">Dari (Origin)</span>
@@ -347,9 +351,7 @@
                             </div>
                         </div>
 
-                        <!-- Ticket Body Details -->
                         <div class="p-6 space-y-5 bg-slate-900">
-                            <!-- Grid details -->
                             <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                                 <div>
                                     <span class="text-xs text-slate-400 block">Nama Penumpang</span>
@@ -369,15 +371,14 @@
                                 </div>
                             </div>
 
-                            <!-- Financial Details -->
                             <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                                 <div>
                                     <span class="text-xs text-slate-400 block">Siapa yang Booking</span>
-                                    <span class="text-sm font-medium text-slate-200 mt-0.5 block" x-text="selectedTicket.booked_by"></span>
+                                    <span class="text-sm font-medium text-indigo-300 mt-0.5 block" x-text="selectedTicket.booked_by"></span>
                                 </div>
                                 <div>
                                     <span class="text-xs text-slate-400 block">Siapa yang Bayar</span>
-                                    <span class="text-sm font-medium text-slate-200 mt-0.5 block" x-text="selectedTicket.paid_by"></span>
+                                    <span class="text-sm font-medium text-emerald-300 mt-0.5 block" x-text="selectedTicket.paid_by"></span>
                                 </div>
                                 <div>
                                     <span class="text-xs text-slate-400 block">Tanggal Pembayaran</span>
@@ -389,13 +390,11 @@
                                 </div>
                             </div>
 
-                            <!-- Notes -->
                             <div class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800/80">
                                 <span class="text-xs text-slate-400 block font-medium">Catatan / Keterangan</span>
                                 <p class="text-xs text-slate-300 mt-1 leading-relaxed italic" x-text="selectedTicket.notes"></p>
                             </div>
 
-                            <!-- Attachment if available -->
                             <template x-if="selectedTicket.attachment_url">
                                 <div class="pt-2">
                                     <a :href="selectedTicket.attachment_url" target="_blank" class="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors">
@@ -405,7 +404,6 @@
                             </template>
                         </div>
 
-                        <!-- Footer barcode style -->
                         <div class="bg-slate-950 p-4 border-t border-slate-800 text-center">
                             <div class="font-mono text-2xl tracking-[0.3em] text-slate-600 select-none">
                                 ||||| ||| ||||||| ||| |||||

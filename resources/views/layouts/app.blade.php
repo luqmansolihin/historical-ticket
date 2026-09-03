@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Histori Tiket Perjalanan') - Ticket Trace</title>
+    <title>@yield('title', 'Histori Tiket Perjalanan') - TicketTrace</title>
 
     <!-- Google Fonts Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,16 +21,6 @@
                         sans: ['Inter', 'sans-serif'],
                         display: ['Outfit', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#f0f7ff',
-                            100: '#e0effe',
-                            500: '#0284c7',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            900: '#0c4a6e',
-                        }
                     }
                 }
             }
@@ -60,7 +50,6 @@
             outline: none;
             box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
         }
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -88,14 +77,61 @@
                     </a>
                 </div>
 
-                <!-- Navigation Action Links -->
-                <div class="flex items-center space-x-3">
+                <!-- Navigation & Authenticated User Info -->
+                <div class="flex items-center space-x-4">
                     <a href="{{ route('tickets.index') }}" class="px-3.5 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('tickets.index') ? 'bg-sky-500/10 text-sky-400 border border-sky-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
                         <i class="fa-solid fa-list-check mr-1.5"></i> Daftar Tiket
                     </a>
-                    <a href="{{ route('tickets.create') }}" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition-all duration-200 active:scale-[0.98]">
-                        <i class="fa-solid fa-plus mr-2"></i> Tambah Tiket
-                    </a>
+
+                    @can('create', App\Models\TicketHistory::class)
+                        <a href="{{ route('tickets.create') }}" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition-all duration-200 active:scale-[0.98]">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Tambah Tiket
+                        </a>
+                    @endcan
+
+                    <!-- User Profile & Logout -->
+                    @auth
+                        <div x-data="{ open: false }" class="relative pl-3 border-l border-slate-800">
+                            <button @click="open = !open" class="flex items-center space-x-2.5 hover:opacity-90 transition-opacity focus:outline-none">
+                                <div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sky-400 text-sm">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
+                                <div class="hidden md:block text-left">
+                                    <div class="text-xs font-semibold text-white leading-tight">{{ Auth::user()->name }}</div>
+                                    <div class="text-[10px] font-mono text-sky-400 capitalize">
+                                        @if(Auth::user()->isAdmin())
+                                            🛡️ Admin
+                                        @elseif(Auth::user()->isBooker())
+                                            📝 Booker
+                                        @elseif(Auth::user()->isPayer())
+                                            💳 Payer
+                                        @else
+                                            👤 User
+                                        @endif
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div x-cloak x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-56 bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 py-2 z-50">
+                                <div class="px-4 py-3 border-b border-slate-800">
+                                    <p class="text-xs text-slate-400">Login sebagai:</p>
+                                    <p class="text-sm font-semibold text-white truncate mt-0.5">{{ Auth::user()->name }}</p>
+                                    <p class="text-xs font-mono text-sky-400 truncate">{{ Auth::user()->email }}</p>
+                                </div>
+
+                                <div class="py-1">
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left px-4 py-2.5 text-xs text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 transition-colors">
+                                            <i class="fa-solid fa-right-from-bracket"></i> Logout / Keluar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endauth
                 </div>
             </div>
         </div>
@@ -140,11 +176,9 @@
     <!-- Footer -->
     <footer class="mt-auto border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>&copy; {{ date('Y') }} TicketTrace &bull; Sistem Histori Tiket Perjalanan & Pencatatan Biaya</p>
+            <p>&copy; {{ date('Y') }} TicketTrace &bull; Sistem Histori Tiket, Booker & Payer Authorization</p>
             <div class="flex items-center space-x-4 text-slate-400 font-mono">
-                <span><i class="fa-solid fa-bolt text-sky-400 mr-1"></i> Laravel v{{ Illuminate\Foundation\Application::VERSION }}</span>
-                <span>&bull;</span>
-                <span>PHP v{{ PHP_VERSION }}</span>
+                <span><i class="fa-solid fa-shield-halved text-sky-400 mr-1"></i> Role: {{ ucfirst(Auth::user()->role ?? 'Guest') }}</span>
             </div>
         </div>
     </footer>

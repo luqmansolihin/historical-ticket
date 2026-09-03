@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\TicketHistory;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class TicketHistorySeeder extends Seeder
@@ -12,6 +13,10 @@ class TicketHistorySeeder extends Seeder
      */
     public function run(): void
     {
+        $bookerUser = User::where('email', 'booker@ticket.com')->first();
+        $payerUser = User::where('email', 'payer@ticket.com')->first();
+        $regularUser = User::where('email', 'user@ticket.com')->first();
+
         $tickets = [
             [
                 'ticket_code' => 'GA-89102',
@@ -20,8 +25,10 @@ class TicketHistorySeeder extends Seeder
                 'destination' => 'Surabaya (SUB)',
                 'transport_type' => 'Pesawat',
                 'passenger_name' => 'Luqman Solihin',
-                'booked_by' => 'Siti Nurhaliza (Secretary)',
-                'paid_by' => 'PT Corporate Indonesia',
+                'booked_by' => 'Siti Nurhaliza (Sekretaris)',
+                'booked_by_user_id' => $bookerUser?->id,
+                'paid_by' => 'PT Corporate Finance',
+                'paid_by_user_id' => $payerUser?->id,
                 'payment_date' => '2026-08-10',
                 'amount' => 1450000.00,
                 'status' => 'Lunas',
@@ -35,7 +42,9 @@ class TicketHistorySeeder extends Seeder
                 'transport_type' => 'Kereta Api',
                 'passenger_name' => 'Luqman Solihin',
                 'booked_by' => 'Luqman Solihin',
+                'booked_by_user_id' => $regularUser?->id,
                 'paid_by' => 'Luqman Solihin',
+                'paid_by_user_id' => $regularUser?->id,
                 'payment_date' => '2026-08-18',
                 'amount' => 380000.00,
                 'status' => 'Reimburse',
@@ -49,7 +58,9 @@ class TicketHistorySeeder extends Seeder
                 'transport_type' => 'Bus',
                 'passenger_name' => 'Budi Santoso',
                 'booked_by' => 'Budi Santoso',
+                'booked_by_user_id' => null,
                 'paid_by' => 'Budi Santoso',
+                'paid_by_user_id' => null,
                 'payment_date' => '2026-07-25',
                 'amount' => 220000.00,
                 'status' => 'Lunas',
@@ -62,8 +73,10 @@ class TicketHistorySeeder extends Seeder
                 'destination' => 'Jakarta (Fatmawati)',
                 'transport_type' => 'Travel',
                 'passenger_name' => 'Ahmad Rifa\'i',
-                'booked_by' => 'Ahmad Rifa\'i',
-                'paid_by' => 'PT Corporate Indonesia',
+                'booked_by' => 'Siti Nurhaliza (Sekretaris)',
+                'booked_by_user_id' => $bookerUser?->id,
+                'paid_by' => 'PT Corporate Finance',
+                'paid_by_user_id' => $payerUser?->id,
                 'payment_date' => '2026-08-24',
                 'amount' => 1350000.00,
                 'status' => 'Lunas',
@@ -76,8 +89,10 @@ class TicketHistorySeeder extends Seeder
                 'destination' => 'Denpasar Bali (DPS)',
                 'transport_type' => 'Pesawat',
                 'passenger_name' => 'Luqman Solihin',
-                'booked_by' => 'Siti Nurhaliza (Secretary)',
-                'paid_by' => 'PT Corporate Indonesia',
+                'booked_by' => 'Siti Nurhaliza (Sekretaris)',
+                'booked_by_user_id' => $bookerUser?->id,
+                'paid_by' => 'PT Corporate Finance',
+                'paid_by_user_id' => $payerUser?->id,
                 'payment_date' => null,
                 'amount' => 2100000.00,
                 'status' => 'Belum Bayar',
@@ -91,7 +106,9 @@ class TicketHistorySeeder extends Seeder
                 'transport_type' => 'Kapal Laut',
                 'passenger_name' => 'Eko Prasetyo',
                 'booked_by' => 'Eko Prasetyo',
+                'booked_by_user_id' => null,
                 'paid_by' => 'Eko Prasetyo',
+                'paid_by_user_id' => null,
                 'payment_date' => '2026-06-10',
                 'amount' => 650000.00,
                 'status' => 'Lunas',
@@ -104,8 +121,10 @@ class TicketHistorySeeder extends Seeder
                 'destination' => 'Magelang (Borobudur)',
                 'transport_type' => 'Mobil / Rental',
                 'passenger_name' => 'Tim Technical Operations (4 orang)',
-                'booked_by' => 'Luqman Solihin',
-                'paid_by' => 'PT Corporate Indonesia',
+                'booked_by' => 'Siti Nurhaliza (Sekretaris)',
+                'booked_by_user_id' => $bookerUser?->id,
+                'paid_by' => 'PT Corporate Finance',
+                'paid_by_user_id' => $payerUser?->id,
                 'payment_date' => '2026-08-01',
                 'amount' => 750000.00,
                 'status' => 'Lunas',
@@ -119,7 +138,9 @@ class TicketHistorySeeder extends Seeder
                 'transport_type' => 'Pesawat',
                 'passenger_name' => 'Rina Wijaya',
                 'booked_by' => 'Rina Wijaya',
+                'booked_by_user_id' => null,
                 'paid_by' => 'Rina Wijaya',
+                'paid_by_user_id' => null,
                 'payment_date' => '2026-05-01',
                 'amount' => 1250000.00,
                 'status' => 'Dibatalkan',

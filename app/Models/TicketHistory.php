@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TicketHistory extends Model
 {
@@ -17,7 +18,9 @@ class TicketHistory extends Model
         'transport_type',
         'passenger_name',
         'booked_by',
+        'booked_by_user_id',
         'paid_by',
+        'paid_by_user_id',
         'payment_date',
         'amount',
         'status',
@@ -30,6 +33,22 @@ class TicketHistory extends Model
         'payment_date' => 'date',
         'amount' => 'decimal:2',
     ];
+
+    /**
+     * Relationship to Booker user
+     */
+    public function bookerUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'booked_by_user_id');
+    }
+
+    /**
+     * Relationship to Payer user
+     */
+    public function payerUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'paid_by_user_id');
+    }
 
     /**
      * Format amount in IDR (Rp 1.500.000)
