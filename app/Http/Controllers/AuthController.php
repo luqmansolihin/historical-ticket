@@ -45,25 +45,6 @@ class AuthController extends Controller
     }
 
     /**
-     * Quick login helper for testing demo accounts
-     */
-    public function quickLogin(Request $request)
-    {
-        $email = $request->input('email');
-        $user = User::where('email', $email)->first();
-
-        if ($user) {
-            Auth::login($user);
-            $request->session()->regenerate();
-
-            return redirect()->route('tickets.index')
-                ->with('success', 'Login berhasil sebagai ' . $user->name . ' (' . ucfirst($user->role) . ')');
-        }
-
-        return redirect()->route('login')->with('error', 'Akun demo tidak ditemukan.');
-    }
-
-    /**
      * Show registration form
      */
     public function showRegister()

@@ -115,54 +115,6 @@
                 <p class="text-xs text-slate-400">Belum punya akun? <a href="{{ route('register') }}" class="text-sky-400 hover:underline font-medium">Daftar Akun Baru</a></p>
             </div>
         </div>
-
-        <!-- Quick Login Demo Buttons -->
-        <div class="mt-6 glass-card p-4 rounded-2xl border border-slate-800">
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block text-center mb-3">
-                ⚡ Demo Quick Login (Klik untuk Masuk Instan)
-            </span>
-            <div class="grid grid-cols-2 gap-2">
-                <!-- Admin -->
-                <form action="{{ route('quick-login') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="email" value="admin@ticket.com">
-                    <button type="submit" class="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-left text-xs transition-colors group">
-                        <div class="font-bold text-sky-400 group-hover:text-sky-300">🛡️ Admin Manager</div>
-                        <div class="text-[10px] text-slate-500">Akses Penuh</div>
-                    </button>
-                </form>
-
-                <!-- Booker -->
-                <form action="{{ route('quick-login') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="email" value="booker@ticket.com">
-                    <button type="submit" class="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-left text-xs transition-colors group">
-                        <div class="font-bold text-indigo-400 group-hover:text-indigo-300">📝 Booker / Pemesan</div>
-                        <div class="text-[10px] text-slate-500">Siti (Sekretaris)</div>
-                    </button>
-                </form>
-
-                <!-- Payer -->
-                <form action="{{ route('quick-login') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="email" value="payer@ticket.com">
-                    <button type="submit" class="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-left text-xs transition-colors group">
-                        <div class="font-bold text-emerald-400 group-hover:text-emerald-300">💳 Payer / Finance</div>
-                        <div class="text-[10px] text-slate-500">PT Corporate Finance</div>
-                    </button>
-                </form>
-
-                <!-- Regular User -->
-                <form action="{{ route('quick-login') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="email" value="user@ticket.com">
-                    <button type="submit" class="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-left text-xs transition-colors group">
-                        <div class="font-bold text-amber-400 group-hover:text-amber-300">👤 User Penumpang</div>
-                        <div class="text-[10px] text-slate-500">Luqman Solihin</div>
-                    </button>
-                </form>
-            </div>
-        </div>
     </div>
 
 </body>
