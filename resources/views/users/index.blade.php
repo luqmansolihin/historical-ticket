@@ -40,7 +40,7 @@
         <div class="glass-card p-4 rounded-2xl border-l-4 border-l-emerald-500">
             <span class="text-xs font-semibold text-emerald-400 block uppercase">Payer</span>
             <div class="font-display text-2xl font-bold text-emerald-300 mt-1">{{ number_format($totalPayer) }}</div>
-            <span class="text-[10px] text-emerald-500/80 font-mono mt-1 block">Penanggung Jawab</span>
+            <span class="text-[10px] text-emerald-500/80 font-mono mt-1 block">Pembayaran Oleh</span>
         </div>
         <div class="glass-card p-4 rounded-2xl border-l-4 border-l-slate-600">
             <span class="text-xs font-semibold text-slate-400 block uppercase">User Regular</span>

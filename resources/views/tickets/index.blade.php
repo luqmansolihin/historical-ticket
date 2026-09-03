@@ -253,7 +253,7 @@
                                     @endif
                                 </div>
                                 <div class="mt-0.5">
-                                    <span class="text-slate-400">Penanggung Jawab:</span> 
+                                    <span class="text-slate-400">Pembayaran Oleh:</span> 
                                     <strong class="text-emerald-300">{{ $ticket->paid_by }}</strong>
                                     @if($ticket->payerUser)
                                         <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">Akun</span>
@@ -382,9 +382,14 @@
                                         <h3 class="font-mono font-bold text-lg" x-text="selectedTicket.ticket_code"></h3>
                                     </div>
                                 </div>
-                                <button @click="showModal = false" class="w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center text-white transition-colors">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" title="Cetak Boarding Pass Ini">
+                                        <i class="fa-solid fa-print"></i> Cetak
+                                    </button>
+                                    <button @click="showModal = false" class="w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center text-white transition-colors">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="mt-6 pt-4 border-t border-white/20 flex items-center justify-between">
@@ -446,7 +451,7 @@
                                     <span class="text-sm font-medium text-indigo-300 mt-0.5 block" x-text="selectedTicket.booked_by"></span>
                                 </div>
                                 <div>
-                                    <span class="text-xs text-slate-400 block">Penanggung Jawab Biaya</span>
+                                    <span class="text-xs text-slate-400 block">Pembayaran Oleh</span>
                                     <span class="text-sm font-medium text-emerald-300 mt-0.5 block" x-text="selectedTicket.paid_by"></span>
                                 </div>
                                 <div>

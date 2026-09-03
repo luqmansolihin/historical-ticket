@@ -151,7 +151,7 @@
             <!-- Section 3: Pemesanan & Pembayaran -->
             <div>
                 <h3 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-credit-card"></i> Detail Pemesan Tiket & Penanggung Jawab Biaya
+                    <i class="fa-solid fa-credit-card"></i> Detail Pemesan & Pembayaran Oleh
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -213,7 +213,7 @@
                         <!-- Read-only payment info for Booker when status is Lunas -->
                         <div class="md:col-span-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <span class="text-xs text-slate-400 block">Penanggung Jawab Biaya</span>
+                                <span class="text-xs text-slate-400 block">Pembayaran Oleh</span>
                                 <span class="text-sm font-semibold text-emerald-400 mt-0.5 block">{{ $ticket->paid_by ?: '-' }}</span>
                             </div>
                             <div>
@@ -229,7 +229,7 @@
                                     <i class="fa-solid fa-credit-card"></i>
                                 </div>
                                 <div>
-                                    <div class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Penanggung Jawab Biaya (Payer Terhubung)</div>
+                                    <div class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Pembayaran Oleh (Payer Terhubung)</div>
                                     <div class="text-sm font-bold text-white flex items-center gap-2">
                                         {{ Auth::user()->name }}
                                         <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
@@ -254,7 +254,7 @@
                     @else
                         <div>
                             <label for="paid_by" class="block text-xs font-medium text-slate-300 mb-1.5">
-                                Penanggung Jawab Biaya <span class="text-rose-400">*</span>
+                                Pembayaran Oleh <span class="text-rose-400">*</span>
                             </label>
                             <input type="text" id="paid_by" name="paid_by" value="{{ old('paid_by', $ticket->paid_by) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('paid_by') border-rose-500 @enderror">
                             @error('paid_by')

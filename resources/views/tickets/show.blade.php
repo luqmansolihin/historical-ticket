@@ -105,7 +105,7 @@
                     <span class="text-sm font-medium text-indigo-300 mt-0.5 block">{{ $ticket->booked_by }}</span>
                 </div>
                 <div>
-                    <span class="text-xs text-slate-400 block">Penanggung Jawab Biaya</span>
+                    <span class="text-xs text-slate-400 block">Pembayaran Oleh</span>
                     <span class="text-sm font-medium text-emerald-300 mt-0.5 block">{{ $ticket->paid_by }}</span>
                 </div>
                 <div>

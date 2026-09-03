@@ -118,7 +118,7 @@
             <!-- Section 3: Pemesanan & Pembayaran -->
             <div>
                 <h3 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-credit-card"></i> Detail Pemesan Tiket & Penanggung Jawab Biaya
+                    <i class="fa-solid fa-credit-card"></i> Detail Pemesan & Pembayaran Oleh
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
