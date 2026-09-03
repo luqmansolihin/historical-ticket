@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Histori Tiket Perjalanan') - TicketTrace</title>
 
-    <!-- Google Fonts Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,10 +25,7 @@
         }
     </script>
 
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
@@ -78,10 +73,18 @@
                 </div>
 
                 <!-- Navigation & Authenticated User Info -->
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3 sm:space-x-4">
                     <a href="{{ route('tickets.index') }}" class="px-3.5 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('tickets.index') ? 'bg-sky-500/10 text-sky-400 border border-sky-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
                         <i class="fa-solid fa-list-check mr-1.5"></i> Daftar Tiket
                     </a>
+
+                    @auth
+                        @if(Auth::user()->isAdmin())
+                            <a href="{{ route('users.create') }}" class="px-3.5 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('users.create') ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
+                                <i class="fa-solid fa-user-plus mr-1.5 text-indigo-400"></i> Buat Akun User
+                            </a>
+                        @endif
+                    @endauth
 
                     @can('create', App\Models\TicketHistory::class)
                         <a href="{{ route('tickets.create') }}" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition-all duration-200 active:scale-[0.98]">
@@ -122,6 +125,12 @@
                                 </div>
 
                                 <div class="py-1">
+                                    @if(Auth::user()->isAdmin())
+                                        <a href="{{ route('users.create') }}" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-slate-800 flex items-center gap-2 transition-colors">
+                                            <i class="fa-solid fa-user-plus text-indigo-400"></i> Buat Akun User Baru
+                                        </a>
+                                    @endif
+
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
                                         <button type="submit" class="w-full text-left px-4 py-2.5 text-xs text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 transition-colors">
@@ -140,7 +149,6 @@
     <!-- Main Body Container -->
     <main class="flex-1 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Toast Notification -->
             @if(session('success'))
                 <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-6 p-4 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 flex items-center justify-between shadow-xl backdrop-blur-sm">
                     <div class="flex items-center space-x-3">
@@ -173,7 +181,6 @@
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="mt-auto border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p>&copy; {{ date('Y') }} TicketTrace &bull; Sistem Histori Tiket, Booker & Payer Authorization</p>

@@ -45,40 +45,42 @@ class AuthController extends Controller
     }
 
     /**
-     * Show registration form
+     * Show registration form (Admin Only)
      */
     public function showRegister()
     {
-        if (Auth::check()) {
-            return redirect()->route('tickets.index');
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Akses Ditolak. Hanya Admin yang memiliki wewenang untuk membuat akun pengguna baru.');
         }
 
         return view('auth.register');
     }
 
     /**
-     * Process user registration
+     * Process user creation by Admin
      */
     public function register(Request $request)
     {
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Akses Ditolak. Hanya Admin yang memiliki wewenang untuk membuat akun pengguna baru.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Password::defaults()],
-            'role' => 'required|string|in:booker,payer,user',
+            'role' => 'required|string|in:admin,booker,payer,user',
         ]);
 
-        $user = User::create([
+        $newUser = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
         ]);
 
-        Auth::login($user);
-
         return redirect()->route('tickets.index')
-            ->with('success', 'Akun berhasil dibuat! Anda telah login sebagai ' . ucfirst($user->role));
+            ->with('success', 'Akun pengguna baru "' . $newUser->name . '" (' . ucfirst($newUser->role) . ') telah berhasil dibuat oleh Admin!');
     }
 
     /**

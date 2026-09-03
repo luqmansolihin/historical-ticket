@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - TicketTrace</title>
 
-    <!-- Google Fonts Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -110,10 +108,6 @@
                     <i class="fa-solid fa-right-to-bracket mr-2"></i> Masuk / Login
                 </button>
             </form>
-
-            <div class="mt-6 pt-6 border-t border-slate-800 text-center">
-                <p class="text-xs text-slate-400">Belum punya akun? <a href="{{ route('register') }}" class="text-sky-400 hover:underline font-medium">Daftar Akun Baru</a></p>
-            </div>
         </div>
     </div>
 
