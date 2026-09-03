@@ -1,66 +1,163 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TicketTrace — Historical Ticket Management System 🎫✈️🚆
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> **TicketTrace** adalah sistem manajemen & rekapitulasi histori tiket perjalanan dinas perusahaan berbasis Laravel 11. Dilengkapi dengan otorisasi berbasis Role (*Admin*, *Booker*, *Payer*, *User*), filter multiple selection, log aktivitas perubahan status, tampilan E-Ticket Boarding Pass, serta ekspor CSV.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🌟 Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **📊 Dashboard Analytics & Statistics Cards**
+  - Ringkasan total pengeluaran biaya tiket, total tiket terdaftar, tiket berstatus Lunas, Belum Bayar, dan Dibatalkan.
+- **🔍 Dynamic Multi-Select Search & Filter Toolbar**
+  - Pencarian kata kunci fleksibel (*Kode Tiket*, *Rute*, *Nama Penumpang*, *Booker*, *Payer*).
+  - Multi-select dropdown interaktif berbasis Alpine.js untuk **Moda Transportasi** (*Pesawat, Kereta Api, Bus, Travel, Kapal Laut, Mobil/Rental*) dan **Status Pembayaran** (*Lunas, Belum Bayar, Dibatalkan*).
+  - Penyaringan tanggal keberangkatan (*Dari Tanggal* & *Sampai Tanggal*).
+- **🎫 E-Ticket Boarding Pass View & Print**
+  - Modal tampilan detail E-Ticket berdesain *boarding pass* maskapai penerbangan modern.
+  - Cetak/print otomatis (`window.print()`).
+- **👥 Dynamic Multiple Passengers Input**
+  - Input banyak nama penumpang secara fleksibel dalam satu tiket pendaftaran.
+- **📜 Sequential Status Activity Log & Timeline**
+  - Pencatatan riwayat perubahan status tiket secara urut bertahap (*Step 1 ➔ Step 2 ➔ Step 3*).
+  - Mencatat aktor pengubah, role, status awal, status tujuan, catatan keterangan, dan timestamp.
+- **👥 Admin User Management Dashboard**
+  - Kelola seluruh akun pengguna terdaftar (`/users`) khusus untuk role **Admin**.
+  - Pendaftaran akun baru, pembaruan profil & role, serta reset password.
+- **📥 Export Data CSV**
+  - Ekspor rekapitulasi data tiket sesuai filter aktif secara langsung ke format berkas CSV.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🛡️ Matriks Hak Akses Berdasarkan Role
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Fitur / Hak Akses | Admin 🛡️ | Booker 📝 | Payer 💳 | User Regular 👤 |
+|---|:---:|:---:|:---:|:---:|
+| **Lihat Daftar & Detail Tiket** | ✅ | ✅ | ✅ | ✅ |
+| **Tambah Tiket Baru** | ✅ | ✅ *(Status awal Belum Bayar)* | ❌ | ❌ |
+| **Edit Tiket Status "Belum Bayar"** | ✅ | ✅ *(Field pembayar di-hide)* | ✅ *(Bisa ubah ke Lunas)* | ❌ |
+| **Edit Tiket Status "Lunas"** | ✅ | ⚠️ *Read-only* *(Hanya bisa Dibatalkan)* | ⚠️ *Read-only* *(Bisa edit tgl bayar & Dibatalkan)* | ❌ |
+| **Edit Tiket Status "Dibatalkan"** | ✅ | ❌ *(Terkunci Permanen)* | ❌ *(Terkunci Permanen)* | ❌ |
+| **Hapus Data Tiket** | ✅ *(Semua Status)* | ⚠️ *(Hanya status Belum Bayar)* | ⚠️ *(Hanya status Belum Bayar)* | ❌ |
+| **Kelola Akun (User Management)** | ✅ | ❌ | ❌ | ❌ |
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🛠️ Teknologi Yang Digunakan (Tech Stack)
 
-## Laravel Sponsors
+- **Backend Framework**: Laravel 11.x (PHP 8.2+)
+- **Frontend / UI**: Vanilla CSS / Tailwind CSS (Dark Glassmorphic Theme) & Alpine.js
+- **Database**: MySQL / MariaDB / PostgreSQL / SQLite
+- **Icons & Typography**: FontAwesome 6, Google Fonts (Plus Jakarta Sans & Outfit)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🚀 Panduan Instalasi Lokal (Development)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### 1. Prasyarat
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- Database Engine (MySQL / MariaDB)
 
-## Contributing
+### 2. Langkah-Langkah Instalasi
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+# 1. Clone repository
+git clone https://github.com/luqmansolihin/historical-ticket.git
+cd historical-ticket
 
-## Code of Conduct
+# 2. Install dependency PHP & JavaScript
+composer install
+npm install
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 3. Salin file lingkungan (.env)
+cp .env.example .env
 
-## Security Vulnerabilities
+# 4. Generate Application Key
+php artisan key:generate
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 5. Konfigurasi Database di file .env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=historical_ticket
+DB_USERNAME=root
+DB_PASSWORD=
 
-## License
+# 6. Jalankan migrasi database & seeder
+php artisan migrate:fresh --seed
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 7. Buat symlink storage untuk lampiran berkas (PDF/Gambar)
+php artisan storage:link
+
+# 8. Jalankan server lokal
+php artisan serve
+```
+
+Akses aplikasi di peramban web pada alamat: `http://127.0.0.1:8000`
+
+---
+
+## 🔐 Kredensial Akun Default (Setelah Seeding)
+
+| Role | Email | Password |
+|---|---|---|
+| **Admin** | `admin@ticket.com` | `password` |
+
+*(Setelah berhasil login sebagai Admin, Anda dapat mendaftarkan akun Booker, Payer, atau User baru melalui menu **Daftar Akun**)*
+
+---
+
+## 📦 Panduan Deploy ke Server Production
+
+### Opsi 1: Deployment di cPanel (Shared Hosting)
+
+1. **Upload Berkas**: Unggah seluruh berkas proyek (kecuali folder `node_modules` dan `.env` lokal) ke server cPanel.
+2. **Atur Document Root**: Arahkan *Document Root* domain/subdomain ke folder `public/`.
+3. **Database**:
+   - Buat database MySQL baru melalui menu *MySQL Databases* di cPanel.
+   - Buat file `.env` di server dan sesuaikan `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD`.
+4. **Jalankan Perintah Optimasi via Terminal cPanel / SSH**:
+   ```bash
+   php artisan migrate --force
+   php artisan storage:link
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   ```
+
+### Opsi 2: Deployment di VPS (Ubuntu Nginx + PHP-FPM)
+
+```bash
+# 1. Clone proyek ke folder web server
+cd /var/www/
+git clone https://github.com/luqmansolihin/historical-ticket.git
+cd historical-ticket
+
+# 2. Atur izin akses folder storage & cache
+sudo chown -R www-data:www-data storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+
+# 3. Install composer & konfigurasi .env
+composer install --no-dev --optimize-autoloader
+cp .env.example .env
+
+# Edit .env sesuai konfigurasi database produksi
+nano .env
+
+# 4. Generate key & migrasi database
+php artisan key:generate
+php artisan migrate --force
+php artisan storage:link
+
+# 5. Jalankan optimasi cache Laravel
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+---
+
+## 📄 Lisensi
+
+Aplikasi ini dikembangkan untuk kebutuhan internal manajemen rekapitulasi tiket dan dilindungi oleh [MIT License](LICENSE).
