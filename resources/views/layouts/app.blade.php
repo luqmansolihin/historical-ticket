@@ -177,7 +177,7 @@
 
     <footer class="mt-auto border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>&copy; {{ date('Y') }} TicketTrace &bull; Sistem Histori Tiket, Booker & Payer Authorization</p>
+            <p>&copy; {{ date('Y') }} TicketTrace &bull; Sistem Histori Tiket</p>
             <div class="flex items-center space-x-4 text-slate-400 font-mono">
                 <span><i class="fa-solid fa-shield-halved text-sky-400 mr-1"></i> Role: {{ ucfirst(Auth::user()->role ?? 'Guest') }}</span>
             </div>
