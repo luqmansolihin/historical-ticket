@@ -28,5 +28,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
     Route::get('/tickets/export', [TicketHistoryController::class, 'exportCsv'])->name('tickets.export');
+    Route::get('/tickets/{ticket}/pdf', [TicketHistoryController::class, 'exportPdf'])->name('tickets.pdf');
     Route::resource('tickets', TicketHistoryController::class);
 });

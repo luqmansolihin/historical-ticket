@@ -6,7 +6,7 @@
 <div x-data="{ selectedTicket: null, showModal: false }">
 
     <!-- Page Header & Action Bar -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 no-print">
         <div>
             <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-3">
                 <span>Histori Tiket Perjalanan</span>
@@ -30,8 +30,8 @@
         </div>
     </div>
 
-    <!-- Analytics & Summary Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <!-- Analytics & Statistics Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 no-print">
         <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
             <div class="flex items-center justify-between">
                 <div>
@@ -93,8 +93,8 @@
         </div>
     </div>
 
-    <!-- Filter & Search Toolbar -->
-    <div class="glass-card p-5 rounded-2xl mb-8 relative z-20">
+    <!-- Filter & Search Toolbar Card -->
+    <div class="glass-card rounded-2xl p-5 mb-8 relative z-20 no-print">
         <form action="{{ route('tickets.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-end">
             <div class="lg:col-span-3">
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">Pencarian Keyword</label>
@@ -185,8 +185,8 @@
         </form>
     </div>
 
-    <!-- Tickets Table View -->
-    <div class="glass-card rounded-2xl overflow-hidden shadow-2xl">
+    <!-- Tickets Data Table Container -->
+    <div class="glass-card rounded-2xl overflow-hidden shadow-2xl relative z-10 no-print">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm text-slate-300">
                 <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 tracking-wider border-b border-slate-800">
@@ -298,6 +298,7 @@
                                         'status_badge' => $ticket->status_badge_class,
                                         'notes' => $ticket->notes ?? '-',
                                         'attachment_url' => $ticket->attachment_path ? asset('storage/' . $ticket->attachment_path) : null,
+                                        'pdf_url' => route('tickets.pdf', $ticket->id),
                                         'status_logs' => $ticket->statusLogs->map(fn($log) => [
                                             'to_status' => $log->to_status,
                                             'from_status' => $log->from_status,
@@ -360,11 +361,11 @@
     <!-- Boarding Pass Modal -->
     <div x-cloak x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showModal = false" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity"></div>
+            <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showModal = false" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity no-print"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-            <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-800 relative">
+            <div id="modal-boarding-pass-card" x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-800 relative printable-card">
                 <template x-if="selectedTicket">
                     <div class="p-0">
                         <div class="bg-gradient-to-r from-sky-600 to-indigo-700 p-6 text-white relative overflow-hidden">
@@ -382,10 +383,10 @@
                                         <h3 class="font-mono font-bold text-lg" x-text="selectedTicket.ticket_code"></h3>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" title="Cetak Boarding Pass Ini">
-                                        <i class="fa-solid fa-print"></i> Cetak
-                                    </button>
+                                <div class="flex items-center gap-2 no-print">
+                                    <a :href="selectedTicket.pdf_url" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm" title="Download / Cetak Boarding Pass Versi PDF">
+                                        <i class="fa-solid fa-file-pdf"></i> Download PDF
+                                    </a>
                                     <button @click="showModal = false" class="w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center text-white transition-colors">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>

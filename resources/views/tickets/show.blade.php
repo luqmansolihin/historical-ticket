@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-2xl mx-auto">
     <!-- Breadcrumb -->
-    <div class="mb-6">
+    <div class="mb-6 no-print">
         <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
         </a>
@@ -13,7 +13,7 @@
     </div>
 
     <!-- E-Ticket Pass Card -->
-    <div class="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800 relative">
+    <div id="ticket-boarding-pass-card" class="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800 relative printable-card">
         <div class="bg-gradient-to-r from-sky-600 to-indigo-700 p-6 sm:p-8 text-white relative overflow-hidden">
             <div class="absolute -right-6 -bottom-6 text-white/10 text-9xl font-bold font-mono select-none">
                 TCK
@@ -168,16 +168,16 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex items-center justify-between pt-2">
+            <div class="flex items-center justify-between pt-2 no-print">
                 @can('update', $ticket)
                     <a href="{{ route('tickets.edit', $ticket->id) }}" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500 hover:text-white transition-all">
                         <i class="fa-solid fa-pen-to-square mr-1.5"></i> Edit Tiket Ini
                     </a>
                 @endcan
 
-                <button onclick="window.print()" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 transition-all">
-                    <i class="fa-solid fa-print mr-1.5"></i> Cetak / Print Boarding Pass
-                </button>
+                <a href="{{ route('tickets.pdf', $ticket->id) }}" target="_blank" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-500/20 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf text-sm"></i> Download / Cetak PDF Boarding Pass
+                </a>
             </div>
         </div>
 

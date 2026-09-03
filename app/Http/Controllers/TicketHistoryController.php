@@ -10,9 +10,29 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TicketHistoryController extends Controller
 {
+    /**
+     * Export specified ticket as PDF.
+     */
+    public function exportPdf(TicketHistory $ticket)
+    {
+        $ticket->load(['bookerUser', 'payerUser', 'statusLogs']);
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('tickets.pdf', compact('ticket'))
+            ->setPaper('a4', 'portrait')
+            ->setOption([
+                'isRemoteEnabled' => true,
+                'isHtml5ParserEnabled' => true,
+                'defaultFont' => 'DejaVu Sans',
+            ]);
+
+        return $pdf->stream('Boarding-Pass-' . $ticket->ticket_code . '.pdf');
+    }
+
     /**
      * Display a listing of historical tickets with search, filtering, and summary stats.
      */

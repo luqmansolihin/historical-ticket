@@ -49,6 +49,63 @@
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* ========================================================= */
+        /* PRINT COLOR & LAYOUT ACCURACY PRESERVATION RULES           */
+        /* ========================================================= */
+        @media print {
+            /* Force exact background colors, gradients, and text colors */
+            *, *::before, *::after {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            @page {
+                size: portrait;
+                margin: 0.8cm;
+            }
+
+            body {
+                background-color: #020617 !important;
+                color: #f8fafc !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Hide non-printable UI elements */
+            header,
+            footer,
+            .no-print,
+            .fixed.bottom-6,
+            nav {
+                display: none !important;
+            }
+
+            /* Container print adjustments */
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .printable-card {
+                box-shadow: none !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 auto !important;
+                position: relative !important;
+            }
+
+            /* If modal print is active, hide everything outside modal */
+            .fixed.inset-0:has(.printable-card) ~ * {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body class="h-full font-sans antialiased bg-slate-950 text-slate-100 selection:bg-sky-500 selection:text-white flex flex-col min-h-screen">
@@ -197,6 +254,41 @@
             <i class="fa-solid fa-arrow-up text-lg group-hover:-translate-y-0.5 transition-transform"></i>
         </button>
     </div>
+
+    <!-- html2pdf Library for 100% UI Accurate PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        function downloadTicketPDF(elementId, filename = 'E-Ticket-Boarding-Pass.pdf') {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                alert('Elemen tiket tidak ditemukan.');
+                return;
+            }
+
+            const nonPrintables = element.querySelectorAll('.no-print');
+            nonPrintables.forEach(el => el.style.setProperty('display', 'none', 'important'));
+
+            const opt = {
+                margin:       [8, 8, 8, 8],
+                filename:     filename,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true, 
+                    logging: false,
+                    backgroundColor: '#0f172a'
+                },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                nonPrintables.forEach(el => el.style.removeProperty('display'));
+            }).catch(err => {
+                nonPrintables.forEach(el => el.style.removeProperty('display'));
+                console.error(err);
+            });
+        }
+    </script>
 
     @stack('scripts')
 </body>
