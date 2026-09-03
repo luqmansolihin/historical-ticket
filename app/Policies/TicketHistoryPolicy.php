@@ -79,18 +79,10 @@ class TicketHistoryPolicy
 
     /**
      * Determine whether the user can delete the ticket record.
-     * Only Admin or Booker who created the ticket can delete it. Regular 'user' CANNOT delete.
+     * Only Admin can delete ticket records.
      */
     public function delete(User $user, TicketHistory $ticket): bool
     {
-        if ($user->isAdmin()) {
-            return true;
-        }
-
-        if ($user->role === 'user') {
-            return false;
-        }
-
-        return $user->role === 'booker' && $ticket->booked_by_user_id && $ticket->booked_by_user_id === $user->id;
+        return $user->isAdmin();
     }
 }

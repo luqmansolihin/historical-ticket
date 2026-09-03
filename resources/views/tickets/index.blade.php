@@ -261,7 +261,16 @@
                                         'status' => $ticket->status,
                                         'status_badge' => $ticket->status_badge_class,
                                         'notes' => $ticket->notes ?? '-',
-                                        'attachment_url' => $ticket->attachment_path ? asset('storage/' . $ticket->attachment_path) : null
+                                        'attachment_url' => $ticket->attachment_path ? asset('storage/' . $ticket->attachment_path) : null,
+                                        'status_logs' => $ticket->statusLogs->map(fn($log) => [
+                                            'to_status' => $log->to_status,
+                                            'from_status' => $log->from_status,
+                                            'user_name' => $log->user_name,
+                                            'user_role' => ucfirst($log->user_role),
+                                            'notes' => $log->notes,
+                                            'date' => $log->created_at->format('d M Y, H:i'),
+                                            'badge' => $log->status_badge_class,
+                                        ])
                                     ]) }}; showModal = true" class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 hover:bg-sky-500 hover:text-white flex items-center justify-center transition-colors" title="Lihat E-Ticket Boarding Pass">
                                         <i class="fa-solid fa-ticket-simple text-sm"></i>
                                     </button>
@@ -413,6 +422,33 @@
                             <div class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800/80">
                                 <span class="text-xs text-slate-400 block font-medium">Catatan / Keterangan</span>
                                 <p class="text-xs text-slate-300 mt-1 leading-relaxed italic" x-text="selectedTicket.notes"></p>
+                            </div>
+
+                            <!-- Status Log Timeline in Modal -->
+                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-slate-400 flex items-center gap-1.5 font-semibold uppercase tracking-wider">
+                                        <i class="fa-solid fa-list-check text-sky-400"></i> Riwayat Step Status Tiket
+                                    </span>
+                                    <span class="text-[10px] text-slate-500 font-mono">Sequential Log</span>
+                                </div>
+                                <div class="relative pl-6 space-y-3 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-800">
+                                    <template x-for="(log, lIdx) in selectedTicket.status_logs" :key="lIdx">
+                                        <div class="relative">
+                                            <div class="absolute -left-6 top-0.5 w-5 h-5 rounded-full bg-slate-900 border-2 border-sky-400 flex items-center justify-center text-[10px] font-mono font-bold text-sky-300" x-text="lIdx + 1"></div>
+                                            <div>
+                                                <div class="flex items-center gap-1.5 flex-wrap">
+                                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold border" :class="log.badge" x-text="log.to_status"></span>
+                                                    <template x-if="log.from_status">
+                                                        <span class="text-[10px] text-slate-500 font-mono" x-text="'(dari ' + log.from_status + ')'"></span>
+                                                    </template>
+                                                </div>
+                                                <p class="text-xs text-slate-300 mt-0.5 leading-relaxed" x-text="log.notes"></p>
+                                                <span class="text-[10px] text-slate-500 font-mono mt-0.5 block" x-text="log.user_name + ' (' + log.user_role + ') • ' + log.date"></span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
 
                             <template x-if="selectedTicket.attachment_url">

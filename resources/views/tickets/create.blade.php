@@ -143,40 +143,6 @@
                     </div>
 
                     <div>
-                        <label for="paid_by" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Penanggung Jawab Biaya (Nama/Instansi) <span class="text-rose-400">*</span>
-                        </label>
-                        <input type="text" id="paid_by" name="paid_by" value="{{ old('paid_by', 'PT Corporate Finance') }}" placeholder="Nama pembayar / Perusahaan" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('paid_by') border-rose-500 @enderror">
-                        @error('paid_by')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="paid_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Linkkan dengan Akun Pembayar (Sistem)
-                        </label>
-                        <select id="paid_by_user_id" name="paid_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
-                            <option value="">-- Pilih Akun User Pembayar --</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}" {{ old('paid_by_user_id') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }} ({{ ucfirst($user->role) }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="payment_date" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Tanggal Pembayaran <span class="text-slate-500">(Jika sudah dibayar)</span>
-                        </label>
-                        <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date') }}" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('payment_date') border-rose-500 @enderror">
-                        @error('payment_date')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
                         <label for="amount" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Harga / Biaya Tiket (IDR) <span class="text-rose-400">*</span>
                         </label>

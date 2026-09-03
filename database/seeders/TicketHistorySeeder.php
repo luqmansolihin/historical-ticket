@@ -165,11 +165,49 @@ class TicketHistorySeeder extends Seeder
             ]
         ];
 
-        foreach ($tickets as $ticket) {
-            TicketHistory::updateOrCreate(
-                ['ticket_code' => $ticket['ticket_code']],
-                $ticket
+        foreach ($tickets as $ticketData) {
+            $ticket = TicketHistory::updateOrCreate(
+                ['ticket_code' => $ticketData['ticket_code']],
+                $ticketData
             );
+
+            // Populate sample activity logs if log doesn't exist
+            if ($ticket->statusLogs()->count() === 0) {
+                // Step 1: Initial creation (Belum Bayar)
+                \App\Models\TicketStatusLog::create([
+                    'ticket_history_id' => $ticket->id,
+                    'user_id' => $ticket->booked_by_user_id ?: $bookerUser?->id,
+                    'user_name' => $ticket->booked_by,
+                    'user_role' => 'booker',
+                    'from_status' => null,
+                    'to_status' => 'Belum Bayar',
+                    'notes' => 'Tiket baru dibuat oleh Booker dengan status Belum Bayar.',
+                ]);
+
+                if ($ticket->status === 'Lunas') {
+                    // Step 2: Payment completed
+                    \App\Models\TicketStatusLog::create([
+                        'ticket_history_id' => $ticket->id,
+                        'user_id' => $ticket->paid_by_user_id ?: $payerUser?->id,
+                        'user_name' => $ticket->paid_by,
+                        'user_role' => 'payer',
+                        'from_status' => 'Belum Bayar',
+                        'to_status' => 'Lunas',
+                        'notes' => 'Pembayaran dikonfirmasi Lunas.',
+                    ]);
+                } elseif ($ticket->status === 'Dibatalkan') {
+                    // Step 2: Payment (if applicable) & Cancellation
+                    \App\Models\TicketStatusLog::create([
+                        'ticket_history_id' => $ticket->id,
+                        'user_id' => $ticket->booked_by_user_id ?: $bookerUser?->id,
+                        'user_name' => $ticket->booked_by,
+                        'user_role' => 'booker',
+                        'from_status' => 'Belum Bayar',
+                        'to_status' => 'Dibatalkan',
+                        'notes' => 'Tiket dibatalkan oleh Booker.',
+                    ]);
+                }
+            }
         }
     }
 }

@@ -184,6 +184,26 @@
         </div>
     </footer>
 
+    <!-- Scroll To Top Floating Button -->
+    <div x-data="{ showScrollTop: false }"
+         @scroll.window="showScrollTop = (window.pageYOffset > 300)"
+         class="fixed bottom-6 right-6 z-50">
+        <button x-show="showScrollTop"
+                x-cloak
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 translate-y-4 scale-90"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 scale-90"
+                @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
+                type="button"
+                class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-blue-600 text-white shadow-xl shadow-sky-500/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 border border-sky-400/40 group"
+                title="Kembali ke Atas">
+            <i class="fa-solid fa-arrow-up text-lg group-hover:-translate-y-0.5 transition-transform"></i>
+        </button>
+    </div>
+
     @stack('scripts')
 </body>
 </html>

@@ -221,11 +221,22 @@
                         <label for="status" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Status Pembayaran <span class="text-rose-400">*</span>
                         </label>
-                        <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
-                            @foreach($statusOptions as $optStatus)
-                                <option value="{{ $optStatus }}" {{ old('status', $ticket->status) == $optStatus ? 'selected' : '' }}>{{ $optStatus }}</option>
-                            @endforeach
-                        </select>
+                        @if(Auth::user()->isBooker() && !Auth::user()->isAdmin())
+                            <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
+                                @if($ticket->status === 'Lunas')
+                                    <option value="Lunas" {{ old('status', $ticket->status) == 'Lunas' ? 'selected' : '' }}>Lunas (Status Saat Ini)</option>
+                                @elseif($ticket->status === 'Belum Bayar')
+                                    <option value="Belum Bayar" {{ old('status', $ticket->status) == 'Belum Bayar' ? 'selected' : '' }}>Belum Bayar</option>
+                                @endif
+                                <option value="Dibatalkan" {{ old('status', $ticket->status) == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                            </select>
+                        @else
+                            <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
+                                @foreach($statusOptions as $optStatus)
+                                    <option value="{{ $optStatus }}" {{ old('status', $ticket->status) == $optStatus ? 'selected' : '' }}>{{ $optStatus }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                         @error('status')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror

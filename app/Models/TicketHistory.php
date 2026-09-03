@@ -51,6 +51,14 @@ class TicketHistory extends Model
     }
 
     /**
+     * Relationship to status activity logs
+     */
+    public function statusLogs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TicketStatusLog::class, 'ticket_history_id')->orderBy('id', 'asc');
+    }
+
+    /**
      * Get passenger names as an array
      */
     public function getPassengersListAttribute(): array

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TicketHistory;
+use App\Models\TicketStatusLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +25,7 @@ class TicketHistoryController extends Controller
         $dateTo = $request->input('date_to');
 
         $query = TicketHistory::query()
-            ->with(['bookerUser', 'payerUser'])
+            ->with(['bookerUser', 'payerUser', 'statusLogs'])
             ->search($search)
             ->filterTransport($transportType)
             ->filterStatus($status);
@@ -99,7 +100,7 @@ class TicketHistoryController extends Controller
             'passenger_names.*' => 'required|string|max:255',
             'booked_by' => 'nullable|string|max:255',
             'booked_by_user_id' => 'nullable|exists:users,id',
-            'paid_by' => 'required|string|max:255',
+            'paid_by' => 'nullable|string|max:255',
             'paid_by_user_id' => 'nullable|exists:users,id',
             'payment_date' => 'nullable|date',
             'amount' => 'required|numeric|min:0',
@@ -126,6 +127,11 @@ class TicketHistoryController extends Controller
             $validated['booked_by_user_id'] = Auth::id();
         }
 
+        // Default paid_by if omitted during creation
+        if (empty($validated['paid_by'])) {
+            $validated['paid_by'] = '-';
+        }
+
         // Booker creates ticket with initial status 'Belum Bayar'
         if (Auth::user()->role === 'booker' || !Auth::user()->isAdmin()) {
             $validated['status'] = 'Belum Bayar';
@@ -136,7 +142,18 @@ class TicketHistoryController extends Controller
             $validated['attachment_path'] = $path;
         }
 
-        TicketHistory::create($validated);
+        $newTicket = TicketHistory::create($validated);
+
+        // Record initial status log
+        TicketStatusLog::create([
+            'ticket_history_id' => $newTicket->id,
+            'user_id' => Auth::id(),
+            'user_name' => Auth::user()->name ?? 'System',
+            'user_role' => Auth::user()->role ?? 'user',
+            'from_status' => null,
+            'to_status' => $newTicket->status,
+            'notes' => 'Tiket histori baru dibuat dengan status ' . $newTicket->status . '.',
+        ]);
 
         return redirect()->route('tickets.index')
             ->with('success', 'Tiket histori dengan ' . count($names) . ' penumpang berhasil ditambahkan!');
@@ -147,7 +164,7 @@ class TicketHistoryController extends Controller
      */
     public function show(TicketHistory $ticket)
     {
-        $ticket->load(['bookerUser', 'payerUser']);
+        $ticket->load(['bookerUser', 'payerUser', 'statusLogs']);
 
         if (request()->wantsJson()) {
             return response()->json($ticket);
@@ -200,6 +217,16 @@ class TicketHistoryController extends Controller
         $validated['passenger_name'] = implode(', ', $names);
         unset($validated['passenger_names']);
 
+        // Booker (non-admin) can change status to 'Dibatalkan' at any stage (Lunas or Belum Bayar)
+        if (Auth::user()->isBooker() && !Auth::user()->isAdmin()) {
+            if ($validated['status'] !== 'Dibatalkan' && $validated['status'] !== $ticket->status) {
+                $validated['status'] = $ticket->status;
+            }
+        }
+
+        $oldStatus = $ticket->status;
+        $newStatus = $validated['status'];
+
         if ($request->hasFile('attachment')) {
             if ($ticket->attachment_path && Storage::disk('public')->exists($ticket->attachment_path)) {
                 Storage::disk('public')->delete($ticket->attachment_path);
@@ -209,6 +236,25 @@ class TicketHistoryController extends Controller
         }
 
         $ticket->update($validated);
+
+        // Record status activity log if status changed
+        if ($oldStatus !== $newStatus) {
+            $logNotes = match ($newStatus) {
+                'Lunas' => 'Status pembayaran diperbarui menjadi Lunas.',
+                'Dibatalkan' => 'Tiket dibatalkan oleh ' . (Auth::user()->name ?? 'User') . ' (' . ucfirst(Auth::user()->role ?? 'user') . ').',
+                default => 'Status tiket diubah dari ' . $oldStatus . ' menjadi ' . $newStatus . '.',
+            };
+
+            TicketStatusLog::create([
+                'ticket_history_id' => $ticket->id,
+                'user_id' => Auth::id(),
+                'user_name' => Auth::user()->name ?? 'System',
+                'user_role' => Auth::user()->role ?? 'user',
+                'from_status' => $oldStatus,
+                'to_status' => $newStatus,
+                'notes' => $logNotes,
+            ]);
+        }
 
         return redirect()->route('tickets.index')
             ->with('success', 'Tiket histori berhasil diperbarui!');

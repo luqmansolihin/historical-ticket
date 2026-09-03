@@ -129,6 +129,44 @@
                 </div>
             @endif
 
+            <!-- Status Change Timeline & Logs -->
+            <div class="bg-slate-950/60 p-5 rounded-2xl border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-sky-400"></i> Riwayat Step Status Tiket
+                    </span>
+                    <span class="text-[10px] text-slate-500 font-mono">Sequential Activity Log</span>
+                </div>
+
+                @if($ticket->statusLogs && $ticket->statusLogs->count() > 0)
+                    <div class="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-800">
+                        @foreach($ticket->statusLogs as $stepIndex => $log)
+                            <div class="relative flex items-start justify-between gap-3">
+                                <div class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-slate-900 border-2 border-sky-400 flex items-center justify-center text-[10px] font-mono font-bold text-sky-300">
+                                    {{ $stepIndex + 1 }}
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold border {{ $log->status_badge_class }}">
+                                            {{ $log->to_status }}
+                                        </span>
+                                        @if($log->from_status)
+                                            <span class="text-xs text-slate-500 font-mono">(dari {{ $log->from_status }})</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">{{ $log->notes }}</p>
+                                    <span class="text-[11px] text-slate-500 font-mono mt-0.5 block">
+                                        <i class="fa-solid fa-user text-slate-600 mr-1"></i> {{ $log->user_name }} ({{ ucfirst($log->user_role) }}) &bull; {{ $log->created_at->format('d M Y, H:i') }}
+                                    </span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-xs text-slate-500 italic">Belum ada riwayat aktivitas log tercatat.</p>
+                @endif
+            </div>
+
             <!-- Action Buttons -->
             <div class="flex items-center justify-between pt-2">
                 @can('update', $ticket)
