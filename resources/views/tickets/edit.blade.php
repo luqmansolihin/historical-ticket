@@ -1,0 +1,214 @@
+@extends('layouts.app')
+
+@section('title', 'Edit Tiket - ' . $ticket->ticket_code)
+
+@section('content')
+<div class="max-w-4xl mx-auto">
+    <!-- Breadcrumb & Title -->
+    <div class="mb-6">
+        <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
+        </a>
+        <h1 class="font-display text-2xl sm:text-3xl font-bold text-white">Edit Histori Tiket</h1>
+        <p class="text-slate-400 text-sm mt-1">Perbarui data tiket <span class="font-mono text-sky-400 font-semibold">{{ $ticket->ticket_code }}</span></p>
+    </div>
+
+    <!-- Form Container -->
+    <div class="glass-card p-6 sm:p-8 rounded-2xl shadow-2xl">
+        <form action="{{ route('tickets.update', $ticket->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            @csrf
+            @method('PUT')
+
+            <!-- Section 1: Informasi Perjalanan -->
+            <div>
+                <h3 class="text-sm font-semibold text-sky-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-route"></i> Informasi Perjalanan
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Tanggal Tiket -->
+                    <div>
+                        <label for="ticket_date" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Tanggal Tiket / Keberangkatan <span class="text-rose-400">*</span>
+                        </label>
+                        <input type="date" id="ticket_date" name="ticket_date" value="{{ old('ticket_date', $ticket->ticket_date ? $ticket->ticket_date->format('Y-m-d') : '') }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('ticket_date') border-rose-500 @enderror">
+                        @error('ticket_date')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Kode Tiket -->
+                    <div>
+                        <label for="ticket_code" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Kode Tiket / Ref Booking <span class="text-rose-400">*</span>
+                        </label>
+                        <input type="text" id="ticket_code" name="ticket_code" value="{{ old('ticket_code', $ticket->ticket_code) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm font-mono @error('ticket_code') border-rose-500 @enderror">
+                        @error('ticket_code')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Dari (Origin) -->
+                    <div>
+                        <label for="origin" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Dari (Lokasi Keberangkatan) <span class="text-rose-400">*</span>
+                        </label>
+                        <input type="text" id="origin" name="origin" value="{{ old('origin', $ticket->origin) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('origin') border-rose-500 @enderror">
+                        @error('origin')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Ke (Destination) -->
+                    <div>
+                        <label for="destination" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Ke (Lokasi Tujuan) <span class="text-rose-400">*</span>
+                        </label>
+                        <input type="text" id="destination" name="destination" value="{{ old('destination', $ticket->destination) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('destination') border-rose-500 @enderror">
+                        @error('destination')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Jenis Transportasi -->
+                    <div>
+                        <label for="transport_type" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Jenis Transportasi <span class="text-rose-400">*</span>
+                        </label>
+                        <select id="transport_type" name="transport_type" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('transport_type') border-rose-500 @enderror">
+                            @foreach($transportOptions as $option)
+                                <option value="{{ $option }}" {{ old('transport_type', $ticket->transport_type) == $option ? 'selected' : '' }}>{{ $option }}</option>
+                            @endforeach
+                        </select>
+                        @error('transport_type')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Nama Penumpang -->
+                    <div>
+                        <label for="passenger_name" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Nama Penumpang <span class="text-rose-400">*</span>
+                        </label>
+                        <input type="text" id="passenger_name" name="passenger_name" value="{{ old('passenger_name', $ticket->passenger_name) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('passenger_name') border-rose-500 @enderror">
+                        @error('passenger_name')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-slate-800/80">
+
+            <!-- Section 2: Pemesanan & Pembayaran -->
+            <div>
+                <h3 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-credit-card"></i> Detail Pemesanan & Pembayaran
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Siapa yang Booking -->
+                    <div>
+                        <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Siapa yang Booking <span class="text-rose-400">*</span>
+                        </label>
+                        <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by', $ticket->booked_by) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('booked_by') border-rose-500 @enderror">
+                        @error('booked_by')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Siapa yang Bayar -->
+                    <div>
+                        <label for="paid_by" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Siapa yang Bayar <span class="text-rose-400">*</span>
+                        </label>
+                        <input type="text" id="paid_by" name="paid_by" value="{{ old('paid_by', $ticket->paid_by) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('paid_by') border-rose-500 @enderror">
+                        @error('paid_by')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Tanggal Bayar -->
+                    <div>
+                        <label for="payment_date" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Tanggal Pembayaran
+                        </label>
+                        <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date', $ticket->payment_date ? $ticket->payment_date->format('Y-m-d') : '') }}" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('payment_date') border-rose-500 @enderror">
+                        @error('payment_date')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Harga / Biaya (IDR) -->
+                    <div>
+                        <label for="amount" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Harga / Biaya Tiket (IDR) <span class="text-rose-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-bold">
+                                Rp
+                            </div>
+                            <input type="number" step="1000" min="0" id="amount" name="amount" value="{{ old('amount', $ticket->amount) }}" required class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm font-mono @error('amount') border-rose-500 @enderror">
+                        </div>
+                        @error('amount')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Status Pembayaran -->
+                    <div>
+                        <label for="status" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Status Pembayaran <span class="text-rose-400">*</span>
+                        </label>
+                        <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
+                            @foreach($statusOptions as $optStatus)
+                                <option value="{{ $optStatus }}" {{ old('status', $ticket->status) == $optStatus ? 'selected' : '' }}>{{ $optStatus }}</option>
+                            @endforeach
+                        </select>
+                        @error('status')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Upload Bukti Tiket -->
+                    <div>
+                        <label for="attachment" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Ganti File Bukti / Nota Tiket <span class="text-slate-500">(Opsional)</span>
+                        </label>
+                        <input type="file" id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="w-full glass-input rounded-xl px-3 py-2 text-xs bg-slate-900 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-500/20 file:text-sky-300 hover:file:bg-sky-500/30">
+                        @if($ticket->attachment_path)
+                            <p class="text-xs text-sky-400 mt-1">
+                                <i class="fa-solid fa-paperclip mr-1"></i> File saat ini: <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank" class="underline">Lihat Lampiran</a>
+                            </p>
+                        @endif
+                        @error('attachment')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-slate-800/80">
+
+            <!-- Section 3: Catatan Tambahan -->
+            <div>
+                <label for="notes" class="block text-xs font-medium text-slate-300 mb-1.5">
+                    Catatan / Keterangan Tambahan
+                </label>
+                <textarea id="notes" name="notes" rows="3" class="w-full glass-input rounded-xl p-4 text-sm">{{ old('notes', $ticket->notes) }}</textarea>
+            </div>
+
+            <!-- Submit buttons -->
+            <div class="flex items-center justify-end gap-3 pt-4">
+                <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
+                    Batal
+                </a>
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-lg shadow-amber-500/25 transition-all">
+                    <i class="fa-solid fa-pen-to-square mr-2"></i> Perbarui Tiket
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
