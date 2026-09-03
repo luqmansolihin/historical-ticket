@@ -139,9 +139,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-xs text-emerald-400 font-medium flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-lg w-fit">
-                                <i class="fa-solid fa-lock"></i> Akun Booker Terkunci
-                            </div>
                             <input type="hidden" name="booked_by" value="{{ old('booked_by', $ticket->booked_by ?: Auth::user()->name) }}">
                             <input type="hidden" name="booked_by_user_id" value="{{ old('booked_by_user_id', $ticket->booked_by_user_id ?: Auth::id()) }}">
                         </div>

@@ -138,9 +138,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-xs text-emerald-400 font-medium flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-lg w-fit">
-                            <i class="fa-solid fa-circle-check"></i> Otomatis Akun Login
-                        </div>
                         <input type="hidden" name="booked_by" value="{{ Auth::user()->name }}">
                         <input type="hidden" name="booked_by_user_id" value="{{ Auth::id() }}">
                     </div>
@@ -203,7 +200,6 @@
                                 <span class="inline-flex items-center gap-2 font-semibold text-rose-400">
                                     <i class="fa-solid fa-hourglass-half text-xs"></i> Belum Bayar
                                 </span>
-                                <span class="text-[10px] text-slate-400 font-mono">⚡ Otomatis untuk Booker</span>
                             </div>
                             <input type="hidden" name="status" value="Belum Bayar">
                         @else
