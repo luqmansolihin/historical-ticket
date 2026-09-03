@@ -51,6 +51,52 @@ class TicketHistory extends Model
     }
 
     /**
+     * Get passenger names as an array
+     */
+    public function getPassengersListAttribute(): array
+    {
+        if (empty($this->passenger_name)) {
+            return [];
+        }
+
+        // Handle JSON or comma/newline separated strings
+        if (str_starts_with(trim($this->passenger_name), '[')) {
+            $decoded = json_decode($this->passenger_name, true);
+            if (is_array($decoded)) {
+                return array_values(array_filter(array_map('trim', $decoded)));
+            }
+        }
+
+        $items = preg_split('/[,\n]+/', $this->passenger_name);
+        return array_values(array_filter(array_map('trim', $items)));
+    }
+
+    /**
+     * Get count of passengers
+     */
+    public function getPassengerCountAttribute(): int
+    {
+        return count($this->passengers_list);
+    }
+
+    /**
+     * Get formatted display string for passengers
+     */
+    public function getPassengerDisplayAttribute(): string
+    {
+        $list = $this->passengers_list;
+        if (empty($list)) {
+            return '-';
+        }
+
+        if (count($list) === 1) {
+            return $list[0];
+        }
+
+        return implode(', ', $list) . ' (' . count($list) . ' Penumpang)';
+    }
+
+    /**
      * Format amount in IDR (Rp 1.500.000)
      */
     public function getFormattedAmountAttribute(): string

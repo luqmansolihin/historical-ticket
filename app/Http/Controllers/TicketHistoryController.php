@@ -97,7 +97,8 @@ class TicketHistoryController extends Controller
             'origin' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
             'transport_type' => 'required|string|max:100',
-            'passenger_name' => 'required|string|max:255',
+            'passenger_names' => 'required|array|min:1',
+            'passenger_names.*' => 'required|string|max:255',
             'booked_by' => 'required|string|max:255',
             'booked_by_user_id' => 'nullable|exists:users,id',
             'paid_by' => 'required|string|max:255',
@@ -108,6 +109,11 @@ class TicketHistoryController extends Controller
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
+
+        // Process array of passenger names into clean comma-separated string
+        $names = array_values(array_filter(array_map('trim', $validated['passenger_names'])));
+        $validated['passenger_name'] = implode(', ', $names);
+        unset($validated['passenger_names']);
 
         // Auto-generate ticket code if not specified
         if (empty($validated['ticket_code'])) {
@@ -127,7 +133,7 @@ class TicketHistoryController extends Controller
         TicketHistory::create($validated);
 
         return redirect()->route('tickets.index')
-            ->with('success', 'Tiket histori berhasil ditambahkan!');
+            ->with('success', 'Tiket histori dengan ' . count($names) . ' penumpang berhasil ditambahkan!');
     }
 
     /**
@@ -171,7 +177,8 @@ class TicketHistoryController extends Controller
             'origin' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
             'transport_type' => 'required|string|max:100',
-            'passenger_name' => 'required|string|max:255',
+            'passenger_names' => 'required|array|min:1',
+            'passenger_names.*' => 'required|string|max:255',
             'booked_by' => 'required|string|max:255',
             'booked_by_user_id' => 'nullable|exists:users,id',
             'paid_by' => 'required|string|max:255',
@@ -182,6 +189,10 @@ class TicketHistoryController extends Controller
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
+
+        $names = array_values(array_filter(array_map('trim', $validated['passenger_names'])));
+        $validated['passenger_name'] = implode(', ', $names);
+        unset($validated['passenger_names']);
 
         if ($request->hasFile('attachment')) {
             if ($ticket->attachment_path && Storage::disk('public')->exists($ticket->attachment_path)) {

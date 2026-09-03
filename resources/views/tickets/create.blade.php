@@ -9,7 +9,7 @@
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
         </a>
         <h1 class="font-display text-2xl sm:text-3xl font-bold text-white">Tambah Histori Tiket Baru</h1>
-        <p class="text-slate-400 text-sm mt-1">Masukkan rincian tiket keberangkatan, pemesan (Booker), dan pembayar (Payer).</p>
+        <p class="text-slate-400 text-sm mt-1">Masukkan rincian tiket keberangkatan, pemesan (Booker), dan daftar penumpang (bisa lebih dari 1 orang).</p>
     </div>
 
     <div class="glass-card p-6 sm:p-8 rounded-2xl shadow-2xl">
@@ -63,7 +63,7 @@
                         @enderror
                     </div>
 
-                    <div>
+                    <div class="md:col-span-2">
                         <label for="transport_type" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Jenis Transportasi <span class="text-rose-400">*</span>
                         </label>
@@ -77,29 +77,51 @@
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-
-                    <div>
-                        <label for="passenger_name" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Nama Penumpang <span class="text-rose-400">*</span>
-                        </label>
-                        <input type="text" id="passenger_name" name="passenger_name" value="{{ old('passenger_name', Auth::user()->name) }}" placeholder="Nama orang yang bepergian" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('passenger_name') border-rose-500 @enderror">
-                        @error('passenger_name')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
                 </div>
             </div>
 
             <hr class="border-slate-800/80">
 
-            <!-- Section 2: Pemesanan (Booker) & Pembayaran (Payer) -->
+            <!-- Dynamic Multiple Passengers Input -->
+            <div x-data="{ passengers: {{ json_encode(old('passenger_names', [Auth::user()->name])) }} }">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-semibold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-users"></i> Daftar Nama Penumpang (<span x-text="passengers.length"></span> Orang)
+                    </h3>
+                    <button type="button" @click="passengers.push('')" class="text-xs font-semibold text-sky-400 hover:text-sky-300 px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-plus"></i> Tambah Penumpang
+                    </button>
+                </div>
+
+                <p class="text-xs text-slate-400 mb-4">Anda dapat menambahkan lebih dari 1 penumpang untuk tiket yang sama.</p>
+
+                <div class="space-y-3">
+                    <template x-for="(passenger, index) in passengers" :key="index">
+                        <div class="flex items-center gap-2">
+                            <div class="relative flex-1">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-bold" x-text="(index + 1) + '.'"></div>
+                                <input type="text" :name="'passenger_names[' + index + ']'" x-model="passengers[index]" placeholder="Nama Penumpang (Lengkap)" required class="w-full glass-input rounded-xl pl-9 pr-4 py-2.5 text-sm placeholder-slate-600">
+                            </div>
+                            <button type="button" @click="passengers.splice(index, 1)" x-show="passengers.length > 1" class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm" title="Hapus Penumpang Ini">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+                @error('passenger_names')
+                    <p class="text-rose-400 text-xs mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <hr class="border-slate-800/80">
+
+            <!-- Section 3: Pemesanan (Booker) & Pembayaran (Payer) -->
             <div>
                 <h3 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-credit-card"></i> Detail Booker (Pemesan) & Payer (Pembayar)
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Siapa yang Booking Text -->
                     <div>
                         <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Siapa yang Booking (Nama/Instansi) <span class="text-rose-400">*</span>
@@ -110,7 +132,6 @@
                         @enderror
                     </div>
 
-                    <!-- Link Akun Booker User -->
                     <div>
                         <label for="booked_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Linkkan dengan Akun Booker (Sistem)
@@ -125,7 +146,6 @@
                         </select>
                     </div>
 
-                    <!-- Siapa yang Bayar Text -->
                     <div>
                         <label for="paid_by" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Siapa yang Bayar (Nama/Instansi) <span class="text-rose-400">*</span>
@@ -136,7 +156,6 @@
                         @enderror
                     </div>
 
-                    <!-- Link Akun Payer User -->
                     <div>
                         <label for="paid_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Linkkan dengan Akun Payer (Sistem)
@@ -151,7 +170,6 @@
                         </select>
                     </div>
 
-                    <!-- Tanggal Bayar -->
                     <div>
                         <label for="payment_date" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Tanggal Pembayaran <span class="text-slate-500">(Jika sudah dibayar)</span>
@@ -162,7 +180,6 @@
                         @enderror
                     </div>
 
-                    <!-- Harga / Biaya (IDR) -->
                     <div>
                         <label for="amount" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Harga / Biaya Tiket (IDR) <span class="text-rose-400">*</span>
@@ -178,7 +195,6 @@
                         @enderror
                     </div>
 
-                    <!-- Status Pembayaran -->
                     <div>
                         <label for="status" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Status Pembayaran <span class="text-rose-400">*</span>
@@ -193,7 +209,6 @@
                         @enderror
                     </div>
 
-                    <!-- Upload Bukti Tiket -->
                     <div>
                         <label for="attachment" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Upload Bukti / Nota Tiket <span class="text-slate-500">(PDF, JPG, PNG max 5MB)</span>
@@ -208,7 +223,6 @@
 
             <hr class="border-slate-800/80">
 
-            <!-- Section 3: Catatan Tambahan -->
             <div>
                 <label for="notes" class="block text-xs font-medium text-slate-300 mb-1.5">
                     Catatan / Keterangan Tambahan
@@ -216,7 +230,6 @@
                 <textarea id="notes" name="notes" rows="3" placeholder="Informasi tambahan seperti nomor kursi, kelas penerbangan, atau keperluan dinas..." class="w-full glass-input rounded-xl p-4 text-sm placeholder-slate-600">{{ old('notes') }}</textarea>
             </div>
 
-            <!-- Submit buttons -->
             <div class="flex items-center justify-end gap-3 pt-4">
                 <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
                     Batal

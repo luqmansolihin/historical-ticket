@@ -14,7 +14,7 @@
                     {{ $totalTickets }} Tiket Terdaftar
                 </span>
             </h1>
-            <p class="text-slate-400 text-sm mt-1">Pencatatan riwayat keberangkatan, pemesan (Booker), dan pembayar (Payer).</p>
+            <p class="text-slate-400 text-sm mt-1">Pencatatan riwayat keberangkatan, penumpang (multi-person), pemesan (Booker), dan pembayar (Payer).</p>
         </div>
 
         <div class="flex items-center gap-3 flex-wrap">
@@ -102,7 +102,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                         <i class="fa-solid fa-magnifying-glass text-sm"></i>
                     </div>
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari kode, kota, pemesan, pembayar..." class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm placeholder-slate-500">
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari kode, kota, penumpang, pemesan, pembayar..." class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm placeholder-slate-500">
                 </div>
             </div>
 
@@ -159,7 +159,7 @@
                     <tr>
                         <th class="py-4 px-4">Kode Tiket</th>
                         <th class="py-4 px-4">Tgl Tiket</th>
-                        <th class="py-4 px-4">Rute (Dari ➔ Ke)</th>
+                        <th class="py-4 px-4">Rute & Penumpang</th>
                         <th class="py-4 px-4">Transportasi</th>
                         <th class="py-4 px-4">Booker & Payer</th>
                         <th class="py-4 px-4 text-right">Biaya (IDR)</th>
@@ -184,15 +184,21 @@
                                 {{ $ticket->ticket_date->format('d M Y') }}
                             </td>
 
-                            <!-- Rute -->
+                            <!-- Rute & Penumpang -->
                             <td class="py-4 px-4">
                                 <div class="flex items-center gap-2 font-medium text-slate-100">
                                     <span>{{ $ticket->origin }}</span>
                                     <i class="fa-solid fa-arrow-right text-xs text-sky-400"></i>
                                     <span>{{ $ticket->destination }}</span>
                                 </div>
-                                <div class="text-xs text-slate-400 mt-0.5">
-                                    <i class="fa-solid fa-user text-slate-500 mr-1"></i> {{ $ticket->passenger_name }}
+                                <div class="text-xs text-slate-300 mt-1 flex items-center gap-1.5 flex-wrap">
+                                    <i class="fa-solid fa-user-group text-slate-500"></i>
+                                    <span class="font-medium text-slate-200">{{ $ticket->passenger_display }}</span>
+                                    @if($ticket->passenger_count > 1)
+                                        <span class="px-1.5 py-0.5 rounded text-[10px] bg-sky-950 text-sky-300 border border-sky-800 font-bold">
+                                            {{ $ticket->passenger_count }} Orang
+                                        </span>
+                                    @endif
                                 </div>
                             </td>
 
@@ -247,7 +253,9 @@
                                         'destination' => $ticket->destination,
                                         'transport_type' => $ticket->transport_type,
                                         'transport_icon' => $ticket->transport_icon,
-                                        'passenger_name' => $ticket->passenger_name,
+                                        'passenger_display' => $ticket->passenger_display,
+                                        'passengers_list' => $ticket->passengers_list,
+                                        'passenger_count' => $ticket->passenger_count,
                                         'booked_by' => $ticket->booked_by,
                                         'paid_by' => $ticket->paid_by,
                                         'payment_date' => $ticket->payment_date ? $ticket->payment_date->format('d M Y') : '-',
@@ -260,7 +268,7 @@
                                         <i class="fa-solid fa-ticket-simple text-sm"></i>
                                     </button>
 
-                                    <!-- Edit (Policy Protected) -->
+                                    <!-- Edit -->
                                     @can('update', $ticket)
                                         <a href="{{ route('tickets.edit', $ticket->id) }}" class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white flex items-center justify-center transition-colors" title="Edit Tiket">
                                             <i class="fa-solid fa-pen-to-square text-sm"></i>
@@ -271,7 +279,7 @@
                                         </span>
                                     @endcan
 
-                                    <!-- Delete (Policy Protected) -->
+                                    <!-- Delete -->
                                     @can('delete', $ticket)
                                         <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus histori tiket {{ $ticket->ticket_code }}?');" class="inline">
                                             @csrf
@@ -352,11 +360,25 @@
                         </div>
 
                         <div class="p-6 space-y-5 bg-slate-900">
-                            <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-                                <div>
-                                    <span class="text-xs text-slate-400 block">Nama Penumpang</span>
-                                    <span class="text-sm font-semibold text-white mt-0.5 block" x-text="selectedTicket.passenger_name"></span>
+                            <!-- Passengers Section in Modal -->
+                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
+                                        <i class="fa-solid fa-users text-sky-400"></i> Daftar Penumpang
+                                    </span>
+                                    <span class="text-xs font-mono font-semibold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/30" x-text="selectedTicket.passenger_count + ' Penumpang'"></span>
                                 </div>
+                                <div class="space-y-1">
+                                    <template x-for="(name, idx) in selectedTicket.passengers_list" :key="idx">
+                                        <div class="flex items-center gap-2 text-sm text-slate-100 font-medium py-1 border-b border-slate-800/40 last:border-0">
+                                            <span class="text-xs font-mono text-slate-500" x-text="(idx + 1) + '.'"></span>
+                                            <span x-text="name"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                                 <div>
                                     <span class="text-xs text-slate-400 block">Tanggal Keberangkatan</span>
                                     <span class="text-sm font-semibold text-sky-400 mt-0.5 block" x-text="selectedTicket.ticket_date"></span>
@@ -368,6 +390,10 @@
                                 <div>
                                     <span class="text-xs text-slate-400 block">Status Pembayaran</span>
                                     <span class="inline-block mt-1 px-2.5 py-0.5 text-xs font-semibold rounded-full border" :class="selectedTicket.status_badge" x-text="selectedTicket.status"></span>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Harga / Biaya Tiket</span>
+                                    <span class="text-base font-bold text-emerald-400 font-mono mt-0.5 block" x-text="selectedTicket.amount"></span>
                                 </div>
                             </div>
 
@@ -383,10 +409,6 @@
                                 <div>
                                     <span class="text-xs text-slate-400 block">Tanggal Pembayaran</span>
                                     <span class="text-sm font-medium text-slate-300 mt-0.5 block" x-text="selectedTicket.payment_date"></span>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-slate-400 block">Harga / Biaya Tiket</span>
-                                    <span class="text-base font-bold text-emerald-400 font-mono mt-0.5 block" x-text="selectedTicket.amount"></span>
                                 </div>
                             </div>
 
