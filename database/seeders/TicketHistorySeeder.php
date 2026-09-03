@@ -80,8 +80,8 @@ class TicketHistorySeeder extends Seeder
                 'paid_by_user_id' => $payerUser?->id,
                 'payment_date' => '2026-08-24',
                 'amount' => 160000.00,
-                'status' => 'Reimburse',
-                'notes' => 'DayTrans Executive Shuttle Seat 1A. Form klaim reimburse atas nama Luqman Solihin.',
+                'status' => 'Lunas',
+                'notes' => 'DayTrans Executive Shuttle Seat 1A. Pembayaran perjalanan dinas atas nama Luqman Solihin.',
             ],
             [
                 'ticket_code' => 'SJ-BUS-902',

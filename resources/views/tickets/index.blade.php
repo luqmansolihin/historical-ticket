@@ -80,15 +80,15 @@
         <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Reimburse / Pending</p>
-                    <h3 class="text-2xl font-bold text-amber-400 mt-1 font-display">{{ number_format($totalReimburse + $totalBelumBayar) }} Tiket</h3>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Belum Bayar</p>
+                    <h3 class="text-2xl font-bold text-rose-400 mt-1 font-display">{{ number_format($totalBelumBayar) }} Tiket</h3>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 transition-transform">
+                <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 text-xl group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-hourglass-half"></i>
                 </div>
             </div>
             <div class="mt-3 pt-3 border-t border-slate-800/60 text-xs text-slate-400 flex items-center gap-1.5">
-                <span class="text-amber-400">{{ $totalReimburse }} Reimburse</span> &bull; <span class="text-rose-400">{{ $totalBelumBayar }} Belum Bayar</span>
+                <i class="fa-solid fa-triangle-exclamation text-rose-400"></i> Menunggu pembayaran
             </div>
         </div>
     </div>

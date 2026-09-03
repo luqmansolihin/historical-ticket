@@ -42,7 +42,6 @@ class TicketHistoryController extends Controller
         $totalTickets = $statsQuery->count();
         $totalAmount = (float) $statsQuery->sum('amount');
         $totalLunas = (clone $statsQuery)->where('status', 'Lunas')->count();
-        $totalReimburse = (clone $statsQuery)->where('status', 'Reimburse')->count();
         $totalBelumBayar = (clone $statsQuery)->where('status', 'Belum Bayar')->count();
 
         $tickets = $query->orderBy('ticket_date', 'desc')
@@ -51,7 +50,7 @@ class TicketHistoryController extends Controller
             ->withQueryString();
 
         $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
-        $statusOptions = ['Lunas', 'Belum Bayar', 'Reimburse', 'Dibatalkan'];
+        $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
 
         return view('tickets.index', compact(
             'tickets',
@@ -63,7 +62,6 @@ class TicketHistoryController extends Controller
             'totalTickets',
             'totalAmount',
             'totalLunas',
-            'totalReimburse',
             'totalBelumBayar',
             'transportOptions',
             'statusOptions'
@@ -78,7 +76,7 @@ class TicketHistoryController extends Controller
         Gate::authorize('create', TicketHistory::class);
 
         $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
-        $statusOptions = ['Lunas', 'Belum Bayar', 'Reimburse', 'Dibatalkan'];
+        $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
         $users = User::orderBy('name')->get();
 
         return view('tickets.create', compact('transportOptions', 'statusOptions', 'users'));
@@ -99,7 +97,7 @@ class TicketHistoryController extends Controller
             'transport_type' => 'required|string|max:100',
             'passenger_names' => 'required|array|min:1',
             'passenger_names.*' => 'required|string|max:255',
-            'booked_by' => 'required|string|max:255',
+            'booked_by' => 'nullable|string|max:255',
             'booked_by_user_id' => 'nullable|exists:users,id',
             'paid_by' => 'required|string|max:255',
             'paid_by_user_id' => 'nullable|exists:users,id',
@@ -120,7 +118,10 @@ class TicketHistoryController extends Controller
             $validated['ticket_code'] = 'TCK-' . strtoupper(Str::random(6));
         }
 
-        // Automatically connect Pemesan (booked_by_user_id) to the currently logged in user if empty
+        // Automatically bind Booker name and User ID to currently logged in user
+        if (empty($validated['booked_by'])) {
+            $validated['booked_by'] = Auth::user()->name;
+        }
         if (empty($validated['booked_by_user_id'])) {
             $validated['booked_by_user_id'] = Auth::id();
         }
@@ -158,7 +159,7 @@ class TicketHistoryController extends Controller
         Gate::authorize('update', $ticket);
 
         $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
-        $statusOptions = ['Lunas', 'Belum Bayar', 'Reimburse', 'Dibatalkan'];
+        $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
         $users = User::orderBy('name')->get();
 
         return view('tickets.edit', compact('ticket', 'transportOptions', 'statusOptions', 'users'));

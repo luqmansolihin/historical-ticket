@@ -122,29 +122,27 @@
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Pemesan Tiket (Nama/Instansi) <span class="text-rose-400">*</span>
-                        </label>
-                        <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by', Auth::user()->name) }}" placeholder="Nama pemesan tiket" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('booked_by') border-rose-500 @enderror">
-                        @error('booked_by')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="booked_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5 flex items-center justify-between">
-                            <span>Linkkan dengan Akun Pemesan (Sistem)</span>
-                            <span class="text-[10px] text-sky-400 font-mono font-semibold">⚡ Otomatis Akun Login</span>
-                        </label>
-                        <select id="booked_by_user_id" name="booked_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
-                            <option value="">-- Pilih Akun User Pemesan --</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}" {{ old('booked_by_user_id', Auth::id()) == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }} ({{ ucfirst($user->role) }}) {{ $user->id === Auth::id() ? '★ (Akun Anda)' : '' }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <!-- Booker account auto-linked -->
+                    <div class="md:col-span-2 bg-sky-500/10 border border-sky-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-sm shrink-0">
+                                <i class="fa-solid fa-user-check"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-sky-400 font-semibold uppercase tracking-wider">Pemesan Tiket (Booker Terhubung)</div>
+                                <div class="text-sm font-bold text-white flex items-center gap-2">
+                                    {{ Auth::user()->name }}
+                                    <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-400/20 text-sky-300 border border-sky-400/30">
+                                        ID: #{{ Auth::id() }} • {{ ucfirst(Auth::user()->role) }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-emerald-400 font-medium flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-lg w-fit">
+                            <i class="fa-solid fa-circle-check"></i> Otomatis Akun Login
+                        </div>
+                        <input type="hidden" name="booked_by" value="{{ Auth::user()->name }}">
+                        <input type="hidden" name="booked_by_user_id" value="{{ Auth::id() }}">
                     </div>
 
                     <div>

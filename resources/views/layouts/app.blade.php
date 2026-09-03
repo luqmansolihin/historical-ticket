@@ -84,11 +84,7 @@
                         @endif
                     @endauth
 
-                    @can('create', App\Models\TicketHistory::class)
-                        <a href="{{ route('tickets.create') }}" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition-all duration-200 active:scale-[0.98]">
-                            <i class="fa-solid fa-plus mr-1.5"></i> Tambah Tiket
-                        </a>
-                    @endcan
+
 
                     <!-- User Profile & Logout -->
                     @auth
