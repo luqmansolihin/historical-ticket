@@ -79,8 +79,8 @@ class AuthController extends Controller
             'role' => $validated['role'],
         ]);
 
-        return redirect()->route('tickets.index')
-            ->with('success', 'Akun pengguna baru "' . $newUser->name . '" (' . ucfirst($newUser->role) . ') telah berhasil dibuat oleh Admin!');
+        return redirect()->route('users.index')
+            ->with('success', 'Akun pengguna baru "' . $newUser->name . '" (' . ucfirst($newUser->role) . ') telah berhasil dibuat!');
     }
 
     /**
