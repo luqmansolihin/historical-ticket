@@ -9,6 +9,7 @@ class TicketHistoryPolicy
 {
     /**
      * Determine whether the user can view any ticket records.
+     * All authenticated users (Admin, Booker, Payer, User) can view ticket list.
      */
     public function viewAny(User $user): bool
     {
@@ -25,15 +26,16 @@ class TicketHistoryPolicy
 
     /**
      * Determine whether the user can create ticket records.
+     * Only Admin or Booker can create tickets.
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isBooker() || $user->isPayer();
+        return $user->isAdmin() || $user->isBooker();
     }
 
     /**
      * Determine whether the user can update the ticket record.
-     * Booker who booked it, Payer responsible for paying it, or Admin.
+     * Admin, Booker who booked it, or Payer assigned to it. Regular 'user' CANNOT edit.
      */
     public function update(User $user, TicketHistory $ticket): bool
     {
@@ -41,13 +43,18 @@ class TicketHistoryPolicy
             return true;
         }
 
-        // Booker of this ticket can edit it
-        if ($ticket->booked_by_user_id && $ticket->booked_by_user_id === $user->id) {
+        // Regular users (role = 'user') are strictly read-only
+        if ($user->role === 'user') {
+            return false;
+        }
+
+        // Booker who booked this ticket can edit it
+        if ($user->role === 'booker' && $ticket->booked_by_user_id && $ticket->booked_by_user_id === $user->id) {
             return true;
         }
 
         // Payer assigned to this ticket can edit it
-        if ($ticket->paid_by_user_id && $ticket->paid_by_user_id === $user->id) {
+        if ($user->role === 'payer' && $ticket->paid_by_user_id && $ticket->paid_by_user_id === $user->id) {
             return true;
         }
 
@@ -59,16 +66,20 @@ class TicketHistoryPolicy
      */
     public function updatePaymentStatus(User $user, TicketHistory $ticket): bool
     {
-        if ($user->isAdmin() || $user->isPayer()) {
+        if ($user->isAdmin()) {
             return true;
         }
 
-        return $ticket->paid_by_user_id && $ticket->paid_by_user_id === $user->id;
+        if ($user->role === 'user') {
+            return false;
+        }
+
+        return $user->role === 'payer' && ($ticket->paid_by_user_id === $user->id || $ticket->paid_by_user_id === null);
     }
 
     /**
      * Determine whether the user can delete the ticket record.
-     * Only Admin or the Booker who created the ticket can delete it.
+     * Only Admin or Booker who created the ticket can delete it. Regular 'user' CANNOT delete.
      */
     public function delete(User $user, TicketHistory $ticket): bool
     {
@@ -76,6 +87,10 @@ class TicketHistoryPolicy
             return true;
         }
 
-        return $ticket->booked_by_user_id && $ticket->booked_by_user_id === $user->id;
+        if ($user->role === 'user') {
+            return false;
+        }
+
+        return $user->role === 'booker' && $ticket->booked_by_user_id && $ticket->booked_by_user_id === $user->id;
     }
 }
