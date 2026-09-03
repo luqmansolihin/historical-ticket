@@ -159,7 +159,7 @@
                         <th class="py-4 px-4">Tgl Tiket</th>
                         <th class="py-4 px-4">Rute & Penumpang</th>
                         <th class="py-4 px-4">Transportasi</th>
-                        <th class="py-4 px-4">Booker & Payer</th>
+                        <th class="py-4 px-4">Pemesan & Pembayar</th>
                         <th class="py-4 px-4 text-right">Biaya (IDR)</th>
                         <th class="py-4 px-4 text-center">Status</th>
                         <th class="py-4 px-4 text-center">Aksi</th>
@@ -210,14 +210,14 @@
                             <!-- Booker & Payer -->
                             <td class="py-4 px-4 text-xs">
                                 <div>
-                                    <span class="text-slate-400">Booker:</span> 
+                                    <span class="text-slate-400">Pemesan:</span> 
                                     <strong class="text-indigo-300">{{ $ticket->booked_by }}</strong>
                                     @if($ticket->bookerUser)
                                         <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800">Akun</span>
                                     @endif
                                 </div>
                                 <div class="mt-0.5">
-                                    <span class="text-slate-400">Payer:</span> 
+                                    <span class="text-slate-400">Penanggung Jawab:</span> 
                                     <strong class="text-emerald-300">{{ $ticket->paid_by }}</strong>
                                     @if($ticket->payerUser)
                                         <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">Akun</span>
@@ -397,11 +397,11 @@
 
                             <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                                 <div>
-                                    <span class="text-xs text-slate-400 block">Siapa yang Booking</span>
+                                    <span class="text-xs text-slate-400 block">Pemesan Tiket</span>
                                     <span class="text-sm font-medium text-indigo-300 mt-0.5 block" x-text="selectedTicket.booked_by"></span>
                                 </div>
                                 <div>
-                                    <span class="text-xs text-slate-400 block">Siapa yang Bayar</span>
+                                    <span class="text-xs text-slate-400 block">Penanggung Jawab Biaya</span>
                                     <span class="text-sm font-medium text-emerald-300 mt-0.5 block" x-text="selectedTicket.paid_by"></span>
                                 </div>
                                 <div>

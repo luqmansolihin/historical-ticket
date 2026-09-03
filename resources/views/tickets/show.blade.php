@@ -101,11 +101,11 @@
             <!-- Financial & Party Details -->
             <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
                 <div>
-                    <span class="text-xs text-slate-400 block">Siapa yang Booking</span>
+                    <span class="text-xs text-slate-400 block">Pemesan Tiket</span>
                     <span class="text-sm font-medium text-indigo-300 mt-0.5 block">{{ $ticket->booked_by }}</span>
                 </div>
                 <div>
-                    <span class="text-xs text-slate-400 block">Siapa yang Bayar</span>
+                    <span class="text-xs text-slate-400 block">Penanggung Jawab Biaya</span>
                     <span class="text-sm font-medium text-emerald-300 mt-0.5 block">{{ $ticket->paid_by }}</span>
                 </div>
                 <div>

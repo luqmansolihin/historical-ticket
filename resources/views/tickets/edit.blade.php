@@ -116,13 +116,13 @@
             <!-- Section 3: Pemesanan & Pembayaran -->
             <div>
                 <h3 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-credit-card"></i> Detail Booker (Pemesan) & Payer (Pembayar)
+                    <i class="fa-solid fa-credit-card"></i> Detail Pemesan Tiket & Penanggung Jawab Biaya
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Siapa yang Booking <span class="text-rose-400">*</span>
+                            Pemesan Tiket <span class="text-rose-400">*</span>
                         </label>
                         <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by', $ticket->booked_by) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('booked_by') border-rose-500 @enderror">
                         @error('booked_by')
@@ -132,10 +132,10 @@
 
                     <div>
                         <label for="booked_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Linkkan dengan Akun Booker (Sistem)
+                            Linkkan dengan Akun Pemesan (Sistem)
                         </label>
                         <select id="booked_by_user_id" name="booked_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
-                            <option value="">-- Pilih Akun User Booker --</option>
+                            <option value="">-- Pilih Akun User Pemesan --</option>
                             @foreach($users as $user)
                                 <option value="{{ $user->id }}" {{ old('booked_by_user_id', $ticket->booked_by_user_id) == $user->id ? 'selected' : '' }}>
                                     {{ $user->name }} ({{ ucfirst($user->role) }})
@@ -146,7 +146,7 @@
 
                     <div>
                         <label for="paid_by" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Siapa yang Bayar <span class="text-rose-400">*</span>
+                            Penanggung Jawab Biaya <span class="text-rose-400">*</span>
                         </label>
                         <input type="text" id="paid_by" name="paid_by" value="{{ old('paid_by', $ticket->paid_by) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('paid_by') border-rose-500 @enderror">
                         @error('paid_by')
@@ -156,10 +156,10 @@
 
                     <div>
                         <label for="paid_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Linkkan dengan Akun Payer (Sistem)
+                            Linkkan dengan Akun Pembayar (Sistem)
                         </label>
                         <select id="paid_by_user_id" name="paid_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
-                            <option value="">-- Pilih Akun User Payer --</option>
+                            <option value="">-- Pilih Akun User Pembayar --</option>
                             @foreach($users as $user)
                                 <option value="{{ $user->id }}" {{ old('paid_by_user_id', $ticket->paid_by_user_id) == $user->id ? 'selected' : '' }}>
                                     {{ $user->name }} ({{ ucfirst($user->role) }})
