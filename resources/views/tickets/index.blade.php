@@ -139,11 +139,9 @@
             </div>
 
             <div class="lg:col-span-12 flex items-center justify-end gap-3 pt-2 border-t border-slate-800/50 mt-2">
-                @if($search || $transportType || $status || $dateFrom || $dateTo)
-                    <a href="{{ route('tickets.index') }}" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-800 transition-colors">
-                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset Filter
-                    </a>
-                @endif
+                <a href="{{ route('tickets.index') }}" class="px-4 py-2 rounded-xl text-xs font-medium text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all flex items-center gap-1.5" title="Hapus seluruh filter pencarian">
+                    <i class="fa-solid fa-filter-circle-xmark"></i> Hapus Filter
+                </a>
                 <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 shadow-md shadow-sky-600/20 transition-all">
                     <i class="fa-solid fa-filter mr-1.5"></i> Terapkan Filter
                 </button>

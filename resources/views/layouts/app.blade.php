@@ -74,9 +74,7 @@
 
                 <!-- Navigation & Authenticated User Info -->
                 <div class="flex items-center space-x-3 sm:space-x-4">
-                    <a href="{{ route('tickets.index') }}" class="px-3.5 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('tickets.index') ? 'bg-sky-500/10 text-sky-400 border border-sky-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
-                        <i class="fa-solid fa-list-check mr-1.5"></i> Daftar Tiket
-                    </a>
+
 
                     @auth
                         @if(Auth::user()->isAdmin())
