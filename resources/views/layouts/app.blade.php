@@ -108,135 +108,162 @@
         }
     </style>
 </head>
-<body class="h-full font-sans antialiased bg-slate-950 text-slate-100 selection:bg-sky-500 selection:text-white flex flex-col min-h-screen">
+<body class="h-full font-sans antialiased bg-slate-950 text-slate-100 selection:bg-sky-500 selection:text-white">
 
-    <!-- Header / Navbar -->
-    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo & Brand -->
-                <div class="flex items-center space-x-3">
+    <div x-data="{ mobileSidebarOpen: false }" class="min-h-screen flex flex-col md:flex-row bg-slate-950">
+
+        <!-- Mobile Header Bar -->
+        <header class="md:hidden sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between no-print">
+            <div class="flex items-center space-x-3">
+                <button @click="mobileSidebarOpen = !mobileSidebarOpen" type="button" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white focus:outline-none">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <a href="{{ route('tickets.index') }}" class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
+                        <i class="fa-solid fa-ticket text-sm transform -rotate-12"></i>
+                    </div>
+                    <span class="font-display font-bold text-lg text-white tracking-tight">TicketTrace <span class="text-xs text-sky-400 font-mono">ERP</span></span>
+                </a>
+            </div>
+
+            @auth
+                <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sky-400 text-xs">
+                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                </div>
+            @endauth
+        </header>
+
+        <!-- Sidebar Navigation (ERP Left Menu) -->
+        <aside :class="mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'" class="fixed md:sticky top-0 inset-y-0 left-0 z-50 w-64 bg-slate-900/95 md:bg-slate-900 backdrop-blur-md border-r border-slate-800/80 flex flex-col justify-between h-screen shrink-0 transition-transform duration-300 ease-in-out no-print">
+            
+            <div>
+                <!-- Brand / Logo Header -->
+                <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
                     <a href="{{ route('tickets.index') }}" class="flex items-center space-x-3 group">
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform duration-200">
                             <i class="fa-solid fa-ticket text-lg transform -rotate-12"></i>
                         </div>
                         <div>
-                            <span class="font-display font-bold text-xl tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                            <span class="font-display font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent block leading-tight">
                                 TicketTrace
                             </span>
-                            <span class="text-xs block text-sky-400 font-mono tracking-wider font-medium">HISTORICAL TICKET</span>
+                            <span class="text-[10px] block text-sky-400 font-mono tracking-wider font-semibold uppercase">ERP HISTORICAL TICKET</span>
                         </div>
                     </a>
+                    <button @click="mobileSidebarOpen = false" class="md:hidden text-slate-400 hover:text-white p-1">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
                 </div>
 
-                <!-- Navigation & Authenticated User Info -->
-                <div class="flex items-center space-x-3 sm:space-x-4">
-
-
-                    @auth
-                        @if(Auth::user()->isAdmin())
-                            <a href="{{ route('users.index') }}" class="px-3.5 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('users.*') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
-                                <i class="fa-solid fa-users-gear mr-1.5 text-sky-400"></i> Daftar Akun
+                <!-- Navigation Links -->
+                <div class="p-4 space-y-6">
+                    <div>
+                        <div class="px-3 mb-2 text-[10px] font-bold font-mono text-slate-500 uppercase tracking-wider">
+                            MODUL UTAMA ERP
+                        </div>
+                        <nav class="space-y-1">
+                            <!-- Histori Tiket -->
+                            <a href="{{ route('tickets.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all {{ request()->routeIs('tickets.*') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                                <i class="fa-solid fa-table-list text-sm {{ request()->routeIs('tickets.*') ? 'text-sky-400' : 'text-slate-400' }}"></i>
+                                <span>Histori Tiket</span>
                             </a>
-                        @endif
-                    @endauth
 
+                            <!-- Kelola User (Admin Only) -->
+                            @auth
+                                @if(Auth::user()->isAdmin())
+                                    <a href="{{ route('users.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all {{ request()->routeIs('users.*') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                                        <i class="fa-solid fa-users-gear text-sm {{ request()->routeIs('users.*') ? 'text-sky-400' : 'text-slate-400' }}"></i>
+                                        <span>Kelola User</span>
+                                    </a>
+                                @endif
+                            @endauth
+                        </nav>
+                    </div>
+                </div>
+            </div>
 
-
-                    <!-- User Profile & Logout -->
-                    @auth
-                        <div x-data="{ open: false }" class="relative pl-3 border-l border-slate-800">
-                            <button @click="open = !open" class="flex items-center space-x-2.5 hover:opacity-90 transition-opacity focus:outline-none">
-                                <div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sky-400 text-sm">
-                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                </div>
-                                <div class="hidden md:block text-left">
-                                    <div class="text-xs font-semibold text-white leading-tight">{{ Auth::user()->name }}</div>
-                                    <div class="text-[10px] font-mono text-sky-400 capitalize">
-                                         @if(Auth::user()->isAdmin())
-                                             🛡️ Admin
-                                         @elseif(Auth::user()->isBooker() || Auth::user()->role === 'payer')
-                                             📝 Booker & Payer
-                                         @else
-                                             👤 User
-                                         @endif
-                                    </div>
-                                </div>
-                                <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
-                            </button>
-
-                            <!-- Dropdown Menu -->
-                            <div x-cloak x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-56 bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 py-2 z-50">
-                                <div class="px-4 py-3 border-b border-slate-800">
-                                    <p class="text-xs text-slate-400">Login sebagai:</p>
-                                    <p class="text-sm font-semibold text-white truncate mt-0.5">{{ Auth::user()->name }}</p>
-                                    <p class="text-xs font-mono text-sky-400 truncate">{{ Auth::user()->email }}</p>
-                                </div>
-
-                                <div class="py-1">
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="w-full text-left px-4 py-2.5 text-xs text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 transition-colors">
-                                            <i class="fa-solid fa-right-from-bracket"></i> Logout / Keluar
-                                        </button>
-                                    </form>
+            <!-- User Profile & Logout Bottom Bar -->
+            @auth
+                <div class="p-4 border-t border-slate-800/80 bg-slate-950/40">
+                    <div class="p-3 rounded-2xl bg-slate-800/60 border border-slate-700/50 mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sky-400 text-sm shrink-0">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-semibold text-white truncate leading-tight">{{ Auth::user()->name }}</div>
+                                <div class="text-[10px] font-mono text-sky-400 truncate mt-0.5 capitalize">
+                                    @if(Auth::user()->isAdmin())
+                                        🛡️ Admin
+                                    @elseif(Auth::user()->isBooker() || Auth::user()->role === 'payer')
+                                        📝 Booker & Payer
+                                    @else
+                                        👤 User
+                                    @endif
                                 </div>
                             </div>
                         </div>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Body Container -->
-    <main class="flex-1 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            @if(session('success'))
-                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-6 p-4 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 flex items-center justify-between shadow-xl backdrop-blur-sm">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                            <i class="fa-solid fa-circle-check text-lg"></i>
-                        </div>
-                        <span class="text-sm font-medium">{{ session('success') }}</span>
                     </div>
-                    <button @click="show = false" class="text-emerald-400 hover:text-emerald-200">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-            @endif
 
-            @if(session('error'))
-                <div x-data="{ show: true }" x-show="show" class="mb-6 p-4 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 flex items-center justify-between shadow-xl">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center text-rose-400">
-                            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full px-3.5 py-2 rounded-xl text-xs font-medium text-rose-400 hover:text-white hover:bg-rose-500/20 border border-rose-500/30 flex items-center justify-center gap-2 transition-all">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout / Keluar
+                        </button>
+                    </form>
+                </div>
+            @endauth
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+            <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+                @if(session('success'))
+                    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-4 p-4 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 flex items-center justify-between shadow-xl backdrop-blur-sm no-print">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                                <i class="fa-solid fa-circle-check text-lg"></i>
+                            </div>
+                            <span class="text-sm font-medium">{{ session('success') }}</span>
                         </div>
-                        <span class="text-sm font-medium">{{ session('error') }}</span>
+                        <button @click="show = false" class="text-emerald-400 hover:text-emerald-200">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
-                    <button @click="show = false" class="text-rose-400 hover:text-rose-200">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                @endif
+
+                @if(session('error'))
+                    <div x-data="{ show: true }" x-show="show" class="mb-4 p-4 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 flex items-center justify-between shadow-xl no-print">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center text-rose-400">
+                                <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                            </div>
+                            <span class="text-sm font-medium">{{ session('error') }}</span>
+                        </div>
+                        <button @click="show = false" class="text-rose-400 hover:text-rose-200">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                @endif
+
+                @yield('content')
+            </main>
+
+            <footer class="mt-auto border-t border-slate-900 bg-slate-950 py-4 px-6 text-xs text-slate-500 no-print">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+                    <p>&copy; {{ date('Y') }} TicketTrace ERP &bull; Sistem Histori Tiket Perjalanan</p>
+                    <div class="flex items-center space-x-4 text-slate-400 font-mono text-[11px]">
+                        <span><i class="fa-solid fa-shield-halved text-sky-400 mr-1"></i> Role: {{ ucfirst(Auth::user()->role ?? 'Guest') }}</span>
+                    </div>
                 </div>
-            @endif
-
-            @yield('content')
+            </footer>
         </div>
-    </main>
-
-    <footer class="mt-auto border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>&copy; {{ date('Y') }} TicketTrace &bull; Sistem Histori Tiket</p>
-            <div class="flex items-center space-x-4 text-slate-400 font-mono">
-                <span><i class="fa-solid fa-shield-halved text-sky-400 mr-1"></i> Role: {{ ucfirst(Auth::user()->role ?? 'Guest') }}</span>
-            </div>
-        </div>
-    </footer>
+    </div>
 
     <!-- Scroll To Top Floating Button -->
     <div x-data="{ showScrollTop: false }"
          @scroll.window="showScrollTop = (window.pageYOffset > 300)"
-         class="fixed bottom-6 right-6 z-50">
+         class="fixed bottom-6 right-6 z-50 no-print">
         <button x-show="showScrollTop"
                 x-cloak
                 x-transition:enter="transition ease-out duration-200"
@@ -247,9 +274,9 @@
                 x-transition:leave-end="opacity-0 translate-y-4 scale-90"
                 @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
                 type="button"
-                class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-blue-600 text-white shadow-xl shadow-sky-500/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 border border-sky-400/40 group"
+                class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 shadow-xl border border-slate-700 flex items-center justify-center transition-all duration-200"
                 title="Kembali ke Atas">
-            <i class="fa-solid fa-arrow-up text-lg group-hover:-translate-y-0.5 transition-transform"></i>
+            <i class="fa-solid fa-arrow-up text-sm"></i>
         </button>
     </div>
 
