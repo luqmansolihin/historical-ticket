@@ -30,83 +30,85 @@
         </div>
     </div>
 
-    <!-- Analytics & Statistics Summary Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 no-print">
-        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Tiket</p>
-                    <h3 class="text-2xl font-bold text-white mt-1 font-display">{{ number_format($totalTickets) }}</h3>
+    <!-- Analytics & Statistics Summary Cards (Khusus Admin) -->
+    @if(Auth::user()->isAdmin())
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 no-print">
+            <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Tiket</p>
+                        <h3 class="text-2xl font-bold text-white mt-1 font-display">{{ number_format($totalTickets) }}</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 text-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-ticket-simple"></i>
+                    </div>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 text-xl group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-ticket-simple"></i>
+                <div class="mt-3 pt-3 border-t border-slate-800/60 text-xs text-slate-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-clock-rotate-left text-sky-400"></i> Histori tercatat dalam sistem
                 </div>
             </div>
-            <div class="mt-3 pt-3 border-t border-slate-800/60 text-xs text-slate-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-clock-rotate-left text-sky-400"></i> Histori tercatat dalam sistem
-            </div>
-        </div>
 
-        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
-                    <h3 class="text-2xl font-bold text-emerald-400 mt-1 font-display">Rp {{ number_format($totalAmount, 0, ',', '.') }}</h3>
+            <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
+                        <h3 class="text-2xl font-bold text-emerald-400 mt-1 font-display">Rp {{ number_format($totalAmount, 0, ',', '.') }}</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-money-bill-wave"></i>
+                <div class="mt-3 pt-3 border-t border-slate-800/60 text-xs text-slate-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-calculator text-emerald-400"></i> Akumulasi biaya tiket
                 </div>
             </div>
-            <div class="mt-3 pt-3 border-t border-slate-800/60 text-xs text-slate-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-calculator text-emerald-400"></i> Akumulasi biaya tiket
-            </div>
-        </div>
 
-        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Status Lunas</p>
-                    <h3 class="text-2xl font-bold text-sky-300 mt-1 font-display">{{ number_format($totalLunas) }} Tiket</h3>
+            <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Status Lunas</p>
+                        <h3 class="text-2xl font-bold text-sky-300 mt-1 font-display">{{ number_format($totalLunas) }} Tiket</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 text-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 text-xl group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-circle-check"></i>
+                <div class="mt-3 pt-3 border-t border-slate-800/60 text-xs text-slate-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-check text-sky-400"></i> Pembayaran tuntas
                 </div>
             </div>
-            <div class="mt-3 pt-3 border-t border-slate-800/60 text-xs text-slate-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-check text-sky-400"></i> Pembayaran tuntas
-            </div>
-        </div>
 
-        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Belum Bayar</p>
-                    <h3 class="text-2xl font-bold text-amber-400 mt-1 font-display">{{ number_format($totalBelumBayar) }} Tiket</h3>
+            <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Belum Bayar</p>
+                        <h3 class="text-2xl font-bold text-amber-400 mt-1 font-display">{{ number_format($totalBelumBayar) }} Tiket</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                    </div>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-hourglass-half"></i>
+                <div class="mt-3 pt-3 border-t border-slate-800/60 text-xs text-slate-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Menunggu pembayaran
                 </div>
             </div>
-            <div class="mt-3 pt-3 border-t border-slate-800/60 text-xs text-slate-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Menunggu pembayaran
-            </div>
-        </div>
 
-        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Dibatalkan</p>
-                    <h3 class="text-2xl font-bold text-rose-400 mt-1 font-display">{{ number_format($totalDibatalkan) }} Tiket</h3>
+            <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Dibatalkan</p>
+                        <h3 class="text-2xl font-bold text-rose-400 mt-1 font-display">{{ number_format($totalDibatalkan) }} Tiket</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 text-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-ban"></i>
+                    </div>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 text-xl group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-ban"></i>
+                <div class="mt-3 pt-3 border-t border-slate-800/60 text-xs text-slate-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-xmark text-rose-400"></i> Tiket dibatalkan
                 </div>
-            </div>
-            <div class="mt-3 pt-3 border-t border-slate-800/60 text-xs text-slate-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-circle-xmark text-rose-400"></i> Tiket dibatalkan
             </div>
         </div>
-    </div>
+    @endif
 
     <!-- Filter & Search Toolbar Card -->
     <div class="glass-card rounded-2xl p-5 mb-8 relative z-20 no-print">
@@ -203,25 +205,25 @@
     <!-- Tickets Data Table Container -->
     <div class="glass-card rounded-2xl overflow-hidden shadow-2xl relative z-10 no-print">
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-300">
-                <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 tracking-wider border-b border-slate-800">
+            <table class="w-full text-left text-sm text-slate-300 whitespace-nowrap">
+                <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 tracking-wider border-b border-slate-800 whitespace-nowrap">
                     <tr>
-                        <th class="py-4 px-4">Kode Tiket</th>
-                        <th class="py-4 px-4">Tgl Tiket</th>
-                        <th class="py-4 px-4">Rute & Penumpang</th>
-                        <th class="py-4 px-4">Transportasi</th>
-                        <th class="py-4 px-4">Pemesan & Pembayar</th>
-                        <th class="py-4 px-4 text-right">Biaya (IDR)</th>
-                        <th class="py-4 px-4 text-center">Status</th>
-                        <th class="py-4 px-4 text-center">Aksi</th>
+                        <th class="py-4 px-4 whitespace-nowrap">Kode Tiket</th>
+                        <th class="py-4 px-4 whitespace-nowrap">Tgl Tiket</th>
+                        <th class="py-4 px-4 whitespace-nowrap">Rute & Penumpang</th>
+                        <th class="py-4 px-4 whitespace-nowrap">Transportasi</th>
+                        <th class="py-4 px-4 whitespace-nowrap">Pemesan & Pembayar</th>
+                        <th class="py-4 px-4 text-right whitespace-nowrap">Biaya (IDR)</th>
+                        <th class="py-4 px-4 text-center whitespace-nowrap">Status</th>
+                        <th class="py-4 px-4 text-center whitespace-nowrap">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-800/60">
+                <tbody class="divide-y divide-slate-800/60 whitespace-nowrap">
                     @forelse($tickets as $ticket)
-                        <tr class="hover:bg-slate-900/50 transition-colors group">
+                        <tr class="hover:bg-slate-900/50 transition-colors group whitespace-nowrap">
                             <!-- Kode Tiket -->
                             <td class="py-4 px-4 font-mono font-medium text-sky-400 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2 whitespace-nowrap">
                                     <span class="text-base">{{ $ticket->transport_icon }}</span>
                                     <span>{{ $ticket->ticket_code }}</span>
                                 </div>
@@ -234,17 +236,17 @@
                             </td>
 
                             <!-- Rute & Penumpang -->
-                            <td class="py-4 px-4">
-                                <div class="flex items-center gap-2 font-medium text-slate-100">
+                            <td class="py-4 px-4 whitespace-nowrap">
+                                <div class="flex items-center gap-2 font-medium text-slate-100 whitespace-nowrap">
                                     <span>{{ $ticket->origin }}</span>
                                     <i class="fa-solid fa-arrow-right text-xs text-sky-400"></i>
                                     <span>{{ $ticket->destination }}</span>
                                 </div>
-                                <div class="text-xs text-slate-300 mt-1 flex items-center gap-1.5 flex-wrap">
+                                <div class="text-xs text-slate-300 mt-1 flex items-center gap-1.5 whitespace-nowrap">
                                     <i class="fa-solid fa-user-group text-slate-500"></i>
-                                    <span class="font-medium text-slate-200">{{ $ticket->passenger_display }}</span>
+                                    <span class="font-medium text-slate-200 whitespace-nowrap">{{ $ticket->passenger_display }}</span>
                                     @if($ticket->passenger_count > 1)
-                                        <span class="px-1.5 py-0.5 rounded text-[10px] bg-sky-950 text-sky-300 border border-sky-800 font-bold">
+                                        <span class="px-1.5 py-0.5 rounded text-[10px] bg-sky-950 text-sky-300 border border-sky-800 font-bold whitespace-nowrap">
                                             {{ $ticket->passenger_count }} Orang
                                         </span>
                                     @endif
@@ -253,29 +255,29 @@
 
                             <!-- Transportasi -->
                             <td class="py-4 px-4 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700/60">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700/60 whitespace-nowrap">
                                     {{ $ticket->transport_type }}
                                 </span>
                             </td>
 
                             <!-- Booker & Payer -->
-                            <td class="py-4 px-4 text-xs">
-                                <div>
+                            <td class="py-4 px-4 text-xs whitespace-nowrap">
+                                <div class="whitespace-nowrap">
                                     <span class="text-slate-400">Pemesan:</span> 
                                     <strong class="text-indigo-300">{{ $ticket->booked_by }}</strong>
                                     @if($ticket->bookerUser)
-                                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800">Akun</span>
+                                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800 whitespace-nowrap">Akun</span>
                                     @endif
                                 </div>
-                                <div class="mt-0.5">
+                                <div class="mt-0.5 whitespace-nowrap">
                                     <span class="text-slate-400">Pembayaran Oleh:</span> 
                                     <strong class="text-emerald-300">{{ $ticket->paid_by }}</strong>
                                     @if($ticket->payerUser)
-                                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">Akun</span>
+                                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 whitespace-nowrap">Akun</span>
                                     @endif
                                 </div>
                                 @if($ticket->payment_date)
-                                    <div class="text-[11px] text-slate-500 mt-0.5">Tgl Bayar: {{ $ticket->payment_date->format('d/m/Y') }}</div>
+                                    <div class="text-[11px] text-slate-500 mt-0.5 whitespace-nowrap">Tgl Bayar: {{ $ticket->payment_date->format('d/m/Y') }}</div>
                                 @endif
                             </td>
 
