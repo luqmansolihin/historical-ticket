@@ -237,4 +237,20 @@ class TicketHistory extends Model
 
         return $query->where('status', $status);
     }
+
+    /**
+     * Scope for amount range filter (min and max)
+     */
+    public function scopeFilterAmount($query, $min = null, $max = null)
+    {
+        if ($min !== null && $min !== '') {
+            $query->where('amount', '>=', (float) $min);
+        }
+
+        if ($max !== null && $max !== '') {
+            $query->where('amount', '<=', (float) $max);
+        }
+
+        return $query;
+    }
 }

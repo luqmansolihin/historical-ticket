@@ -46,6 +46,8 @@ class TicketHistoryController extends Controller
         $status = array_values(array_filter((array) $request->input('status', [])));
         $dateFrom = $request->input('date_from');
         $dateTo = $request->input('date_to');
+        $amountMin = $request->input('amount_min');
+        $amountMax = $request->input('amount_max');
 
         $query = TicketHistory::query()
             ->with(['bookerUser', 'payerUser', 'statusLogs'])
@@ -54,7 +56,8 @@ class TicketHistoryController extends Controller
             ->filterRoute($searchRoute)
             ->filterPerson($searchPerson)
             ->filterTransport($transportType)
-            ->filterStatus($status);
+            ->filterStatus($status)
+            ->filterAmount($amountMin, $amountMax);
 
         if ($dateFrom) {
             $query->whereDate('ticket_date', '>=', $dateFrom);
@@ -90,6 +93,8 @@ class TicketHistoryController extends Controller
             'status',
             'dateFrom',
             'dateTo',
+            'amountMin',
+            'amountMax',
             'totalTickets',
             'totalAmount',
             'totalLunas',
@@ -396,6 +401,8 @@ class TicketHistoryController extends Controller
         $status = array_values(array_filter((array) $request->input('status', [])));
         $dateFrom = $request->input('date_from');
         $dateTo = $request->input('date_to');
+        $amountMin = $request->input('amount_min');
+        $amountMax = $request->input('amount_max');
 
         $query = TicketHistory::query()
             ->search($search)
@@ -403,7 +410,8 @@ class TicketHistoryController extends Controller
             ->filterRoute($searchRoute)
             ->filterPerson($searchPerson)
             ->filterTransport($transportType)
-            ->filterStatus($status);
+            ->filterStatus($status)
+            ->filterAmount($amountMin, $amountMax);
 
         if ($dateFrom) {
             $query->whereDate('ticket_date', '>=', $dateFrom);
