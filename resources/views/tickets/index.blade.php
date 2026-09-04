@@ -7,33 +7,17 @@
 
     <!-- ERP Data Table Container & Column Header Filters -->
     <div x-data="{ openPop: null }" class="glass-card rounded-2xl overflow-hidden shadow-2xl relative z-10 no-print">
-        <!-- ERP Data Grid Toolbar -->
-        <div class="px-5 py-3.5 bg-slate-900/90 border-b border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
-                    <i class="fa-solid fa-database text-sm"></i>
-                </div>
-                <div>
-                    <h2 class="text-sm font-semibold text-white font-mono tracking-tight flex items-center gap-2">
-                        <span>DATA HISTORI TIKET</span>
-                        <span class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/30">
-                            {{ $totalTickets }} Tiket
-                        </span>
-                    </h2>
-                </div>
-            </div>
+        <!-- ERP Data Grid Action Toolbar -->
+        <div class="px-4 py-2.5 bg-slate-900/90 border-b border-slate-800/80 flex items-center justify-end gap-2">
+            <a href="{{ route('tickets.export', request()->query()) }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-sm">
+                <i class="fa-solid fa-file-csv text-emerald-400 mr-1.5 text-xs"></i> Export CSV
+            </a>
 
-            <div class="flex items-center gap-2">
-                <a href="{{ route('tickets.export', request()->query()) }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-sm">
-                    <i class="fa-solid fa-file-csv text-emerald-400 mr-1.5 text-xs"></i> Export CSV
+            @can('create', App\Models\TicketHistory::class)
+                <a href="{{ route('tickets.create') }}" class="inline-flex items-center px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-md shadow-sky-500/20 transition-all active:scale-95">
+                    <i class="fa-solid fa-plus mr-1.5"></i> Tambah Tiket Baru
                 </a>
-
-                @can('create', App\Models\TicketHistory::class)
-                    <a href="{{ route('tickets.create') }}" class="inline-flex items-center px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-md shadow-sky-500/20 transition-all active:scale-95">
-                        <i class="fa-solid fa-plus mr-1.5"></i> Tambah Tiket Baru
-                    </a>
-                @endcan
-            </div>
+            @endcan
         </div>
 
         <form action="{{ route('tickets.index') }}" method="GET">
