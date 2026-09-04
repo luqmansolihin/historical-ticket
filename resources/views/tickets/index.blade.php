@@ -14,7 +14,7 @@
             </div>
 
             <div class="flex items-center gap-2 ml-auto">
-                @if($search || $searchCode || $searchOrigin || $searchDestination || $searchPassenger || $searchBooker || $searchPayer || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateFrom || $dateTo || $amountMin || $amountMax || $passengerCountMin || $passengerCountMax || $payDateFrom || $payDateTo)
+                @if($search || $searchCode || $searchOrigin || $searchDestination || $searchPassenger || $searchBooker || $searchPayer || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateVal || $dateFrom || $dateTo || $payDateVal || $payDateFrom || $payDateTo || $amountMin || $amountMax || $passengerCountMin || $passengerCountMax)
                     <a href="{{ route('tickets.index') }}" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
                         <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
                     </a>
@@ -61,33 +61,28 @@
                             <th class="py-3 px-3 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Tgl Tiket</span>
-                                    <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($dateFrom || $dateTo) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Tiket">
+                                    <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $dateVal ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Tiket">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
-                                <!-- Single Calendar Range Picker Popover for Tgl Tiket -->
-                                <div x-show="openPop === 'date'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-2 text-left font-normal normal-case min-w-[310px]"
+                                <!-- 3-Mode Date Filter Popover for Tgl Tiket -->
+                                <div x-show="openPop === 'date'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-2.5 text-left font-normal normal-case min-w-[310px]"
                                      x-data="{
-                                         dateFrom: '{{ $dateFrom }}',
-                                         dateTo: '{{ $dateTo }}',
+                                         dateMode: '{{ $dateMode ?? 'on' }}',
+                                         dateVal: '{{ $dateVal ?? '' }}',
                                          initPicker() {
                                              this.$nextTick(() => {
                                                  flatpickr(this.$refs.datePicker, {
                                                      inline: true,
-                                                     mode: 'range',
+                                                     mode: 'single',
                                                      locale: 'id',
                                                      dateFormat: 'Y-m-d',
-                                                     defaultDate: [this.dateFrom, this.dateTo].filter(Boolean),
+                                                     defaultDate: this.dateVal || null,
                                                      onChange: (selectedDates, dateStr, instance) => {
-                                                         if (selectedDates.length === 1) {
-                                                             this.dateFrom = instance.formatDate(selectedDates[0], 'Y-m-d');
-                                                             this.dateTo = instance.formatDate(selectedDates[0], 'Y-m-d');
-                                                         } else if (selectedDates.length === 2) {
-                                                             this.dateFrom = instance.formatDate(selectedDates[0], 'Y-m-d');
-                                                             this.dateTo = instance.formatDate(selectedDates[1], 'Y-m-d');
+                                                         if (selectedDates.length > 0) {
+                                                             this.dateVal = instance.formatDate(selectedDates[0], 'Y-m-d');
                                                          } else {
-                                                             this.dateFrom = '';
-                                                             this.dateTo = '';
+                                                             this.dateVal = '';
                                                          }
                                                      }
                                                  });
@@ -95,22 +90,49 @@
                                          }
                                      }" x-init="initPicker()">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
-                                        <span>Pilih Rentang Tanggal Tiket</span>
+                                        <span>Filter Tanggal Tiket</span>
                                         <i class="fa-regular fa-calendar-days text-sky-400"></i>
                                     </div>
-                                    <input type="hidden" name="date_from" :value="dateFrom">
-                                    <input type="hidden" name="date_to" :value="dateTo">
                                     
-                                    <div class="py-1">
+                                    <!-- 3 Mode Buttons: Before, After, On -->
+                                    <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[11px] font-medium text-center">
+                                        <button type="button" @click="dateMode = 'before'" 
+                                                :class="dateMode === 'before' ? 'bg-sky-600 text-white shadow font-bold' : 'text-slate-400 hover:text-slate-200'"
+                                                class="py-1 px-2 rounded-md transition-all">
+                                            Before
+                                        </button>
+                                        <button type="button" @click="dateMode = 'after'" 
+                                                :class="dateMode === 'after' ? 'bg-sky-600 text-white shadow font-bold' : 'text-slate-400 hover:text-slate-200'"
+                                                class="py-1 px-2 rounded-md transition-all">
+                                            After
+                                        </button>
+                                        <button type="button" @click="dateMode = 'on'" 
+                                                :class="dateMode === 'on' ? 'bg-sky-600 text-white shadow font-bold' : 'text-slate-400 hover:text-slate-200'"
+                                                class="py-1 px-2 rounded-md transition-all">
+                                            On
+                                        </button>
+                                    </div>
+
+                                    <input type="hidden" name="date_mode" :value="dateMode">
+                                    <input type="hidden" name="date_val" :value="dateVal">
+                                    
+                                    <div class="py-1 flex justify-center">
                                         <div x-ref="datePicker"></div>
                                     </div>
 
                                     <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px]">
                                         <div class="text-slate-400 font-mono">
-                                            <span x-text="dateFrom ? (dateFrom === dateTo ? dateFrom : dateFrom + ' s/d ' + dateTo) : 'Belum ada tanggal dipilih'"></span>
+                                            <template x-if="dateVal">
+                                                <span>
+                                                    <span class="uppercase text-sky-400 font-semibold" x-text="dateMode"></span>: <span x-text="dateVal"></span>
+                                                </span>
+                                            </template>
+                                            <template x-if="!dateVal">
+                                                <span>Belum ada tanggal</span>
+                                            </template>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <button type="button" @click="dateFrom = ''; dateTo = ''; if ($refs.datePicker._flatpickr) $refs.datePicker._flatpickr.clear()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">Clear</button>
+                                            <button type="button" @click="dateVal = ''; if ($refs.datePicker._flatpickr) $refs.datePicker._flatpickr.clear()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">Clear</button>
                                             <button type="submit" class="px-3 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
                                         </div>
                                     </div>
@@ -281,33 +303,28 @@
                             <th class="py-3 px-3 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'pay_date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Tgl Bayar</span>
-                                    <button type="button" @click="openPop = (openPop === 'pay_date' ? null : 'pay_date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($payDateFrom || $payDateTo) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Bayar">
+                                    <button type="button" @click="openPop = (openPop === 'pay_date' ? null : 'pay_date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $payDateVal ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Bayar">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
-                                <!-- Single Calendar Range Picker Popover for Tgl Bayar -->
-                                <div x-show="openPop === 'pay_date'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-2 text-left font-normal normal-case min-w-[310px]"
+                                <!-- 3-Mode Date Filter Popover for Tgl Bayar -->
+                                <div x-show="openPop === 'pay_date'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-2.5 text-left font-normal normal-case min-w-[310px]"
                                      x-data="{
-                                         payDateFrom: '{{ $payDateFrom }}',
-                                         payDateTo: '{{ $payDateTo }}',
+                                         payDateMode: '{{ $payDateMode ?? 'on' }}',
+                                         payDateVal: '{{ $payDateVal ?? '' }}',
                                          initPayPicker() {
                                              this.$nextTick(() => {
                                                  flatpickr(this.$refs.payDatePicker, {
                                                      inline: true,
-                                                     mode: 'range',
+                                                     mode: 'single',
                                                      locale: 'id',
                                                      dateFormat: 'Y-m-d',
-                                                     defaultDate: [this.payDateFrom, this.payDateTo].filter(Boolean),
+                                                     defaultDate: this.payDateVal || null,
                                                      onChange: (selectedDates, dateStr, instance) => {
-                                                         if (selectedDates.length === 1) {
-                                                             this.payDateFrom = instance.formatDate(selectedDates[0], 'Y-m-d');
-                                                             this.payDateTo = instance.formatDate(selectedDates[0], 'Y-m-d');
-                                                         } else if (selectedDates.length === 2) {
-                                                             this.payDateFrom = instance.formatDate(selectedDates[0], 'Y-m-d');
-                                                             this.payDateTo = instance.formatDate(selectedDates[1], 'Y-m-d');
+                                                         if (selectedDates.length > 0) {
+                                                             this.payDateVal = instance.formatDate(selectedDates[0], 'Y-m-d');
                                                          } else {
-                                                             this.payDateFrom = '';
-                                                             this.payDateTo = '';
+                                                             this.payDateVal = '';
                                                          }
                                                      }
                                                  });
@@ -315,22 +332,49 @@
                                          }
                                      }" x-init="initPayPicker()">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
-                                        <span>Pilih Rentang Tanggal Bayar</span>
+                                        <span>Filter Tanggal Bayar</span>
                                         <i class="fa-regular fa-calendar-check text-sky-400"></i>
                                     </div>
-                                    <input type="hidden" name="pay_date_from" :value="payDateFrom">
-                                    <input type="hidden" name="pay_date_to" :value="payDateTo">
                                     
-                                    <div class="py-1">
+                                    <!-- 3 Mode Buttons: Before, After, On -->
+                                    <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[11px] font-medium text-center">
+                                        <button type="button" @click="payDateMode = 'before'" 
+                                                :class="payDateMode === 'before' ? 'bg-sky-600 text-white shadow font-bold' : 'text-slate-400 hover:text-slate-200'"
+                                                class="py-1 px-2 rounded-md transition-all">
+                                            Before
+                                        </button>
+                                        <button type="button" @click="payDateMode = 'after'" 
+                                                :class="payDateMode === 'after' ? 'bg-sky-600 text-white shadow font-bold' : 'text-slate-400 hover:text-slate-200'"
+                                                class="py-1 px-2 rounded-md transition-all">
+                                            After
+                                        </button>
+                                        <button type="button" @click="payDateMode = 'on'" 
+                                                :class="payDateMode === 'on' ? 'bg-sky-600 text-white shadow font-bold' : 'text-slate-400 hover:text-slate-200'"
+                                                class="py-1 px-2 rounded-md transition-all">
+                                            On
+                                        </button>
+                                    </div>
+
+                                    <input type="hidden" name="pay_date_mode" :value="payDateMode">
+                                    <input type="hidden" name="pay_date_val" :value="payDateVal">
+                                    
+                                    <div class="py-1 flex justify-center">
                                         <div x-ref="payDatePicker"></div>
                                     </div>
 
                                     <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px]">
                                         <div class="text-slate-400 font-mono">
-                                            <span x-text="payDateFrom ? (payDateFrom === payDateTo ? payDateFrom : payDateFrom + ' s/d ' + payDateTo) : 'Belum ada tanggal dipilih'"></span>
+                                            <template x-if="payDateVal">
+                                                <span>
+                                                    <span class="uppercase text-sky-400 font-semibold" x-text="payDateMode"></span>: <span x-text="payDateVal"></span>
+                                                </span>
+                                            </template>
+                                            <template x-if="!payDateVal">
+                                                <span>Belum ada tanggal</span>
+                                            </template>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <button type="button" @click="payDateFrom = ''; payDateTo = ''; if ($refs.payDatePicker._flatpickr) $refs.payDatePicker._flatpickr.clear()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">Clear</button>
+                                            <button type="button" @click="payDateVal = ''; if ($refs.payDatePicker._flatpickr) $refs.payDatePicker._flatpickr.clear()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">Clear</button>
                                             <button type="submit" class="px-3 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
                                         </div>
                                     </div>

@@ -34,9 +34,9 @@ class TicketHistoryController extends Controller
     }
 
     /**
-     * Display a listing of historical tickets with search, filtering, and summary stats.
+     * Build filtered query based on request parameters.
      */
-    public function index(Request $request)
+    private function buildFilteredQuery(Request $request)
     {
         $search = $request->input('search');
         $searchCode = $request->input('search_code');
@@ -49,14 +49,49 @@ class TicketHistoryController extends Controller
         $searchPerson = $request->input('search_person');
         $transportType = array_values(array_filter((array) $request->input('transport_type', [])));
         $status = array_values(array_filter((array) $request->input('status', [])));
-        $dateFrom = $request->input('date_from');
-        $dateTo = $request->input('date_to');
         $amountMin = $request->input('amount_min');
         $amountMax = $request->input('amount_max');
         $passengerCountMin = $request->input('passenger_count_min');
         $passengerCountMax = $request->input('passenger_count_max');
+
+        // Date filters for Ticket Date (before, after, on)
+        $dateMode = $request->input('date_mode', 'on');
+        $dateVal = $request->input('date_val');
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
+
+        // Fallback for date_from / date_to legacy query params
+        if (!$dateVal) {
+            if ($dateFrom && $dateTo && $dateFrom === $dateTo) {
+                $dateMode = 'on';
+                $dateVal = $dateFrom;
+            } elseif ($dateFrom && !$dateTo) {
+                $dateMode = 'after';
+                $dateVal = $dateFrom;
+            } elseif (!$dateFrom && $dateTo) {
+                $dateMode = 'before';
+                $dateVal = $dateTo;
+            }
+        }
+
+        // Date filters for Payment Date (before, after, on)
+        $payDateMode = $request->input('pay_date_mode', 'on');
+        $payDateVal = $request->input('pay_date_val');
         $payDateFrom = $request->input('pay_date_from');
         $payDateTo = $request->input('pay_date_to');
+
+        if (!$payDateVal) {
+            if ($payDateFrom && $payDateTo && $payDateFrom === $payDateTo) {
+                $payDateMode = 'on';
+                $payDateVal = $payDateFrom;
+            } elseif ($payDateFrom && !$payDateTo) {
+                $payDateMode = 'after';
+                $payDateVal = $payDateFrom;
+            } elseif (!$payDateFrom && $payDateTo) {
+                $payDateMode = 'before';
+                $payDateVal = $payDateTo;
+            }
+        }
 
         $query = TicketHistory::query()
             ->with(['bookerUser', 'payerUser', 'statusLogs'])
@@ -72,16 +107,66 @@ class TicketHistoryController extends Controller
             ->filterTransport($transportType)
             ->filterStatus($status)
             ->filterAmount($amountMin, $amountMax)
-            ->filterPassengerCount($passengerCountMin, $passengerCountMax)
-            ->filterPayDate($payDateFrom, $payDateTo);
+            ->filterPassengerCount($passengerCountMin, $passengerCountMax);
 
-        if ($dateFrom) {
-            $query->whereDate('ticket_date', '>=', $dateFrom);
+        if ($dateVal) {
+            if ($dateMode === 'before') {
+                $query->whereDate('ticket_date', '<=', $dateVal);
+            } elseif ($dateMode === 'after') {
+                $query->whereDate('ticket_date', '>=', $dateVal);
+            } else {
+                $query->whereDate('ticket_date', '=', $dateVal);
+            }
         }
 
-        if ($dateTo) {
-            $query->whereDate('ticket_date', '<=', $dateTo);
+        if ($payDateVal) {
+            if ($payDateMode === 'before') {
+                $query->whereDate('payment_date', '<=', $payDateVal);
+            } elseif ($payDateMode === 'after') {
+                $query->whereDate('payment_date', '>=', $payDateVal);
+            } else {
+                $query->whereDate('payment_date', '=', $payDateVal);
+            }
         }
+
+        return [
+            'query' => $query,
+            'params' => [
+                'search' => $search,
+                'searchCode' => $searchCode,
+                'searchOrigin' => $searchOrigin,
+                'searchDestination' => $searchDestination,
+                'searchPassenger' => $searchPassenger,
+                'searchBooker' => $searchBooker,
+                'searchPayer' => $searchPayer,
+                'searchRoute' => $searchRoute,
+                'searchPerson' => $searchPerson,
+                'transportType' => $transportType,
+                'status' => $status,
+                'dateMode' => $dateMode,
+                'dateVal' => $dateVal,
+                'dateFrom' => $dateFrom,
+                'dateTo' => $dateTo,
+                'payDateMode' => $payDateMode,
+                'payDateVal' => $payDateVal,
+                'payDateFrom' => $payDateFrom,
+                'payDateTo' => $payDateTo,
+                'amountMin' => $amountMin,
+                'amountMax' => $amountMax,
+                'passengerCountMin' => $passengerCountMin,
+                'passengerCountMax' => $passengerCountMax,
+            ]
+        ];
+    }
+
+    /**
+     * Display a listing of historical tickets with search, filtering, and summary stats.
+     */
+    public function index(Request $request)
+    {
+        $filtered = $this->buildFilteredQuery($request);
+        $query = $filtered['query'];
+        $params = $filtered['params'];
 
         // Summary statistics (calculated from filtered records)
         $statsQuery = clone $query;
@@ -99,34 +184,18 @@ class TicketHistoryController extends Controller
         $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
         $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
 
-        return view('tickets.index', compact(
-            'tickets',
-            'search',
-            'searchCode',
-            'searchOrigin',
-            'searchDestination',
-            'searchPassenger',
-            'searchBooker',
-            'searchPayer',
-            'searchRoute',
-            'searchPerson',
-            'transportType',
-            'status',
-            'dateFrom',
-            'dateTo',
-            'amountMin',
-            'amountMax',
-            'passengerCountMin',
-            'passengerCountMax',
-            'payDateFrom',
-            'payDateTo',
-            'totalTickets',
-            'totalAmount',
-            'totalLunas',
-            'totalBelumBayar',
-            'totalDibatalkan',
-            'transportOptions',
-            'statusOptions'
+        return view('tickets.index', array_merge(
+            $params,
+            compact(
+                'tickets',
+                'totalTickets',
+                'totalAmount',
+                'totalLunas',
+                'totalBelumBayar',
+                'totalDibatalkan',
+                'transportOptions',
+                'statusOptions'
+            )
         ));
     }
 
@@ -420,34 +489,8 @@ class TicketHistoryController extends Controller
      */
     public function exportCsv(Request $request)
     {
-        $search = $request->input('search');
-        $searchCode = $request->input('search_code');
-        $searchRoute = $request->input('search_route');
-        $searchPerson = $request->input('search_person');
-        $transportType = array_values(array_filter((array) $request->input('transport_type', [])));
-        $status = array_values(array_filter((array) $request->input('status', [])));
-        $dateFrom = $request->input('date_from');
-        $dateTo = $request->input('date_to');
-        $amountMin = $request->input('amount_min');
-        $amountMax = $request->input('amount_max');
-
-        $query = TicketHistory::query()
-            ->search($search)
-            ->filterCode($searchCode)
-            ->filterRoute($searchRoute)
-            ->filterPerson($searchPerson)
-            ->filterTransport($transportType)
-            ->filterStatus($status)
-            ->filterAmount($amountMin, $amountMax);
-
-        if ($dateFrom) {
-            $query->whereDate('ticket_date', '>=', $dateFrom);
-        }
-
-        if ($dateTo) {
-            $query->whereDate('ticket_date', '<=', $dateTo);
-        }
-
+        $filtered = $this->buildFilteredQuery($request);
+        $query = $filtered['query'];
         $tickets = $query->orderBy('ticket_date', 'desc')->get();
 
         $filename = "histori_tiket_" . date('Ymd_His') . ".csv";
