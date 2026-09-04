@@ -166,12 +166,8 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="p-3 space-y-6">
-                    <div>
-                        <div x-show="!isCollapsed" class="px-3 mb-2 text-[10px] font-bold font-mono text-slate-500 uppercase tracking-wider">
-                            MODUL UTAMA ERP
-                        </div>
-                        <nav class="space-y-1">
+                <div class="p-3">
+                    <nav class="space-y-1">
                             <!-- Histori Tiket -->
                             <a href="{{ route('tickets.index') }}" 
                                :class="isCollapsed ? 'md:justify-center md:px-0' : ''"
@@ -194,7 +190,6 @@
                                 @endif
                             @endauth
                         </nav>
-                    </div>
                 </div>
             </div>
 
