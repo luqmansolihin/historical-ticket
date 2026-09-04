@@ -3,12 +3,12 @@
 @section('title', 'Daftar Histori Tiket')
 
 @section('content')
-<div x-data="{ selectedTicket: null, showModal: false }">
+<div x-data="{ selectedTicket: null, showModal: false }" class="flex-1 flex flex-col">
 
     <!-- ERP Data Table Container & Column Header Filters -->
-    <div x-data="{ openPop: null }" class="glass-card rounded-2xl overflow-hidden shadow-2xl relative z-10 no-print">
+    <div x-data="{ openPop: null }" class="glass-card rounded-2xl overflow-hidden shadow-2xl relative z-10 no-print flex-1 flex flex-col min-h-[calc(100vh-8rem)]">
         <!-- ERP Data Grid Action Toolbar -->
-        <div class="px-4 py-2.5 bg-slate-900/90 border-b border-slate-800/80 flex items-center justify-end gap-2">
+        <div class="px-4 py-2.5 bg-slate-900/90 border-b border-slate-800/80 flex items-center justify-end gap-2 shrink-0">
             <a href="{{ route('tickets.export', request()->query()) }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-sm">
                 <i class="fa-solid fa-file-csv text-emerald-400 mr-1.5 text-xs"></i> Export CSV
             </a>
@@ -20,8 +20,8 @@
             @endcan
         </div>
 
-        <form action="{{ route('tickets.index') }}" method="GET">
-            <div class="overflow-x-auto">
+        <form action="{{ route('tickets.index') }}" method="GET" class="flex-1 flex flex-col justify-between">
+            <div class="overflow-x-auto flex-1">
                 <table class="w-full text-left text-sm text-slate-300 whitespace-nowrap">
                     <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 tracking-wider border-b border-slate-800 whitespace-nowrap">
                         <tr>
@@ -361,7 +361,7 @@
         </div>
 
         @if($tickets->hasPages())
-            <div class="p-4 bg-slate-900/80 border-t border-slate-800">
+            <div class="p-4 bg-slate-900/80 border-t border-slate-800 mt-auto">
                 {{ $tickets->links() }}
             </div>
         @endif

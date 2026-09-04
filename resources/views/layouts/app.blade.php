@@ -235,7 +235,7 @@
 
         <!-- Main Content Area -->
         <div class="flex-1 flex flex-col min-w-0 min-h-screen">
-            <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+            <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto flex flex-col">
                 @if(session('success'))
                     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-4 p-4 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 flex items-center justify-between shadow-xl backdrop-blur-sm no-print">
                         <div class="flex items-center space-x-3">
