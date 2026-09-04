@@ -65,23 +65,54 @@
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
-                                <div x-show="openPop === 'date'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3.5 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[250px]">
+                                <!-- Single Calendar Range Picker Popover for Tgl Tiket -->
+                                <div x-show="openPop === 'date'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-2 text-left font-normal normal-case min-w-[310px]"
+                                     x-data="{
+                                         dateFrom: '{{ $dateFrom }}',
+                                         dateTo: '{{ $dateTo }}',
+                                         initPicker() {
+                                             this.$nextTick(() => {
+                                                 flatpickr(this.$refs.datePicker, {
+                                                     inline: true,
+                                                     mode: 'range',
+                                                     locale: 'id',
+                                                     dateFormat: 'Y-m-d',
+                                                     defaultDate: [this.dateFrom, this.dateTo].filter(Boolean),
+                                                     onChange: (selectedDates, dateStr, instance) => {
+                                                         if (selectedDates.length === 1) {
+                                                             this.dateFrom = instance.formatDate(selectedDates[0], 'Y-m-d');
+                                                             this.dateTo = instance.formatDate(selectedDates[0], 'Y-m-d');
+                                                         } else if (selectedDates.length === 2) {
+                                                             this.dateFrom = instance.formatDate(selectedDates[0], 'Y-m-d');
+                                                             this.dateTo = instance.formatDate(selectedDates[1], 'Y-m-d');
+                                                         } else {
+                                                             this.dateFrom = '';
+                                                             this.dateTo = '';
+                                                         }
+                                                     }
+                                                 });
+                                             });
+                                         }
+                                     }" x-init="initPicker()">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
-                                        <span>Filter Tanggal Tiket</span>
+                                        <span>Pilih Rentang Tanggal SPK</span>
                                         <i class="fa-regular fa-calendar-days text-sky-400"></i>
                                     </div>
-                                    <div class="space-y-2">
-                                        <div>
-                                            <label class="block text-[11px] text-slate-400 mb-1">Dari Tanggal:</label>
-                                            <input type="date" name="date_from" value="{{ $dateFrom }}" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[11px] text-slate-400 mb-1">Sampai Tanggal:</label>
-                                            <input type="date" name="date_to" value="{{ $dateTo }}" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none">
-                                        </div>
+                                    <input type="hidden" name="date_from" :value="dateFrom">
+                                    <input type="hidden" name="date_to" :value="dateTo">
+                                    
+                                    <div class="py-1">
+                                        <div x-ref="datePicker"></div>
                                     </div>
-                                    <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
+
+                                    <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px]">
+                                        <div class="text-slate-400 font-mono">
+                                            <span x-text="dateFrom ? (dateFrom === dateTo ? dateFrom : dateFrom + ' s/d ' + dateTo) : 'Belum ada tanggal dipilih'"></span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" @click="dateFrom = ''; dateTo = ''; if ($refs.datePicker._flatpickr) $refs.datePicker._flatpickr.clear()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">Clear</button>
+                                            <button type="submit" class="px-3 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
+                                        </div>
                                     </div>
                                 </div>
                             </th>
@@ -254,23 +285,54 @@
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
-                                <div x-show="openPop === 'pay_date'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3.5 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[250px]">
+                                <!-- Single Calendar Range Picker Popover for Tgl Bayar -->
+                                <div x-show="openPop === 'pay_date'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-2 text-left font-normal normal-case min-w-[310px]"
+                                     x-data="{
+                                         payDateFrom: '{{ $payDateFrom }}',
+                                         payDateTo: '{{ $payDateTo }}',
+                                         initPayPicker() {
+                                             this.$nextTick(() => {
+                                                 flatpickr(this.$refs.payDatePicker, {
+                                                     inline: true,
+                                                     mode: 'range',
+                                                     locale: 'id',
+                                                     dateFormat: 'Y-m-d',
+                                                     defaultDate: [this.payDateFrom, this.payDateTo].filter(Boolean),
+                                                     onChange: (selectedDates, dateStr, instance) => {
+                                                         if (selectedDates.length === 1) {
+                                                             this.payDateFrom = instance.formatDate(selectedDates[0], 'Y-m-d');
+                                                             this.payDateTo = instance.formatDate(selectedDates[0], 'Y-m-d');
+                                                         } else if (selectedDates.length === 2) {
+                                                             this.payDateFrom = instance.formatDate(selectedDates[0], 'Y-m-d');
+                                                             this.payDateTo = instance.formatDate(selectedDates[1], 'Y-m-d');
+                                                         } else {
+                                                             this.payDateFrom = '';
+                                                             this.payDateTo = '';
+                                                         }
+                                                     }
+                                                 });
+                                             });
+                                         }
+                                     }" x-init="initPayPicker()">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
-                                        <span>Filter Tanggal Bayar</span>
+                                        <span>Pilih Rentang Tanggal Bayar</span>
                                         <i class="fa-regular fa-calendar-check text-sky-400"></i>
                                     </div>
-                                    <div class="space-y-2">
-                                        <div>
-                                            <label class="block text-[11px] text-slate-400 mb-1">Dari Tanggal:</label>
-                                            <input type="date" name="pay_date_from" value="{{ $payDateFrom }}" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[11px] text-slate-400 mb-1">Sampai Tanggal:</label>
-                                            <input type="date" name="pay_date_to" value="{{ $payDateTo }}" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none">
-                                        </div>
+                                    <input type="hidden" name="pay_date_from" :value="payDateFrom">
+                                    <input type="hidden" name="pay_date_to" :value="payDateTo">
+                                    
+                                    <div class="py-1">
+                                        <div x-ref="payDatePicker"></div>
                                     </div>
-                                    <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
+
+                                    <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px]">
+                                        <div class="text-slate-400 font-mono">
+                                            <span x-text="payDateFrom ? (payDateFrom === payDateTo ? payDateFrom : payDateFrom + ' s/d ' + payDateTo) : 'Belum ada tanggal dipilih'"></span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" @click="payDateFrom = ''; payDateTo = ''; if ($refs.payDatePicker._flatpickr) $refs.payDatePicker._flatpickr.clear()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">Clear</button>
+                                            <button type="submit" class="px-3 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
+                                        </div>
                                     </div>
                                 </div>
                             </th>

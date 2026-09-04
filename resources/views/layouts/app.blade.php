@@ -26,6 +26,13 @@
     </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Flatpickr Range Calendar & Dark Theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
@@ -49,6 +56,29 @@
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Flatpickr Dark Theme Customization */
+        .flatpickr-calendar.inline {
+            background: #090d16 !important;
+            border: 1px solid #1e293b !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+            border-radius: 0.75rem !important;
+            margin: 0 auto !important;
+        }
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+            background: #0284c7 !important;
+            border-color: #0284c7 !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+        }
+        .flatpickr-day.inRange {
+            background: rgba(56, 189, 248, 0.18) !important;
+            box-shadow: -5px 0 0 rgba(56, 189, 248, 0.18), 5px 0 0 rgba(56, 189, 248, 0.18) !important;
+            color: #38bdf8 !important;
+        }
+        .flatpickr-day:hover {
+            background: #1e293b !important;
+        }
 
         /* ========================================================= */
         /* PRINT COLOR & LAYOUT ACCURACY PRESERVATION RULES           */
