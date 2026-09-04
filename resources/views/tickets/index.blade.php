@@ -22,41 +22,37 @@
 
         <form action="{{ route('tickets.index') }}" method="GET" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
             <div class="overflow-auto flex-1 min-h-0">
-                <table class="w-full text-left text-sm text-slate-300 whitespace-nowrap">
-                    <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 tracking-wider border-b border-slate-800 whitespace-nowrap">
+                <table class="w-full text-left text-xs text-slate-300 whitespace-nowrap border-collapse">
+                    <thead class="bg-slate-900/95 text-[11px] uppercase font-semibold text-slate-400 tracking-wider border-b border-slate-800 whitespace-nowrap sticky top-0 z-20 backdrop-blur-md">
                         <tr>
                             <!-- 1. Kode Tiket -->
-                            <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'code') openPop = null">
+                            <th class="py-3 px-3 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'code') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Kode Tiket</span>
                                     <button type="button" @click="openPop = (openPop === 'code' ? null : 'code')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchCode ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kode Tiket">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
-                                <!-- Popover Filter Kode Tiket -->
                                 <div x-show="openPop === 'code'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
                                         <span>Filter Kode Tiket</span>
                                         <i class="fa-solid fa-ticket text-sky-400"></i>
                                     </div>
-                                    <input type="text" name="search_code" value="{{ $searchCode }}" placeholder="Cari kode tiket..." class="w-full h-9 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
+                                    <input type="text" name="search_code" value="{{ $searchCode }}" placeholder="Cari kode tiket..." class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
                                     <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">
-                                            Terapkan
-                                        </button>
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
                                     </div>
                                 </div>
                             </th>
 
-                            <!-- 2. Tanggal Tiket -->
-                            <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'date') openPop = null">
+                            <!-- 2. Tgl SPK / Tiket -->
+                            <th class="py-3 px-3 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Tgl Tiket</span>
                                     <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($dateFrom || $dateTo) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Tiket">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
-                                <!-- Popover Filter Tanggal -->
                                 <div x-show="openPop === 'date'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3.5 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[250px]">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
                                         <span>Filter Tanggal Tiket</span>
@@ -73,45 +69,59 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">
-                                            Terapkan
-                                        </button>
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
                                     </div>
                                 </div>
                             </th>
 
-                            <!-- 3. Rute & Penumpang -->
-                            <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'route') openPop = null">
+                            <!-- 3. Asal -->
+                            <th class="py-3 px-3 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'origin') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <span>Rute & Penumpang</span>
-                                    <button type="button" @click="openPop = (openPop === 'route' ? null : 'route')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchRoute ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Rute & Penumpang">
+                                    <span>Asal</span>
+                                    <button type="button" @click="openPop = (openPop === 'origin' ? null : 'origin')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchOrigin ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kota Asal">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
-                                <!-- Popover Filter Rute -->
-                                <div x-show="openPop === 'route'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
+                                <div x-show="openPop === 'origin'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
-                                        <span>Cari Kota / Penumpang</span>
-                                        <i class="fa-solid fa-route text-sky-400"></i>
+                                        <span>Filter Kota Asal</span>
+                                        <i class="fa-solid fa-location-dot text-sky-400"></i>
                                     </div>
-                                    <input type="text" name="search_route" value="{{ $searchRoute }}" placeholder="Contoh: Jakarta, Luqman..." class="w-full h-9 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
+                                    <input type="text" name="search_origin" value="{{ $searchOrigin }}" placeholder="Cari kota asal..." class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
                                     <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">
-                                            Terapkan
-                                        </button>
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
                                     </div>
                                 </div>
                             </th>
 
-                            <!-- 4. Transportasi -->
-                            <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'transport') openPop = null">
+                            <!-- 4. Tujuan -->
+                            <th class="py-3 px-3 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'destination') openPop = null">
+                                <div class="flex items-center gap-1.5 justify-between">
+                                    <span>Tujuan</span>
+                                    <button type="button" @click="openPop = (openPop === 'destination' ? null : 'destination')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchDestination ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kota Tujuan">
+                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    </button>
+                                </div>
+                                <div x-show="openPop === 'destination'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
+                                    <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
+                                        <span>Filter Kota Tujuan</span>
+                                        <i class="fa-solid fa-location-arrow text-sky-400"></i>
+                                    </div>
+                                    <input type="text" name="search_destination" value="{{ $searchDestination }}" placeholder="Cari kota tujuan..." class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
+                                    <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
+                                    </div>
+                                </div>
+                            </th>
+
+                            <!-- 5. Transportasi -->
+                            <th class="py-3 px-3 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'transport') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Transportasi</span>
                                     <button type="button" @click="openPop = (openPop === 'transport' ? null : 'transport')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($transportType) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Transportasi">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
-                                <!-- Popover Filter Transportasi -->
                                 <div x-show="openPop === 'transport'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-2 text-left font-normal normal-case min-w-[200px]" x-data="{ selected: {{ json_encode($transportType) }} }">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
                                         <span>Pilih Transportasi</span>
@@ -130,45 +140,89 @@
                                         @endforeach
                                     </div>
                                     <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800/80">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">
-                                            Terapkan
-                                        </button>
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
                                     </div>
                                 </div>
                             </th>
 
-                            <!-- 5. Pemesan & Pembayar -->
-                            <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'person') openPop = null">
+                            <!-- 6. Penumpang -->
+                            <th class="py-3 px-3 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'passenger') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <span>Pemesan & Pembayar</span>
-                                    <button type="button" @click="openPop = (openPop === 'person' ? null : 'person')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchPerson ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pemesan & Pembayar">
+                                    <span>Nama Penumpang</span>
+                                    <button type="button" @click="openPop = (openPop === 'passenger' ? null : 'passenger')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchPassenger ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Penumpang">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
-                                <!-- Popover Filter Person -->
-                                <div x-show="openPop === 'person'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
+                                <div x-show="openPop === 'passenger'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
-                                        <span>Cari Pemesan / Pembayar</span>
-                                        <i class="fa-solid fa-user-check text-sky-400"></i>
+                                        <span>Filter Nama Penumpang</span>
+                                        <i class="fa-solid fa-user text-sky-400"></i>
                                     </div>
-                                    <input type="text" name="search_person" value="{{ $searchPerson }}" placeholder="Nama pemesan / pembayar..." class="w-full h-9 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
+                                    <input type="text" name="search_passenger" value="{{ $searchPassenger }}" placeholder="Cari nama penumpang..." class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
                                     <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">
-                                            Terapkan
-                                        </button>
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
                                     </div>
                                 </div>
                             </th>
 
-                            <!-- 6. Biaya (IDR) -->
-                            <th class="py-3.5 px-4 text-right whitespace-nowrap relative" @click.outside="if (openPop === 'amount') openPop = null">
+                            <!-- 7. Jml Penumpang -->
+                            <th class="py-3 px-3 text-center whitespace-nowrap border-r border-slate-800/60">
+                                <span>Jml</span>
+                            </th>
+
+                            <!-- 8. Pemesan -->
+                            <th class="py-3 px-3 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'booker') openPop = null">
+                                <div class="flex items-center gap-1.5 justify-between">
+                                    <span>Pemesan</span>
+                                    <button type="button" @click="openPop = (openPop === 'booker' ? null : 'booker')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchBooker ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pemesan">
+                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    </button>
+                                </div>
+                                <div x-show="openPop === 'booker'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
+                                    <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
+                                        <span>Filter Pemesan</span>
+                                        <i class="fa-solid fa-user-pen text-sky-400"></i>
+                                    </div>
+                                    <input type="text" name="search_booker" value="{{ $searchBooker }}" placeholder="Nama pemesan..." class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
+                                    <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
+                                    </div>
+                                </div>
+                            </th>
+
+                            <!-- 9. Pembayar -->
+                            <th class="py-3 px-3 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'payer') openPop = null">
+                                <div class="flex items-center gap-1.5 justify-between">
+                                    <span>Pembayar</span>
+                                    <button type="button" @click="openPop = (openPop === 'payer' ? null : 'payer')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchPayer ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pembayar">
+                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    </button>
+                                </div>
+                                <div x-show="openPop === 'payer'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
+                                    <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
+                                        <span>Filter Pembayar</span>
+                                        <i class="fa-solid fa-credit-card text-sky-400"></i>
+                                    </div>
+                                    <input type="text" name="search_payer" value="{{ $searchPayer }}" placeholder="Nama pembayar..." class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
+                                    <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
+                                    </div>
+                                </div>
+                            </th>
+
+                            <!-- 10. Tgl Bayar -->
+                            <th class="py-3 px-3 whitespace-nowrap border-r border-slate-800/60">
+                                <span>Tgl Bayar</span>
+                            </th>
+
+                            <!-- 11. Biaya (IDR) -->
+                            <th class="py-3 px-3 text-right whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'amount') openPop = null">
                                 <div class="flex items-center justify-end gap-1.5">
                                     <span>Biaya (IDR)</span>
                                     <button type="button" @click="openPop = (openPop === 'amount' ? null : 'amount')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($amountMin || $amountMax) ? 'text-emerald-400 font-bold bg-emerald-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Rentang Biaya">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
-                                <!-- Popover Filter Biaya -->
                                 <div x-show="openPop === 'amount'" x-cloak x-transition class="absolute z-50 right-0 mt-2 p-3.5 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[240px]">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
                                         <span>Filter Rentang Biaya</span>
@@ -185,22 +239,19 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow transition-colors">
-                                            Terapkan
-                                        </button>
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
                                     </div>
                                 </div>
                             </th>
 
-                            <!-- 7. Status -->
-                            <th class="py-3.5 px-4 text-center whitespace-nowrap relative" @click.outside="if (openPop === 'status') openPop = null">
+                            <!-- 12. Status -->
+                            <th class="py-3 px-3 text-center whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'status') openPop = null">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <span>Status</span>
                                     <button type="button" @click="openPop = (openPop === 'status' ? null : 'status')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($status) ? 'text-emerald-400 font-bold bg-emerald-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Status">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
-                                <!-- Popover Filter Status -->
                                 <div x-show="openPop === 'status'" x-cloak x-transition class="absolute z-50 right-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-2 text-left font-normal normal-case min-w-[180px]" x-data="{ selected: {{ json_encode($status) }} }">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
                                         <span>Pilih Status</span>
@@ -219,18 +270,16 @@
                                         @endforeach
                                     </div>
                                     <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800/80">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">
-                                            Terapkan
-                                        </button>
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
                                     </div>
                                 </div>
                             </th>
 
-                            <!-- 8. Aksi -->
-                            <th class="py-3.5 px-4 text-center whitespace-nowrap">
+                            <!-- 13. Aksi -->
+                            <th class="py-3 px-3 text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <span>Aksi</span>
-                                    @if($search || $searchCode || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateFrom || $dateTo || $amountMin || $amountMax)
+                                    @if($search || $searchCode || $searchOrigin || $searchDestination || $searchPassenger || $searchBooker || $searchPayer || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateFrom || $dateTo || $amountMin || $amountMax)
                                         <a href="{{ route('tickets.index') }}" class="px-2 py-0.5 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-mono normal-case transition-colors inline-flex items-center gap-1" title="Reset Semua Filter">
                                             <i class="fa-solid fa-rotate-left text-[9px]"></i> Reset
                                         </a>
@@ -239,165 +288,162 @@
                             </th>
                         </tr>
                     </thead>
-                <tbody class="divide-y divide-slate-800/60 whitespace-nowrap">
-                    @forelse($tickets as $ticket)
-                        <tr class="hover:bg-slate-900/50 transition-colors group whitespace-nowrap">
-                            <!-- Kode Tiket -->
-                            <td class="py-4 px-4 font-mono font-medium text-sky-400 whitespace-nowrap">
-                                <div class="flex items-center gap-2 whitespace-nowrap">
-                                    <span class="text-base">{{ $ticket->transport_icon }}</span>
-                                    <span>{{ $ticket->ticket_code }}</span>
-                                </div>
-                            </td>
+                    <tbody class="divide-y divide-slate-800/60 whitespace-nowrap font-sans">
+                        @forelse($tickets as $ticket)
+                            <tr class="hover:bg-slate-900/60 transition-colors group whitespace-nowrap border-b border-slate-800/40">
+                                <!-- 1. Kode Tiket -->
+                                <td class="py-2.5 px-3 font-mono font-semibold text-sky-400 whitespace-nowrap border-r border-slate-800/40">
+                                    {{ $ticket->ticket_code }}
+                                </td>
 
-                            <!-- Tanggal Tiket -->
-                            <td class="py-4 px-4 whitespace-nowrap font-medium text-slate-200">
-                                <i class="fa-regular fa-calendar text-slate-500 mr-1.5"></i>
-                                {{ $ticket->ticket_date->format('d M Y') }}
-                            </td>
+                                <!-- 2. Tgl Tiket -->
+                                <td class="py-2.5 px-3 whitespace-nowrap font-medium text-slate-300 border-r border-slate-800/40">
+                                    {{ $ticket->ticket_date->format('d/m/Y') }}
+                                </td>
 
-                            <!-- Rute & Penumpang -->
-                            <td class="py-4 px-4 whitespace-nowrap">
-                                <div class="flex items-center gap-2 font-medium text-slate-100 whitespace-nowrap">
-                                    <span>{{ $ticket->origin }}</span>
-                                    <i class="fa-solid fa-arrow-right text-xs text-sky-400"></i>
-                                    <span>{{ $ticket->destination }}</span>
-                                </div>
-                                <div class="text-xs text-slate-300 mt-1 flex items-center gap-1.5 whitespace-nowrap">
-                                    <i class="fa-solid fa-user-group text-slate-500"></i>
-                                    <span class="font-medium text-slate-200 whitespace-nowrap">{{ $ticket->passenger_display }}</span>
-                                    @if($ticket->passenger_count > 1)
-                                        <span class="px-1.5 py-0.5 rounded text-[10px] bg-sky-950 text-sky-300 border border-sky-800 font-bold whitespace-nowrap">
-                                            {{ $ticket->passenger_count }} Orang
-                                        </span>
-                                    @endif
-                                </div>
-                            </td>
+                                <!-- 3. Asal -->
+                                <td class="py-2.5 px-3 whitespace-nowrap font-medium text-slate-200 border-r border-slate-800/40">
+                                    {{ $ticket->origin }}
+                                </td>
 
-                            <!-- Transportasi -->
-                            <td class="py-4 px-4 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700/60 whitespace-nowrap">
-                                    {{ $ticket->transport_type }}
-                                </span>
-                            </td>
+                                <!-- 4. Tujuan -->
+                                <td class="py-2.5 px-3 whitespace-nowrap font-medium text-slate-200 border-r border-slate-800/40">
+                                    {{ $ticket->destination }}
+                                </td>
 
-                            <!-- Booker & Payer -->
-                            <td class="py-4 px-4 text-xs whitespace-nowrap">
-                                <div class="whitespace-nowrap">
-                                    <span class="text-slate-400">Pemesan:</span> 
-                                    <strong class="text-indigo-300">{{ $ticket->booked_by }}</strong>
+                                <!-- 5. Transportasi -->
+                                <td class="py-2.5 px-3 whitespace-nowrap border-r border-slate-800/40">
+                                    <span class="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700/60 whitespace-nowrap">
+                                        {{ $ticket->transport_type }}
+                                    </span>
+                                </td>
+
+                                <!-- 6. Penumpang -->
+                                <td class="py-2.5 px-3 whitespace-nowrap text-slate-200 font-medium border-r border-slate-800/40">
+                                    {{ implode(', ', $ticket->passengers_list) ?: $ticket->passenger_name }}
+                                </td>
+
+                                <!-- 7. Jml Penumpang -->
+                                <td class="py-2.5 px-3 text-center whitespace-nowrap font-mono text-slate-300 font-bold border-r border-slate-800/40">
+                                    {{ $ticket->passenger_count }}
+                                </td>
+
+                                <!-- 8. Pemesan -->
+                                <td class="py-2.5 px-3 whitespace-nowrap border-r border-slate-800/40">
+                                    <span class="text-indigo-300 font-medium">{{ $ticket->booked_by }}</span>
                                     @if($ticket->bookerUser)
-                                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800 whitespace-nowrap">Akun</span>
+                                        <span class="ml-1 text-[9px] px-1 py-0.2 rounded bg-indigo-950 text-indigo-400 border border-indigo-800 font-mono">Akun</span>
                                     @endif
-                                </div>
-                                <div class="mt-0.5 whitespace-nowrap">
-                                    <span class="text-slate-400">Pembayaran Oleh:</span> 
-                                    <strong class="text-emerald-300">{{ $ticket->paid_by }}</strong>
+                                </td>
+
+                                <!-- 9. Pembayar -->
+                                <td class="py-2.5 px-3 whitespace-nowrap border-r border-slate-800/40">
+                                    <span class="text-emerald-300 font-medium">{{ $ticket->paid_by }}</span>
                                     @if($ticket->payerUser)
-                                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 whitespace-nowrap">Akun</span>
+                                        <span class="ml-1 text-[9px] px-1 py-0.2 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono">Akun</span>
                                     @endif
-                                </div>
-                                @if($ticket->payment_date)
-                                    <div class="text-[11px] text-slate-500 mt-0.5 whitespace-nowrap">Tgl Bayar: {{ $ticket->payment_date->format('d/m/Y') }}</div>
-                                @endif
-                            </td>
+                                </td>
 
-                            <!-- Biaya -->
-                            <td class="py-4 px-4 text-right whitespace-nowrap font-mono font-bold text-emerald-400">
-                                {{ $ticket->formatted_amount }}
-                            </td>
+                                <!-- 10. Tgl Bayar -->
+                                <td class="py-2.5 px-3 whitespace-nowrap text-slate-400 font-mono text-[11px] border-r border-slate-800/40">
+                                    {{ $ticket->payment_date ? $ticket->payment_date->format('d/m/Y') : '-' }}
+                                </td>
 
-                            <!-- Status -->
-                            <td class="py-4 px-4 text-center whitespace-nowrap">
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full border {{ $ticket->status_badge_class }}">
-                                    {{ $ticket->status }}
-                                </span>
-                            </td>
+                                <!-- 11. Biaya (IDR) -->
+                                <td class="py-2.5 px-3 text-right whitespace-nowrap font-mono font-bold text-emerald-400 border-r border-slate-800/40">
+                                    {{ $ticket->formatted_amount }}
+                                </td>
 
-                            <!-- Actions -->
-                            <td class="py-4 px-4 text-center whitespace-nowrap">
-                                <div class="flex items-center justify-center gap-2">
-                                    <!-- View Detail / Boarding Pass -->
-                                    <button @click="selectedTicket = {{ json_encode([
-                                        'ticket_code' => $ticket->ticket_code,
-                                        'ticket_date' => $ticket->ticket_date->format('d M Y'),
-                                        'origin' => $ticket->origin,
-                                        'destination' => $ticket->destination,
-                                        'transport_type' => $ticket->transport_type,
-                                        'transport_icon' => $ticket->transport_icon,
-                                        'passenger_display' => $ticket->passenger_display,
-                                        'passengers_list' => $ticket->passengers_list,
-                                        'passenger_count' => $ticket->passenger_count,
-                                        'booked_by' => $ticket->booked_by,
-                                        'paid_by' => $ticket->paid_by,
-                                        'payment_date' => $ticket->payment_date ? $ticket->payment_date->format('d M Y') : '-',
-                                        'amount' => $ticket->formatted_amount,
-                                        'status' => $ticket->status,
-                                        'status_badge' => $ticket->status_badge_class,
-                                        'notes' => $ticket->notes ?? '-',
-                                        'attachment_url' => $ticket->attachment_path ? asset('storage/' . $ticket->attachment_path) : null,
-                                        'pdf_url' => route('tickets.pdf', $ticket->id),
-                                        'status_logs' => $ticket->statusLogs->map(fn($log) => [
-                                            'to_status' => $log->to_status,
-                                            'from_status' => $log->from_status,
-                                            'user_name' => $log->user_name,
-                                            'user_role' => ucfirst($log->user_role),
-                                            'notes' => $log->notes,
-                                            'date' => $log->created_at->format('d M Y, H:i'),
-                                            'badge' => $log->status_badge_class,
-                                        ])
-                                    ]) }}; showModal = true" class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 hover:bg-sky-500 hover:text-white flex items-center justify-center transition-colors" title="Lihat E-Ticket Boarding Pass">
-                                        <i class="fa-solid fa-ticket-simple text-sm"></i>
-                                    </button>
+                                <!-- 12. Status -->
+                                <td class="py-2.5 px-3 text-center whitespace-nowrap border-r border-slate-800/40">
+                                    <span class="px-2.5 py-0.5 text-[11px] font-semibold rounded-full border {{ $ticket->status_badge_class }}">
+                                        {{ $ticket->status }}
+                                    </span>
+                                </td>
 
-                                    <!-- Edit -->
-                                    @can('update', $ticket)
-                                        <a href="{{ route('tickets.edit', $ticket->id) }}" class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white flex items-center justify-center transition-colors" title="Edit Tiket">
-                                            <i class="fa-solid fa-pen-to-square text-sm"></i>
-                                        </a>
-                                    @else
-                                        <span class="w-8 h-8 rounded-lg bg-slate-800 text-slate-600 flex items-center justify-center cursor-not-allowed" title="Anda tidak memiliki akses mengedit tiket ini">
-                                            <i class="fa-solid fa-lock text-xs"></i>
-                                        </span>
-                                    @endcan
+                                <!-- 13. Aksi -->
+                                <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        <!-- View Detail / Boarding Pass Modal -->
+                                        <button type="button" @click="selectedTicket = {{ json_encode([
+                                            'ticket_code' => $ticket->ticket_code,
+                                            'ticket_date' => $ticket->ticket_date->format('d M Y'),
+                                            'origin' => $ticket->origin,
+                                            'destination' => $ticket->destination,
+                                            'transport_type' => $ticket->transport_type,
+                                            'passenger_display' => implode(', ', $ticket->passengers_list) ?: $ticket->passenger_name,
+                                            'passengers_list' => $ticket->passengers_list,
+                                            'passenger_count' => $ticket->passenger_count,
+                                            'booked_by' => $ticket->booked_by,
+                                            'paid_by' => $ticket->paid_by,
+                                            'payment_date' => $ticket->payment_date ? $ticket->payment_date->format('d M Y') : '-',
+                                            'amount' => $ticket->formatted_amount,
+                                            'status' => $ticket->status,
+                                            'status_badge' => $ticket->status_badge_class,
+                                            'notes' => $ticket->notes ?? '-',
+                                            'attachment_url' => $ticket->attachment_path ? asset('storage/' . $ticket->attachment_path) : null,
+                                            'pdf_url' => route('tickets.pdf', $ticket->id),
+                                            'status_logs' => $ticket->statusLogs->map(fn($log) => [
+                                                'to_status' => $log->to_status,
+                                                'from_status' => $log->from_status,
+                                                'user_name' => $log->user_name,
+                                                'user_role' => ucfirst($log->user_role),
+                                                'notes' => $log->notes,
+                                                'date' => $log->created_at->format('d M Y, H:i'),
+                                                'badge' => $log->status_badge_class,
+                                            ])
+                                        ]) }}; showModal = true" class="w-7 h-7 rounded-lg bg-sky-500/10 text-sky-400 hover:bg-sky-500 hover:text-white flex items-center justify-center transition-colors" title="Lihat E-Ticket Boarding Pass">
+                                            <i class="fa-solid fa-ticket-simple text-xs"></i>
+                                        </button>
 
-                                    <!-- Delete -->
-                                    @can('delete', $ticket)
-                                        <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus histori tiket {{ $ticket->ticket_code }}?');" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors" title="Hapus Tiket">
-                                                <i class="fa-solid fa-trash-can text-sm"></i>
-                                            </button>
-                                        </form>
-                                    @endcan
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="py-12 text-center text-slate-500">
-                                <div class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto mb-3 text-slate-600">
-                                    <i class="fa-solid fa-ticket-simple text-2xl"></i>
-                                </div>
-                                <p class="text-base font-medium text-slate-400">Tidak ada histori tiket ditemukan</p>
-                                <p class="text-xs text-slate-500 mt-1">Coba sesuaikan kata kunci pencarian atau filter yang Anda pilih.</p>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                                        <!-- Edit -->
+                                        @can('update', $ticket)
+                                            <a href="{{ route('tickets.edit', $ticket->id) }}" class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white flex items-center justify-center transition-colors" title="Edit Tiket">
+                                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                            </a>
+                                        @else
+                                            <span class="w-7 h-7 rounded-lg bg-slate-800 text-slate-600 flex items-center justify-center cursor-not-allowed" title="Anda tidak memiliki akses mengedit tiket ini">
+                                                <i class="fa-solid fa-lock text-xs"></i>
+                                            </span>
+                                        @endcan
 
-        @if($tickets->hasPages())
-            <div class="p-4 bg-slate-900/80 border-t border-slate-800 mt-auto">
-                {{ $tickets->links() }}
+                                        <!-- Delete -->
+                                        @can('delete', $ticket)
+                                            <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus histori tiket {{ $ticket->ticket_code }}?');" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="w-7 h-7 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors" title="Hapus Tiket">
+                                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                                </button>
+                                            </form>
+                                        @endcan
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="13" class="py-12 text-center text-slate-500">
+                                    <div class="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto mb-3 text-slate-600">
+                                        <i class="fa-solid fa-table-list text-xl"></i>
+                                    </div>
+                                    <p class="text-sm font-medium text-slate-400">Tidak ada histori tiket ditemukan</p>
+                                    <p class="text-xs text-slate-500 mt-1">Coba sesuaikan kata kunci pencarian atau filter yang Anda pilih.</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-        @endif
+
+            @if($tickets->hasPages())
+                <div class="p-3 bg-slate-900/90 border-t border-slate-800 mt-auto shrink-0">
+                    {{ $tickets->links() }}
+                </div>
+            @endif
         </form>
     </div>
 
-    <!-- Boarding Pass Modal -->
+    <!-- Boarding Pass Modal (Clean Text Only) -->
     <div x-cloak x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showModal = false" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity no-print"></div>
@@ -414,8 +460,8 @@
 
                             <div class="flex items-center justify-between relative z-10">
                                 <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl">
-                                        <span x-text="selectedTicket.transport_icon"></span>
+                                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-lg">
+                                        <i class="fa-solid fa-ticket"></i>
                                     </div>
                                     <div>
                                         <p class="text-xs text-sky-200 uppercase font-mono tracking-wider">E-TICKET BOARDING PASS</p>
@@ -426,7 +472,7 @@
                                     <a :href="selectedTicket.pdf_url" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm" title="Download / Cetak Boarding Pass Versi PDF">
                                         <i class="fa-solid fa-file-pdf"></i> Download PDF
                                     </a>
-                                    <button @click="showModal = false" class="w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center text-white transition-colors">
+                                    <button type="button" @click="showModal = false" class="w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center text-white transition-colors">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
@@ -438,7 +484,7 @@
                                     <span class="font-display text-xl font-bold text-white block mt-0.5" x-text="selectedTicket.origin"></span>
                                 </div>
                                 <div class="px-4 text-center">
-                                    <i class="fa-solid fa-plane-departure text-xl text-sky-300 animate-pulse"></i>
+                                    <i class="fa-solid fa-plane-departure text-xl text-sky-300"></i>
                                 </div>
                                 <div class="text-right">
                                     <span class="text-xs text-sky-200 block uppercase">Ke (Destination)</span>
@@ -534,24 +580,17 @@
 
                             <template x-if="selectedTicket.attachment_url">
                                 <div class="pt-2">
-                                    <a :href="selectedTicket.attachment_url" target="_blank" class="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors">
-                                        <i class="fa-solid fa-paperclip text-sky-400 mr-2"></i> Buka File Bukti Tiket / Nota Upload
+                                    <a :href="selectedTicket.attachment_url" target="_blank" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 text-xs font-semibold transition-colors w-full justify-center">
+                                        <i class="fa-solid fa-paperclip"></i>
+                                        <span>Lihat Dokumen / Bukti Lampiran Original</span>
                                     </a>
                                 </div>
                             </template>
-                        </div>
-
-                        <div class="bg-slate-950 p-4 border-t border-slate-800 text-center">
-                            <div class="font-mono text-2xl tracking-[0.3em] text-slate-600 select-none">
-                                ||||| ||| ||||||| ||| |||||
-                            </div>
-                            <span class="text-[10px] text-slate-500 block font-mono mt-1">VERIFIED HISTORICAL TICKET RECORD</span>
                         </div>
                     </div>
                 </template>
             </div>
         </div>
     </div>
-
 </div>
 @endsection

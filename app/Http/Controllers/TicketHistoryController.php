@@ -40,6 +40,11 @@ class TicketHistoryController extends Controller
     {
         $search = $request->input('search');
         $searchCode = $request->input('search_code');
+        $searchOrigin = $request->input('search_origin');
+        $searchDestination = $request->input('search_destination');
+        $searchPassenger = $request->input('search_passenger');
+        $searchBooker = $request->input('search_booker');
+        $searchPayer = $request->input('search_payer');
         $searchRoute = $request->input('search_route');
         $searchPerson = $request->input('search_person');
         $transportType = array_values(array_filter((array) $request->input('transport_type', [])));
@@ -53,6 +58,11 @@ class TicketHistoryController extends Controller
             ->with(['bookerUser', 'payerUser', 'statusLogs'])
             ->search($search)
             ->filterCode($searchCode)
+            ->filterOrigin($searchOrigin)
+            ->filterDestination($searchDestination)
+            ->filterPassenger($searchPassenger)
+            ->filterBooker($searchBooker)
+            ->filterPayer($searchPayer)
             ->filterRoute($searchRoute)
             ->filterPerson($searchPerson)
             ->filterTransport($transportType)
@@ -77,7 +87,7 @@ class TicketHistoryController extends Controller
 
         $tickets = $query->orderBy('ticket_date', 'desc')
             ->orderBy('id', 'desc')
-            ->paginate(10)
+            ->paginate(15)
             ->withQueryString();
 
         $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
@@ -87,6 +97,11 @@ class TicketHistoryController extends Controller
             'tickets',
             'search',
             'searchCode',
+            'searchOrigin',
+            'searchDestination',
+            'searchPassenger',
+            'searchBooker',
+            'searchPayer',
             'searchRoute',
             'searchPerson',
             'transportType',

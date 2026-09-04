@@ -209,11 +209,11 @@
                             <div class="text-xs font-semibold text-white truncate leading-tight">{{ Auth::user()->name }}</div>
                             <div class="text-[10px] font-mono text-sky-400 truncate mt-0.5 capitalize">
                                 @if(Auth::user()->isAdmin())
-                                    🛡️ Admin
+                                    Admin
                                 @elseif(Auth::user()->isBooker() || Auth::user()->role === 'payer')
-                                    📝 Booker & Payer
+                                    Booker & Payer
                                 @else
-                                    👤 User
+                                    User
                                 @endif
                             </div>
                         </div>

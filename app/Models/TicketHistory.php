@@ -174,6 +174,66 @@ class TicketHistory extends Model
     }
 
     /**
+     * Scope for filtering Origin
+     */
+    public function scopeFilterOrigin($query, ?string $origin)
+    {
+        if (empty($origin)) {
+            return $query;
+        }
+
+        return $query->where('origin', 'like', "%{$origin}%");
+    }
+
+    /**
+     * Scope for filtering Destination
+     */
+    public function scopeFilterDestination($query, ?string $destination)
+    {
+        if (empty($destination)) {
+            return $query;
+        }
+
+        return $query->where('destination', 'like', "%{$destination}%");
+    }
+
+    /**
+     * Scope for filtering Passenger
+     */
+    public function scopeFilterPassenger($query, ?string $passenger)
+    {
+        if (empty($passenger)) {
+            return $query;
+        }
+
+        return $query->where('passenger_name', 'like', "%{$passenger}%");
+    }
+
+    /**
+     * Scope for filtering Booker
+     */
+    public function scopeFilterBooker($query, ?string $booker)
+    {
+        if (empty($booker)) {
+            return $query;
+        }
+
+        return $query->where('booked_by', 'like', "%{$booker}%");
+    }
+
+    /**
+     * Scope for filtering Payer
+     */
+    public function scopeFilterPayer($query, ?string $payer)
+    {
+        if (empty($payer)) {
+            return $query;
+        }
+
+        return $query->where('paid_by', 'like', "%{$payer}%");
+    }
+
+    /**
      * Scope for filtering specifically by Route or Passenger Name
      */
     public function scopeFilterRoute($query, ?string $route)
