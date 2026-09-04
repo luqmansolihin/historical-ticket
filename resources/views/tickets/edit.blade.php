@@ -15,12 +15,20 @@
 @endphp
 
 <div class="max-w-4xl mx-auto">
-    <div class="mb-6">
-        <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
-            <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
-        </a>
-        <h1 class="font-display text-2xl sm:text-3xl font-bold text-white">Edit Histori Tiket</h1>
-        <p class="text-slate-400 text-sm mt-1">Perbarui data tiket <span class="font-mono text-sky-400 font-semibold">{{ $ticket->ticket_code }}</span></p>
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
+            </a>
+            <h1 class="font-display text-2xl sm:text-3xl font-bold text-white">Edit Histori Tiket</h1>
+            <p class="text-slate-400 text-sm mt-1">Perbarui data tiket <span class="font-mono text-sky-400 font-semibold">{{ $ticket->ticket_code }}</span></p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <a href="{{ route('tickets.pdf', $ticket->id) }}" target="_blank" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 shadow-lg shadow-sky-500/20 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-file-pdf text-sm"></i> Cetak / Download Boarding Pass PDF
+            </a>
+        </div>
     </div>
 
     <div class="glass-card p-6 sm:p-8 rounded-2xl shadow-2xl">
@@ -342,13 +350,19 @@
                 <textarea id="notes" name="notes" rows="3" {{ $isDataLocked ? 'disabled' : '' }} class="w-full glass-input rounded-xl p-4 text-sm">{{ old('notes', $ticket->notes) }}</textarea>
             </div>
 
-            <div class="flex items-center justify-end gap-3 pt-4">
-                <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
-                    Batal
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-800/80">
+                <a href="{{ route('tickets.pdf', $ticket->id) }}" target="_blank" class="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-pdf text-sky-400"></i> Cetak / Download Boarding Pass PDF
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-lg shadow-amber-500/25 transition-all">
-                    <i class="fa-solid fa-pen-to-square mr-2"></i> Perbarui Tiket
-                </button>
+
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                    <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
+                        Batal
+                    </a>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-lg shadow-amber-500/25 transition-all">
+                        <i class="fa-solid fa-pen-to-square mr-2"></i> Perbarui Tiket
+                    </button>
+                </div>
             </div>
         </form>
     </div>
