@@ -26,10 +26,10 @@
                     <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 tracking-wider border-b border-slate-800 whitespace-nowrap">
                         <tr>
                             <!-- 1. Kode Tiket -->
-                            <th class="py-3.5 px-4 whitespace-nowrap relative">
+                            <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'code') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Kode Tiket</span>
-                                    <button type="button" @click="openPop = (openPop === 'code' ? null : 'code')" @click.outside="if (openPop === 'code') openPop = null" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $search ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kode Tiket">
+                                    <button type="button" @click="openPop = (openPop === 'code' ? null : 'code')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $search ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kode Tiket">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
@@ -49,10 +49,10 @@
                             </th>
 
                             <!-- 2. Tanggal Tiket -->
-                            <th class="py-3.5 px-4 whitespace-nowrap relative">
+                            <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Tgl Tiket</span>
-                                    <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" @click.outside="if (openPop === 'date') openPop = null" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($dateFrom || $dateTo) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Tiket">
+                                    <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($dateFrom || $dateTo) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Tiket">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
@@ -81,10 +81,10 @@
                             </th>
 
                             <!-- 3. Rute & Penumpang -->
-                            <th class="py-3.5 px-4 whitespace-nowrap relative">
+                            <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'route') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Rute & Penumpang</span>
-                                    <button type="button" @click="openPop = (openPop === 'route' ? null : 'route')" @click.outside="if (openPop === 'route') openPop = null" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $search ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Rute & Penumpang">
+                                    <button type="button" @click="openPop = (openPop === 'route' ? null : 'route')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $search ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Rute & Penumpang">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
@@ -104,10 +104,10 @@
                             </th>
 
                             <!-- 4. Transportasi -->
-                            <th class="py-3.5 px-4 whitespace-nowrap relative">
+                            <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'transport') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Transportasi</span>
-                                    <button type="button" @click="openPop = (openPop === 'transport' ? null : 'transport')" @click.outside="if (openPop === 'transport') openPop = null" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($transportType) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Transportasi">
+                                    <button type="button" @click="openPop = (openPop === 'transport' ? null : 'transport')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($transportType) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Transportasi">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
@@ -138,10 +138,10 @@
                             </th>
 
                             <!-- 5. Pemesan & Pembayar -->
-                            <th class="py-3.5 px-4 whitespace-nowrap relative">
+                            <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'person') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Pemesan & Pembayar</span>
-                                    <button type="button" @click="openPop = (openPop === 'person' ? null : 'person')" @click.outside="if (openPop === 'person') openPop = null" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $search ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pemesan & Pembayar">
+                                    <button type="button" @click="openPop = (openPop === 'person' ? null : 'person')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $search ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pemesan & Pembayar">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
@@ -164,10 +164,10 @@
                             <th class="py-3.5 px-4 text-right whitespace-nowrap">Biaya (IDR)</th>
 
                             <!-- 7. Status -->
-                            <th class="py-3.5 px-4 text-center whitespace-nowrap relative">
+                            <th class="py-3.5 px-4 text-center whitespace-nowrap relative" @click.outside="if (openPop === 'status') openPop = null">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <span>Status</span>
-                                    <button type="button" @click="openPop = (openPop === 'status' ? null : 'status')" @click.outside="if (openPop === 'status') openPop = null" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($status) ? 'text-emerald-400 font-bold bg-emerald-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Status">
+                                    <button type="button" @click="openPop = (openPop === 'status' ? null : 'status')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($status) ? 'text-emerald-400 font-bold bg-emerald-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Status">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
