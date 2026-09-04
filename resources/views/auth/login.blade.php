@@ -51,7 +51,7 @@
                 <i class="fa-solid fa-ticket text-2xl transform -rotate-12"></i>
             </div>
             <h1 class="font-display text-3xl font-bold text-white tracking-tight">TicketTrace</h1>
-            <p class="text-sm text-slate-400 mt-1">Sistem Histori Tiket & Hak Akses Booker / Payer</p>
+            <p class="text-sm text-slate-400 mt-1">Sistem Histori Tiket</p>
         </div>
 
         <!-- Notification -->
