@@ -162,6 +162,49 @@ class TicketHistory extends Model
     }
 
     /**
+     * Scope for filtering specifically by Ticket Code
+     */
+    public function scopeFilterCode($query, ?string $code)
+    {
+        if (empty($code)) {
+            return $query;
+        }
+
+        return $query->where('ticket_code', 'like', "%{$code}%");
+    }
+
+    /**
+     * Scope for filtering specifically by Route or Passenger Name
+     */
+    public function scopeFilterRoute($query, ?string $route)
+    {
+        if (empty($route)) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($route) {
+            $q->where('origin', 'like', "%{$route}%")
+                ->orWhere('destination', 'like', "%{$route}%")
+                ->orWhere('passenger_name', 'like', "%{$route}%");
+        });
+    }
+
+    /**
+     * Scope for filtering specifically by Booker or Payer Name
+     */
+    public function scopeFilterPerson($query, ?string $person)
+    {
+        if (empty($person)) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($person) {
+            $q->where('booked_by', 'like', "%{$person}%")
+                ->orWhere('paid_by', 'like', "%{$person}%");
+        });
+    }
+
+    /**
      * Scope for transport type filter (supports single string or array of strings)
      */
     public function scopeFilterTransport($query, string|array|null $transport)

@@ -39,6 +39,9 @@ class TicketHistoryController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $searchCode = $request->input('search_code');
+        $searchRoute = $request->input('search_route');
+        $searchPerson = $request->input('search_person');
         $transportType = array_values(array_filter((array) $request->input('transport_type', [])));
         $status = array_values(array_filter((array) $request->input('status', [])));
         $dateFrom = $request->input('date_from');
@@ -47,6 +50,9 @@ class TicketHistoryController extends Controller
         $query = TicketHistory::query()
             ->with(['bookerUser', 'payerUser', 'statusLogs'])
             ->search($search)
+            ->filterCode($searchCode)
+            ->filterRoute($searchRoute)
+            ->filterPerson($searchPerson)
             ->filterTransport($transportType)
             ->filterStatus($status);
 
@@ -77,6 +83,9 @@ class TicketHistoryController extends Controller
         return view('tickets.index', compact(
             'tickets',
             'search',
+            'searchCode',
+            'searchRoute',
+            'searchPerson',
             'transportType',
             'status',
             'dateFrom',
@@ -380,6 +389,9 @@ class TicketHistoryController extends Controller
     public function exportCsv(Request $request)
     {
         $search = $request->input('search');
+        $searchCode = $request->input('search_code');
+        $searchRoute = $request->input('search_route');
+        $searchPerson = $request->input('search_person');
         $transportType = array_values(array_filter((array) $request->input('transport_type', [])));
         $status = array_values(array_filter((array) $request->input('status', [])));
         $dateFrom = $request->input('date_from');
@@ -387,6 +399,9 @@ class TicketHistoryController extends Controller
 
         $query = TicketHistory::query()
             ->search($search)
+            ->filterCode($searchCode)
+            ->filterRoute($searchRoute)
+            ->filterPerson($searchPerson)
             ->filterTransport($transportType)
             ->filterStatus($status);
 

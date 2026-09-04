@@ -29,17 +29,17 @@
                             <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'code') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Kode Tiket</span>
-                                    <button type="button" @click="openPop = (openPop === 'code' ? null : 'code')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $search ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kode Tiket">
+                                    <button type="button" @click="openPop = (openPop === 'code' ? null : 'code')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchCode ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kode Tiket">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
                                 <!-- Popover Filter Kode Tiket -->
                                 <div x-show="openPop === 'code'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
-                                        <span>Filter Keyword / Kode</span>
-                                        <i class="fa-solid fa-magnifying-glass text-sky-400"></i>
+                                        <span>Filter Kode Tiket</span>
+                                        <i class="fa-solid fa-ticket text-sky-400"></i>
                                     </div>
-                                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari kode, kota, nama..." class="w-full h-9 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
+                                    <input type="text" name="search_code" value="{{ $searchCode }}" placeholder="Cari kode tiket..." class="w-full h-9 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
                                     <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
                                         <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">
                                             Terapkan
@@ -84,7 +84,7 @@
                             <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'route') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Rute & Penumpang</span>
-                                    <button type="button" @click="openPop = (openPop === 'route' ? null : 'route')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $search ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Rute & Penumpang">
+                                    <button type="button" @click="openPop = (openPop === 'route' ? null : 'route')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchRoute ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Rute & Penumpang">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
@@ -94,7 +94,7 @@
                                         <span>Cari Kota / Penumpang</span>
                                         <i class="fa-solid fa-route text-sky-400"></i>
                                     </div>
-                                    <input type="text" name="search" value="{{ $search }}" placeholder="Contoh: Jakarta, Luqman..." class="w-full h-9 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
+                                    <input type="text" name="search_route" value="{{ $searchRoute }}" placeholder="Contoh: Jakarta, Luqman..." class="w-full h-9 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
                                     <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
                                         <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">
                                             Terapkan
@@ -141,7 +141,7 @@
                             <th class="py-3.5 px-4 whitespace-nowrap relative" @click.outside="if (openPop === 'person') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Pemesan & Pembayar</span>
-                                    <button type="button" @click="openPop = (openPop === 'person' ? null : 'person')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $search ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pemesan & Pembayar">
+                                    <button type="button" @click="openPop = (openPop === 'person' ? null : 'person')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchPerson ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pemesan & Pembayar">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
                                 </div>
@@ -151,7 +151,7 @@
                                         <span>Cari Pemesan / Pembayar</span>
                                         <i class="fa-solid fa-user-check text-sky-400"></i>
                                     </div>
-                                    <input type="text" name="search" value="{{ $search }}" placeholder="Nama pemesan / pembayar..." class="w-full h-9 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
+                                    <input type="text" name="search_person" value="{{ $searchPerson }}" placeholder="Nama pemesan / pembayar..." class="w-full h-9 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
                                     <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
                                         <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">
                                             Terapkan
@@ -201,7 +201,7 @@
                             <th class="py-3.5 px-4 text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <span>Aksi</span>
-                                    @if($search || !empty($transportType) || !empty($status) || $dateFrom || $dateTo)
+                                    @if($search || $searchCode || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateFrom || $dateTo)
                                         <a href="{{ route('tickets.index') }}" class="px-2 py-0.5 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-mono normal-case transition-colors inline-flex items-center gap-1" title="Reset Semua Filter">
                                             <i class="fa-solid fa-rotate-left text-[9px]"></i> Reset
                                         </a>
