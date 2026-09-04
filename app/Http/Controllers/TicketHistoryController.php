@@ -235,6 +235,8 @@ class TicketHistoryController extends Controller
     {
         Gate::authorize('update', $ticket);
 
+        $ticket->load(['bookerUser', 'payerUser', 'statusLogs']);
+
         $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
         $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
         $users = User::orderBy('name')->get();
