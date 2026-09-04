@@ -95,7 +95,7 @@
                                          }
                                      }" x-init="initPicker()">
                                     <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
-                                        <span>Pilih Rentang Tanggal SPK</span>
+                                        <span>Pilih Rentang Tanggal Tiket</span>
                                         <i class="fa-regular fa-calendar-days text-sky-400"></i>
                                     </div>
                                     <input type="hidden" name="date_from" :value="dateFrom">
