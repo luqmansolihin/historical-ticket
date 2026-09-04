@@ -10,7 +10,7 @@
         <!-- ERP Data Grid Action Toolbar -->
         <div class="px-4 py-2.5 bg-slate-900/90 border-b border-slate-800/80 flex items-center justify-between gap-2 shrink-0">
             <div class="text-xs text-slate-400 font-mono hidden sm:block">
-                <i class="fa-solid fa-mouse-pointer text-sky-400 mr-1"></i> Double klik pada baris tabel untuk mengedit data
+                <i class="fa-solid fa-mouse-pointer text-sky-400 mr-1"></i> Double klik baris tabel untuk edit atau lihat Boarding Pass
             </div>
 
             <div class="flex items-center gap-2 ml-auto">
@@ -290,9 +290,42 @@
                     </thead>
                     <tbody class="divide-y divide-slate-800/60 whitespace-nowrap font-sans">
                         @forelse($tickets as $ticket)
-                            <tr @dblclick="window.location.href = '{{ route('tickets.edit', $ticket->id) }}'"
-                                class="hover:bg-sky-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
-                                title="Double klik untuk mengedit data tiket {{ $ticket->ticket_code }}">
+                            @can('update', $ticket)
+                                <tr @dblclick="window.location.href = '{{ route('tickets.edit', $ticket->id) }}'"
+                                    class="hover:bg-sky-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
+                                    title="Double klik untuk mengedit data tiket {{ $ticket->ticket_code }}">
+                            @else
+                                <tr @dblclick="selectedTicket = {{ json_encode([
+                                        'ticket_code' => $ticket->ticket_code,
+                                        'ticket_date' => $ticket->ticket_date->format('d M Y'),
+                                        'origin' => $ticket->origin,
+                                        'destination' => $ticket->destination,
+                                        'transport_type' => $ticket->transport_type,
+                                        'passenger_display' => implode(', ', $ticket->passengers_list) ?: $ticket->passenger_name,
+                                        'passengers_list' => $ticket->passengers_list,
+                                        'passenger_count' => $ticket->passenger_count,
+                                        'booked_by' => $ticket->booked_by,
+                                        'paid_by' => $ticket->paid_by,
+                                        'payment_date' => $ticket->payment_date ? $ticket->payment_date->format('d M Y') : '-',
+                                        'amount' => $ticket->formatted_amount,
+                                        'status' => $ticket->status,
+                                        'status_badge' => $ticket->status_badge_class,
+                                        'notes' => $ticket->notes ?? '-',
+                                        'attachment_url' => $ticket->attachment_path ? asset('storage/' . $ticket->attachment_path) : null,
+                                        'pdf_url' => route('tickets.pdf', $ticket->id),
+                                        'status_logs' => $ticket->statusLogs->map(fn($log) => [
+                                            'to_status' => $log->to_status,
+                                            'from_status' => $log->from_status,
+                                            'user_name' => $log->user_name,
+                                            'user_role' => ucfirst($log->user_role),
+                                            'notes' => $log->notes,
+                                            'date' => $log->created_at->format('d M Y, H:i'),
+                                            'badge' => $log->status_badge_class,
+                                        ])
+                                    ]) }}; showModal = true"
+                                    class="hover:bg-sky-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
+                                    title="Double klik untuk melihat Boarding Pass {{ $ticket->ticket_code }}">
+                            @endcan
                                 <!-- 1. Kode Tiket -->
                                 <td class="py-2.5 px-3 font-mono font-semibold text-sky-400 whitespace-nowrap border-r border-slate-800/40">
                                     {{ $ticket->ticket_code }}
@@ -384,6 +417,156 @@
                 </div>
             @endif
         </form>
+    </div>
+
+    <!-- Boarding Pass Preview Modal (Smart Double Click Fallback) -->
+    <div x-cloak x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showModal = false" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity no-print"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div id="modal-boarding-pass-card" x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-800 relative printable-card">
+                <template x-if="selectedTicket">
+                    <div class="p-0">
+                        <div class="bg-gradient-to-r from-sky-600 to-indigo-700 p-6 text-white relative overflow-hidden">
+                            <div class="absolute -right-6 -bottom-6 text-white/10 text-9xl font-bold font-mono select-none">
+                                TCK
+                            </div>
+
+                            <div class="flex items-center justify-between relative z-10">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-lg">
+                                        <i class="fa-solid fa-ticket"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-sky-200 uppercase font-mono tracking-wider">E-TICKET BOARDING PASS</p>
+                                        <h3 class="font-mono font-bold text-lg" x-text="selectedTicket.ticket_code"></h3>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 no-print">
+                                    <a :href="selectedTicket.pdf_url" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm" title="Download / Cetak Boarding Pass Versi PDF">
+                                        <i class="fa-solid fa-file-pdf"></i> Download PDF
+                                    </a>
+                                    <button type="button" @click="showModal = false" class="w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center text-white transition-colors">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 pt-4 border-t border-white/20 flex items-center justify-between">
+                                <div class="text-left">
+                                    <span class="text-xs text-sky-200 block uppercase">Dari (Origin)</span>
+                                    <span class="font-display text-xl font-bold text-white block mt-0.5" x-text="selectedTicket.origin"></span>
+                                </div>
+                                <div class="px-4 text-center">
+                                    <i class="fa-solid fa-plane-departure text-xl text-sky-300"></i>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-sky-200 block uppercase">Ke (Destination)</span>
+                                    <span class="font-display text-xl font-bold text-white block mt-0.5" x-text="selectedTicket.destination"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 space-y-5 bg-slate-900">
+                            <!-- Passengers Section in Modal -->
+                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
+                                        <i class="fa-solid fa-users text-sky-400"></i> Daftar Penumpang
+                                    </span>
+                                    <span class="text-xs font-mono font-semibold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/30" x-text="selectedTicket.passenger_count + ' Penumpang'"></span>
+                                </div>
+                                <div class="space-y-1">
+                                    <template x-for="(name, idx) in selectedTicket.passengers_list" :key="idx">
+                                        <div class="flex items-center gap-2 text-sm text-slate-100 font-medium py-1 border-b border-slate-800/40 last:border-0">
+                                            <span class="text-xs font-mono text-slate-500" x-text="(idx + 1) + '.'"></span>
+                                            <span x-text="name"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Tanggal Keberangkatan</span>
+                                    <span class="text-sm font-semibold text-sky-400 mt-0.5 block" x-text="selectedTicket.ticket_date"></span>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Moda Transportasi</span>
+                                    <span class="text-sm font-semibold text-slate-200 mt-0.5 block" x-text="selectedTicket.transport_type"></span>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Status Pembayaran</span>
+                                    <span class="inline-block mt-1 px-2.5 py-0.5 text-xs font-semibold rounded-full border" :class="selectedTicket.status_badge" x-text="selectedTicket.status"></span>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Harga / Biaya Tiket</span>
+                                    <span class="text-base font-bold text-emerald-400 font-mono mt-0.5 block" x-text="selectedTicket.amount"></span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Pemesan Tiket</span>
+                                    <span class="text-sm font-medium text-indigo-300 mt-0.5 block" x-text="selectedTicket.booked_by"></span>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Pembayaran Oleh</span>
+                                    <span class="text-sm font-medium text-emerald-300 mt-0.5 block" x-text="selectedTicket.paid_by"></span>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Tanggal Pembayaran</span>
+                                    <span class="text-sm font-medium text-slate-300 mt-0.5 block" x-text="selectedTicket.payment_date"></span>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800/80">
+                                <span class="text-xs text-slate-400 block font-medium">Catatan / Keterangan</span>
+                                <p class="text-xs text-slate-300 mt-1 leading-relaxed italic" x-text="selectedTicket.notes"></p>
+                            </div>
+
+                            <!-- Status Log Timeline in Modal -->
+                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-slate-400 flex items-center gap-1.5 font-semibold uppercase tracking-wider">
+                                        <i class="fa-solid fa-list-check text-sky-400"></i> Riwayat Step Status Tiket
+                                    </span>
+                                    <span class="text-[10px] text-slate-500 font-mono">Sequential Log</span>
+                                </div>
+                                <div class="relative pl-6 space-y-3 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-800">
+                                    <template x-for="(log, lIdx) in selectedTicket.status_logs" :key="lIdx">
+                                        <div class="relative">
+                                            <div class="absolute -left-6 top-0.5 w-5 h-5 rounded-full bg-slate-900 border-2 border-sky-400 flex items-center justify-center text-[10px] font-mono font-bold text-sky-300" x-text="lIdx + 1"></div>
+                                            <div>
+                                                <div class="flex items-center gap-1.5 flex-wrap">
+                                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold border" :class="log.badge" x-text="log.to_status"></span>
+                                                    <template x-if="log.from_status">
+                                                        <span class="text-[10px] text-slate-500 font-mono" x-text="'(dari ' + log.from_status + ')'"></span>
+                                                    </template>
+                                                </div>
+                                                <p class="text-xs text-slate-300 mt-0.5 leading-relaxed" x-text="log.notes"></p>
+                                                <span class="text-[10px] text-slate-500 font-mono mt-0.5 block" x-text="log.user_name + ' (' + log.user_role + ') • ' + log.date"></span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <template x-if="selectedTicket.attachment_url">
+                                <div class="pt-2">
+                                    <a :href="selectedTicket.attachment_url" target="_blank" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 text-xs font-semibold transition-colors w-full justify-center">
+                                        <i class="fa-solid fa-paperclip"></i>
+                                        <span>Lihat Dokumen / Bukti Lampiran Original</span>
+                                    </a>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
