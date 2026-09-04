@@ -38,15 +38,14 @@ class UserController extends Controller
         // Summary Statistics
         $totalUsers = User::count();
         $totalAdmin = User::where('role', 'admin')->count();
-        $totalBooker = User::where('role', 'booker')->count();
-        $totalPayer = User::where('role', 'payer')->count();
+        $totalBooker = User::whereIn('role', ['booker', 'payer'])->count();
         $totalRegularUser = User::where('role', 'user')->count();
 
         $users = $query->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
 
-        $roleOptions = ['admin', 'booker', 'payer', 'user'];
+        $roleOptions = ['admin', 'booker', 'user'];
 
         return view('users.index', compact(
             'users',
@@ -55,7 +54,6 @@ class UserController extends Controller
             'totalUsers',
             'totalAdmin',
             'totalBooker',
-            'totalPayer',
             'totalRegularUser',
             'roleOptions'
         ));
@@ -70,7 +68,7 @@ class UserController extends Controller
             abort(403, 'Akses ditolak. Fitur kelola akun khusus untuk Admin.');
         }
 
-        $roles = ['admin', 'booker', 'payer', 'user'];
+        $roles = ['admin', 'booker', 'user'];
         return view('users.edit', compact('user', 'roles'));
     }
 
@@ -86,7 +84,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'role' => 'required|string|in:admin,booker,payer,user',
+            'role' => 'required|string|in:admin,booker,user',
             'password' => 'nullable|string|min:6',
         ]);
 

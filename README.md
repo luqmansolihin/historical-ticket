@@ -1,6 +1,6 @@
 # TicketTrace — Historical Ticket Management System 🎫✈️🚆
 
-> **TicketTrace** adalah sistem manajemen & rekapitulasi histori tiket perjalanan dinas perusahaan berbasis Laravel 11. Dilengkapi dengan otorisasi berbasis Role (*Admin*, *Booker*, *Payer*, *User*), filter multiple selection, log aktivitas perubahan status, tampilan E-Ticket Boarding Pass, serta ekspor CSV.
+> **TicketTrace** adalah sistem manajemen & rekapitulasi histori tiket perjalanan dinas perusahaan berbasis Laravel 11. Dilengkapi dengan otorisasi berbasis Role (*Admin*, *Booker & Payer*, *User*), filter multiple selection, log aktivitas perubahan status, tampilan E-Ticket Boarding Pass, serta ekspor CSV.
 
 ---
 
@@ -9,7 +9,7 @@
 - **📊 Dashboard Analytics & Statistics Cards**
   - Ringkasan total pengeluaran biaya tiket, total tiket terdaftar, tiket berstatus Lunas, Belum Bayar, dan Dibatalkan.
 - **🔍 Dynamic Multi-Select Search & Filter Toolbar**
-  - Pencarian kata kunci fleksibel (*Kode Tiket*, *Rute*, *Nama Penumpang*, *Booker*, *Payer*).
+  - Pencarian kata kunci fleksibel (*Kode Tiket*, *Rute*, *Nama Penumpang*, *Booker & Payer*).
   - Multi-select dropdown interaktif berbasis Alpine.js untuk **Moda Transportasi** (*Pesawat, Kereta Api, Bus, Travel, Kapal Laut, Mobil/Rental*) dan **Status Pembayaran** (*Lunas, Belum Bayar, Dibatalkan*).
   - Penyaringan tanggal keberangkatan (*Dari Tanggal* & *Sampai Tanggal*).
 - **🎫 E-Ticket Boarding Pass View & Print**
@@ -30,15 +30,15 @@
 
 ## 🛡️ Matriks Hak Akses Berdasarkan Role
 
-| Fitur / Hak Akses | Admin 🛡️ | Booker 📝 | Payer 💳 | User Regular 👤 |
-|---|:---:|:---:|:---:|:---:|
-| **Lihat Daftar & Detail Tiket** | ✅ | ✅ | ✅ | ✅ |
-| **Tambah Tiket Baru** | ✅ | ✅ *(Status awal Belum Bayar)* | ❌ | ❌ |
-| **Edit Tiket Status "Belum Bayar"** | ✅ | ✅ *(Field pembayar di-hide)* | ✅ *(Bisa ubah ke Lunas)* | ❌ |
-| **Edit Tiket Status "Lunas"** | ✅ | ⚠️ *Read-only* *(Hanya bisa Dibatalkan)* | ⚠️ *Read-only* *(Bisa edit tgl bayar & Dibatalkan)* | ❌ |
-| **Edit Tiket Status "Dibatalkan"** | ✅ | ❌ *(Terkunci Permanen)* | ❌ *(Terkunci Permanen)* | ❌ |
-| **Hapus Data Tiket** | ✅ *(Semua Status)* | ⚠️ *(Hanya status Belum Bayar)* | ⚠️ *(Hanya status Belum Bayar)* | ❌ |
-| **Kelola Akun (User Management)** | ✅ | ❌ | ❌ | ❌ |
+| Fitur / Hak Akses | Admin 🛡️ | Booker & Payer 📝💳 | User Regular 👤 |
+|---|:---:|:---:|:---:|
+| **Lihat Daftar & Detail Tiket** | ✅ | ✅ | ✅ |
+| **Tambah Tiket Baru** | ✅ | ✅ *(Belum Bayar / Lunas)* | ❌ |
+| **Edit Tiket Status "Belum Bayar"** | ✅ | ✅ *(Bisa ubah rute, biaya, & konfirmasi Lunas)* | ❌ |
+| **Edit Tiket Status "Lunas"** | ✅ | ⚠️ *Read-only* *(Bisa edit tgl bayar & Dibatalkan)* | ❌ |
+| **Edit Tiket Status "Dibatalkan"** | ✅ | ❌ *(Terkunci Permanen)* | ❌ |
+| **Hapus Data Tiket** | ✅ *(Semua Status)* | ⚠️ *(Hanya status Belum Bayar)* | ❌ |
+| **Kelola Akun (User Management)** | ✅ | ❌ | ❌ |
 
 ---
 

@@ -6,12 +6,10 @@
 @php
     $isAdmin = Auth::user()->isAdmin();
     $isBooker = Auth::user()->isBooker() && !$isAdmin;
-    $isPayer = Auth::user()->isPayer() && !$isAdmin;
     $isLunas = $ticket->status === 'Lunas';
     
     $isBookerLunas = $isBooker && $isLunas;
-    $isPayerLunas = $isPayer && $isLunas;
-    $isDataLocked = ($isBookerLunas || $isPayerLunas);
+    $isDataLocked = $isBookerLunas;
     
     $isBookerUnpaid = $isBooker && $ticket->status === 'Belum Bayar';
 @endphp
@@ -30,16 +28,8 @@
             <div class="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-3">
                 <i class="fa-solid fa-lock text-xl text-amber-400 shrink-0"></i>
                 <div>
-                    <span class="font-bold block text-sm">Tiket Berstatus Lunas — Mode Read-Only (Booker)</span>
-                    <span>Data rute, penumpang, dan biaya tiket telah dikunci karena pembayaran sudah <strong>Lunas</strong>. Sebagai Booker, Anda hanya diperbolehkan mengubah status menjadi <strong>Dibatalkan</strong> jika terjadi pembatalan.</span>
-                </div>
-            </div>
-        @elseif($isPayerLunas)
-            <div class="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-3">
-                <i class="fa-solid fa-lock text-xl text-amber-400 shrink-0"></i>
-                <div>
-                    <span class="font-bold block text-sm">Tiket Berstatus Lunas — Mode Pembatasan Akses (Payer)</span>
-                    <span>Data rute, penumpang, dan biaya tiket telah dikunci. Sebagai Payer, Anda hanya diperbolehkan mengedit <strong>Tanggal Pembayaran</strong> atau mengubah status menjadi <strong>Dibatalkan</strong>.</span>
+                    <span class="font-bold block text-sm">Tiket Berstatus Lunas — Mode Pembatasan Akses (Booker & Payer)</span>
+                    <span>Data rute, penumpang, dan biaya tiket telah dikunci karena pembayaran sudah <strong>Lunas</strong>. Sebagai Booker & Payer, Anda diperbolehkan mengedit <strong>Tanggal Pembayaran</strong> atau mengubah status menjadi <strong>Dibatalkan</strong>.</span>
                 </div>
             </div>
         @endif
@@ -218,47 +208,30 @@
                     @endif
 
                     <!-- Payer & Payment Date info logic -->
-                    @if($isBookerUnpaid)
-                        <!-- Hidden payment fields for Booker when status is Belum Bayar -->
-                        <input type="hidden" name="paid_by" value="{{ $ticket->paid_by ?: '-' }}">
-                        <input type="hidden" name="paid_by_user_id" value="{{ $ticket->paid_by_user_id }}">
-                        <input type="hidden" name="payment_date" value="">
-                    @elseif($isBookerLunas)
-                        <!-- Read-only payment info for Booker when status is Lunas -->
-                        <div class="md:col-span-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <span class="text-xs text-slate-400 block">Pembayaran Oleh</span>
-                                <span class="text-sm font-semibold text-emerald-400 mt-0.5 block">{{ $ticket->paid_by ?: '-' }}</span>
-                            </div>
-                            <div>
-                                <span class="text-xs text-slate-400 block">Tanggal Pembayaran</span>
-                                <span class="text-sm font-semibold text-slate-200 mt-0.5 block">{{ $ticket->payment_date ? $ticket->payment_date->format('d M Y') : '-' }}</span>
-                            </div>
-                        </div>
-                    @elseif($isPayer)
-                        <!-- Payer Auto-Linked Card & Editable Payment Date -->
-                        <div class="md:col-span-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+                    @if($isBooker)
+                        <!-- Booker & Payer Auto-Linked Card & Editable Payment Date -->
+                        <div class="md:col-span-2 bg-sky-500/10 border border-sky-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm shrink-0">
+                                <div class="w-10 h-10 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-sm shrink-0">
                                     <i class="fa-solid fa-credit-card"></i>
                                 </div>
                                 <div>
-                                    <div class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Pembayaran Oleh (Payer Terhubung)</div>
+                                    <div class="text-xs text-sky-400 font-semibold uppercase tracking-wider">Pembayaran Oleh (Booker & Payer)</div>
                                     <div class="text-sm font-bold text-white flex items-center gap-2">
-                                        {{ Auth::user()->name }}
-                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
-                                            ID: #{{ Auth::id() }} • {{ ucfirst(Auth::user()->role) }}
+                                        {{ $ticket->paid_by && $ticket->paid_by !== '-' ? $ticket->paid_by : Auth::user()->name }}
+                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-400/20 text-sky-300 border border-sky-400/30">
+                                            Booker & Payer
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                            <input type="hidden" name="paid_by" value="{{ Auth::user()->name }}">
-                            <input type="hidden" name="paid_by_user_id" value="{{ Auth::id() }}">
+                            <input type="hidden" name="paid_by" value="{{ $ticket->paid_by && $ticket->paid_by !== '-' ? $ticket->paid_by : Auth::user()->name }}">
+                            <input type="hidden" name="paid_by_user_id" value="{{ $ticket->paid_by_user_id ?: Auth::id() }}">
                         </div>
 
                         <div class="md:col-span-2">
                             <label for="payment_date" class="block text-xs font-medium text-slate-300 mb-1.5">
-                                Tanggal Pembayaran <span class="text-slate-400">(Dapat Diubah)</span>
+                                Tanggal Pembayaran <span class="text-slate-400">(Wajib diisi jika status Lunas)</span>
                             </label>
                             <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date', $ticket->payment_date ? $ticket->payment_date->format('Y-m-d') : '') }}" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('payment_date') border-rose-500 @enderror">
                             @error('payment_date')
@@ -324,24 +297,11 @@
                             <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
                                 @if($ticket->status === 'Lunas')
                                     <option value="Lunas" {{ old('status', $ticket->status) == 'Lunas' ? 'selected' : '' }}>Lunas (Status Saat Ini)</option>
+                                    <option value="Dibatalkan" {{ old('status', $ticket->status) == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
                                 @else
-                                    <option value="Belum Bayar" {{ old('status', $ticket->status) == 'Belum Bayar' ? 'selected' : '' }}>Belum Bayar</option>
-                                @endif
-                                <option value="Dibatalkan" {{ old('status', $ticket->status) == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
-                            </select>
-                        @elseif($isPayer)
-                            <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
-                                @if($ticket->status === 'Belum Bayar')
                                     <option value="Belum Bayar" {{ old('status', $ticket->status) == 'Belum Bayar' ? 'selected' : '' }}>Belum Bayar</option>
                                     <option value="Lunas" {{ old('status', $ticket->status) == 'Lunas' ? 'selected' : '' }}>Lunas (Konfirmasi Pembayaran)</option>
                                     <option value="Dibatalkan" {{ old('status', $ticket->status) == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
-                                @elseif($ticket->status === 'Lunas')
-                                    <option value="Lunas" {{ old('status', $ticket->status) == 'Lunas' ? 'selected' : '' }}>Lunas (Status Saat Ini)</option>
-                                    <option value="Dibatalkan" {{ old('status', $ticket->status) == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
-                                @else
-                                    @foreach($statusOptions as $optStatus)
-                                        <option value="{{ $optStatus }}" {{ old('status', $ticket->status) == $optStatus ? 'selected' : '' }}>{{ $optStatus }}</option>
-                                    @endforeach
                                 @endif
                             </select>
                         @else

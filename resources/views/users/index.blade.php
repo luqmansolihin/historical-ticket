@@ -21,7 +21,7 @@
     </div>
 
     <!-- Summary Stats Cards -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div class="glass-card p-4 rounded-2xl border-l-4 border-l-sky-500">
             <span class="text-xs font-semibold text-slate-400 block uppercase">Total Akun</span>
             <div class="font-display text-2xl font-bold text-white mt-1">{{ number_format($totalUsers) }}</div>
@@ -33,14 +33,9 @@
             <span class="text-[10px] text-amber-500/80 font-mono mt-1 block">Full Access</span>
         </div>
         <div class="glass-card p-4 rounded-2xl border-l-4 border-l-sky-400">
-            <span class="text-xs font-semibold text-sky-400 block uppercase">Booker</span>
+            <span class="text-xs font-semibold text-sky-400 block uppercase">Booker & Payer</span>
             <div class="font-display text-2xl font-bold text-sky-300 mt-1">{{ number_format($totalBooker) }}</div>
-            <span class="text-[10px] text-sky-500/80 font-mono mt-1 block">Pemesan Tiket</span>
-        </div>
-        <div class="glass-card p-4 rounded-2xl border-l-4 border-l-emerald-500">
-            <span class="text-xs font-semibold text-emerald-400 block uppercase">Payer</span>
-            <div class="font-display text-2xl font-bold text-emerald-300 mt-1">{{ number_format($totalPayer) }}</div>
-            <span class="text-[10px] text-emerald-500/80 font-mono mt-1 block">Pembayaran Oleh</span>
+            <span class="text-[10px] text-sky-500/80 font-mono mt-1 block">Pemesan & Pembayar</span>
         </div>
         <div class="glass-card p-4 rounded-2xl border-l-4 border-l-slate-600">
             <span class="text-xs font-semibold text-slate-400 block uppercase">User Regular</span>
@@ -67,7 +62,9 @@
                 <select name="role" class="w-full glass-input rounded-xl px-3 py-2.5 text-sm bg-slate-900 capitalize">
                     <option value="">Semua Role</option>
                     @foreach($roleOptions as $roleOpt)
-                        <option value="{{ $roleOpt }}" {{ $roleFilter == $roleOpt ? 'selected' : '' }}>{{ ucfirst($roleOpt) }}</option>
+                        <option value="{{ $roleOpt }}" {{ $roleFilter == $roleOpt ? 'selected' : '' }}>
+                            {{ $roleOpt === 'booker' ? 'Booker & Payer' : ucfirst($roleOpt) }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -126,14 +123,12 @@
                                 <span class="px-3 py-1 rounded-full text-xs font-semibold border inline-flex items-center gap-1.5 capitalize {{ $userItem->role_badge_class }}">
                                     @if($userItem->isAdmin())
                                         <i class="fa-solid fa-shield-halved text-amber-400 text-[10px]"></i>
-                                    @elseif($userItem->role === 'booker')
+                                    @elseif($userItem->role === 'booker' || $userItem->role === 'payer')
                                         <i class="fa-solid fa-user-check text-sky-400 text-[10px]"></i>
-                                    @elseif($userItem->role === 'payer')
-                                        <i class="fa-solid fa-credit-card text-emerald-400 text-[10px]"></i>
                                     @else
                                         <i class="fa-solid fa-user text-slate-400 text-[10px]"></i>
                                     @endif
-                                    {{ ucfirst($userItem->role) }}
+                                    {{ $userItem->role === 'booker' || $userItem->role === 'payer' ? 'Booker & Payer' : ucfirst($userItem->role) }}
                                 </span>
                             </td>
                             <td class="py-4 px-5 text-slate-400 text-xs font-mono">

@@ -35,7 +35,7 @@ class TicketHistoryPolicy
 
     /**
      * Determine whether the user can update the ticket record.
-     * Admin, Booker who booked it, or Payer assigned to it. Regular 'user' CANNOT edit.
+     * Admin, Booker (who booked it or is handling payment). Regular 'user' CANNOT edit.
      */
     public function update(User $user, TicketHistory $ticket): bool
     {
@@ -48,19 +48,16 @@ class TicketHistoryPolicy
             return false;
         }
 
-        // Non-admin users (Booker & Payer) CANNOT edit tickets that are already canceled ('Dibatalkan')
+        // Non-admin users CANNOT edit tickets that are already canceled ('Dibatalkan')
         if ($ticket->status === 'Dibatalkan') {
             return false;
         }
 
-        // Booker who booked this ticket can edit it
-        if ($user->role === 'booker' && $ticket->booked_by_user_id && $ticket->booked_by_user_id === $user->id) {
-            return true;
-        }
-
-        // Payer can edit tickets assigned to them OR unpaid tickets (where paid_by_user_id is null)
-        if (($user->role === 'payer' || $user->isPayer()) && ($ticket->paid_by_user_id === $user->id || $ticket->paid_by_user_id === null || $ticket->status === 'Belum Bayar')) {
-            return true;
+        // Booker (merangkap Payer) who booked this ticket, is assigned as payer, or for unpaid tickets
+        if ($user->isBooker() || $user->isPayer()) {
+            if ($ticket->booked_by_user_id === $user->id || $ticket->paid_by_user_id === $user->id || $ticket->paid_by_user_id === null || $ticket->status === 'Belum Bayar') {
+                return true;
+            }
         }
 
         return false;
@@ -79,12 +76,12 @@ class TicketHistoryPolicy
             return false;
         }
 
-        return $user->role === 'payer' && ($ticket->paid_by_user_id === $user->id || $ticket->paid_by_user_id === null);
+        return ($user->isBooker() || $user->isPayer()) && ($ticket->paid_by_user_id === $user->id || $ticket->paid_by_user_id === null);
     }
 
     /**
      * Determine whether the user can delete the ticket record.
-     * Admin can delete any ticket. Booker and Payer can delete tickets if status is 'Belum Bayar'.
+     * Admin can delete any ticket. Booker (merangkap Payer) can delete tickets if status is 'Belum Bayar'.
      */
     public function delete(User $user, TicketHistory $ticket): bool
     {

@@ -48,11 +48,9 @@
                             @if($rOption === 'admin')
                                 (Full Control System)
                             @elseif($rOption === 'booker')
-                                (Membuat & Mengelola Pemesanan Tiket)
-                            @elseif($rOption === 'payer')
-                                (Mengelola Pembayaran & Status Tiket)
+                                (Membuat, Mengelola Tiket & Pembayaran)
                             @else
-                                (Read-Only)
+                                (Read-Only Penumpang)
                             @endif
                         </option>
                     @endforeach

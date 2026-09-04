@@ -153,15 +153,13 @@
                                 <div class="hidden md:block text-left">
                                     <div class="text-xs font-semibold text-white leading-tight">{{ Auth::user()->name }}</div>
                                     <div class="text-[10px] font-mono text-sky-400 capitalize">
-                                        @if(Auth::user()->isAdmin())
-                                            🛡️ Admin
-                                        @elseif(Auth::user()->isBooker())
-                                            📝 Booker
-                                        @elseif(Auth::user()->isPayer())
-                                            💳 Payer
-                                        @else
-                                            👤 User
-                                        @endif
+                                         @if(Auth::user()->isAdmin())
+                                             🛡️ Admin
+                                         @elseif(Auth::user()->isBooker() || Auth::user()->role === 'payer')
+                                             📝 Booker & Payer
+                                         @else
+                                             👤 User
+                                         @endif
                                     </div>
                                 </div>
                                 <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>

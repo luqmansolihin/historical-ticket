@@ -11,7 +11,7 @@
         <h1 class="font-display text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-user-plus text-sky-400"></i> Buat Akun Pengguna Baru
         </h1>
-        <p class="text-slate-400 text-sm mt-1">Form pendaftaran akun khusus Administrator untuk menambahkan Booker, Payer, atau User Penumpang baru.</p>
+        <p class="text-slate-400 text-sm mt-1">Form pendaftaran akun khusus Administrator untuk menambahkan Booker & Payer atau User Penumpang baru.</p>
     </div>
 
     <div class="glass-card p-6 sm:p-8 rounded-2xl shadow-2xl">
@@ -21,9 +21,11 @@
             <!-- Nama Lengkap -->
             <div>
                 <label for="name" class="block text-xs font-semibold text-slate-300 mb-1.5">
-                    Nama Lengkap / Instansi <span class="text-rose-400">*</span>
+                    Nama Lengkap <span class="text-rose-400">*</span>
                 </label>
-                <input type="text" id="name" name="name" value="{{ old('name') }}" required placeholder="Contoh: Siti Nurhaliza (Sekretaris)" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('name') border-rose-500 @enderror">
+                <input type="text" id="name" name="name" value="{{ old('name') }}" required autofocus
+                    placeholder="Contoh: Siti Nurhaliza"
+                    class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('name') border-rose-500 @enderror">
                 @error('name')
                     <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                 @enderror
@@ -32,9 +34,11 @@
             <!-- Email -->
             <div>
                 <label for="email" class="block text-xs font-semibold text-slate-300 mb-1.5">
-                    Alamat Email (Untuk Login) <span class="text-rose-400">*</span>
+                    Alamat Email <span class="text-rose-400">*</span>
                 </label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="email@company.com" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('email') border-rose-500 @enderror">
+                <input type="email" id="email" name="email" value="{{ old('email') }}" required
+                    placeholder="Contoh: siti@corporate.com"
+                    class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('email') border-rose-500 @enderror">
                 @error('email')
                     <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                 @enderror
@@ -46,8 +50,7 @@
                     Peran Akun / Hak Akses (Role) <span class="text-rose-400">*</span>
                 </label>
                 <select id="role" name="role" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('role') border-rose-500 @enderror">
-                    <option value="booker" {{ old('role', 'booker') == 'booker' ? 'selected' : '' }}>📝 Booker / Pemesan Tiket (Sekretaris/Admin Pemesan)</option>
-                    <option value="payer" {{ old('role') == 'payer' ? 'selected' : '' }}>💳 Payer / Pembayar Tiket (Finance/Bendahara)</option>
+                    <option value="booker" {{ old('role', 'booker') == 'booker' ? 'selected' : '' }}>📝 Booker & Payer (Pemesan & Pembayar Tiket)</option>
                     <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>👤 User / Penumpang Perjalanan</option>
                     <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>🛡️ Admin Manager (Akses Penuh)</option>
                 </select>

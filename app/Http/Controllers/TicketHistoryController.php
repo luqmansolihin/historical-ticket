@@ -154,9 +154,13 @@ class TicketHistoryController extends Controller
             $validated['paid_by'] = '-';
         }
 
-        // Booker creates ticket with initial status 'Belum Bayar'
-        if (Auth::user()->role === 'booker' || !Auth::user()->isAdmin()) {
-            $validated['status'] = 'Belum Bayar';
+        // Booker (merangkap Payer) creating ticket logic:
+        if ($validated['status'] === 'Lunas') {
+            $validated['paid_by'] = Auth::user()->name;
+            $validated['paid_by_user_id'] = Auth::id();
+            if (empty($validated['payment_date'])) {
+                $validated['payment_date'] = now()->format('Y-m-d');
+            }
         }
 
         if ($request->hasFile('attachment')) {
@@ -262,19 +266,16 @@ class TicketHistoryController extends Controller
             $validated['booked_by_user_id'] = $ticket->booked_by_user_id;
         }
 
-        // Payer (non-admin) edit rules:
-        if (Auth::user()->role === 'payer' || (Auth::user()->isPayer() && !Auth::user()->isAdmin())) {
+        // Booker (merangkap Payer) non-admin edit rules:
+        if (!Auth::user()->isAdmin() && ($AuthUser = Auth::user()) && ($AuthUser->isBooker() || $AuthUser->isPayer())) {
             if ($ticket->status === 'Dibatalkan') {
                 return redirect()->route('tickets.show', $ticket->id)
                     ->with('error', 'Tiket yang berstatus Dibatalkan telah dikunci dan tidak dapat diubah kembali.');
             }
 
-            $validated['paid_by'] = Auth::user()->name;
-            $validated['paid_by_user_id'] = Auth::id();
-
             if ($ticket->status === 'Lunas') {
-                // When ticket status is Lunas, Payer can ONLY update payment_date and status (to Dibatalkan or Lunas).
-                // All other ticket data is locked to original values.
+                // When ticket status was already Lunas, lock original ticket data.
+                // Booker can edit payment_date or set status to Dibatalkan.
                 $validated['ticket_code'] = $ticket->ticket_code;
                 $validated['ticket_date'] = $ticket->ticket_date->format('Y-m-d');
                 $validated['origin'] = $ticket->origin;
@@ -285,6 +286,8 @@ class TicketHistoryController extends Controller
                 $validated['booked_by_user_id'] = $ticket->booked_by_user_id;
                 $validated['amount'] = $ticket->amount;
                 $validated['notes'] = $ticket->notes;
+                $validated['paid_by'] = $ticket->paid_by ?: Auth::user()->name;
+                $validated['paid_by_user_id'] = $ticket->paid_by_user_id ?: Auth::id();
 
                 if ($request->input('status') === 'Dibatalkan') {
                     $validated['status'] = 'Dibatalkan';
@@ -292,72 +295,29 @@ class TicketHistoryController extends Controller
                     $validated['status'] = 'Lunas';
                 }
             } else {
-                // Retain original booker info for unpaid tickets
-                $validated['booked_by'] = $ticket->booked_by;
-                $validated['booked_by_user_id'] = $ticket->booked_by_user_id;
-
-                // If Payer marks status as Lunas and payment_date is not specified, auto-fill with today's date
-                if ($validated['status'] === 'Lunas' && empty($validated['payment_date'])) {
-                    $validated['payment_date'] = now()->format('Y-m-d');
-                }
-            }
-        }
-
-        // Booker (non-admin) edit rules:
-        if (Auth::user()->role === 'booker' || (Auth::user()->isBooker() && !Auth::user()->isAdmin())) {
-            if ($ticket->status === 'Dibatalkan') {
-                return redirect()->route('tickets.show', $ticket->id)
-                    ->with('error', 'Tiket yang berstatus Dibatalkan telah dikunci dan tidak dapat diubah kembali.');
-            }
-
-            if ($ticket->status === 'Lunas') {
-                // For Lunas tickets, all original ticket data is locked. Booker can ONLY change status to 'Dibatalkan'.
-                $validated['ticket_code'] = $ticket->ticket_code;
-                $validated['ticket_date'] = $ticket->ticket_date->format('Y-m-d');
-                $validated['origin'] = $ticket->origin;
-                $validated['destination'] = $ticket->destination;
-                $validated['transport_type'] = $ticket->transport_type;
-                $validated['passenger_name'] = $ticket->passenger_name;
-                $validated['booked_by'] = $ticket->booked_by;
-                $validated['booked_by_user_id'] = $ticket->booked_by_user_id;
-                $validated['paid_by'] = $ticket->paid_by;
-                $validated['paid_by_user_id'] = $ticket->paid_by_user_id;
-                $validated['payment_date'] = $ticket->payment_date ? $ticket->payment_date->format('Y-m-d') : null;
-                $validated['amount'] = $ticket->amount;
-                $validated['notes'] = $ticket->notes;
-
-                if ($request->input('status') === 'Dibatalkan') {
-                    $validated['status'] = 'Dibatalkan';
-                } else {
-                    $validated['status'] = 'Lunas';
-                }
-            } else {
-                // For Belum Bayar tickets, hide payment info and restrict status choice to Belum Bayar or Dibatalkan
-                $validated['paid_by'] = $ticket->paid_by ?: '-';
-                $validated['paid_by_user_id'] = $ticket->paid_by_user_id;
-                $validated['payment_date'] = null;
-                $validated['booked_by'] = $ticket->booked_by;
-                $validated['booked_by_user_id'] = $ticket->booked_by_user_id;
-
-                if ($request->input('status') === 'Dibatalkan') {
+                // Status was Belum Bayar
+                if ($validated['status'] === 'Lunas') {
+                    $validated['paid_by'] = Auth::user()->name;
+                    $validated['paid_by_user_id'] = Auth::id();
+                    if (empty($validated['payment_date'])) {
+                        $validated['payment_date'] = now()->format('Y-m-d');
+                    }
+                } elseif ($validated['status'] === 'Dibatalkan') {
                     $validated['status'] = 'Dibatalkan';
                 } else {
                     $validated['status'] = 'Belum Bayar';
+                    $validated['paid_by'] = $ticket->paid_by ?: '-';
+                    $validated['paid_by_user_id'] = $ticket->paid_by_user_id;
+                    $validated['payment_date'] = null;
                 }
             }
         }
 
         // Strict Validation for Lunas Status:
         if ($validated['status'] === 'Lunas') {
-            if (Auth::user()->isPayer() && !Auth::user()->isAdmin()) {
+            if (empty($validated['paid_by_user_id']) || empty($validated['paid_by']) || $validated['paid_by'] === '-') {
                 $validated['paid_by'] = Auth::user()->name;
                 $validated['paid_by_user_id'] = Auth::id();
-            }
-
-            if (empty($validated['paid_by_user_id']) || empty($validated['paid_by']) || $validated['paid_by'] === '-') {
-                return back()->withErrors([
-                    'paid_by' => 'Untuk mengubah status menjadi Lunas, data Pembayaran Oleh wajib terisi dan terhubung dengan Akun Payer yang valid.',
-                ])->withInput();
             }
         }
 
