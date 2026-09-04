@@ -54,42 +54,37 @@ class TicketHistoryController extends Controller
         $passengerCountMin = $request->input('passenger_count_min');
         $passengerCountMax = $request->input('passenger_count_max');
 
-        // Date filters for Ticket Date (before, after, on)
-        $dateMode = $request->input('date_mode', 'on');
+        // Date filters for Ticket Date (after, before, on)
+        $dateAfter = $request->input('date_after', $request->input('date_from'));
+        $dateBefore = $request->input('date_before', $request->input('date_to'));
+        $dateOn = $request->input('date_on');
         $dateVal = $request->input('date_val');
-        $dateFrom = $request->input('date_from');
-        $dateTo = $request->input('date_to');
+        $dateMode = $request->input('date_mode');
 
-        // Fallback for date_from / date_to legacy query params
-        if (!$dateVal) {
-            if ($dateFrom && $dateTo && $dateFrom === $dateTo) {
-                $dateMode = 'on';
-                $dateVal = $dateFrom;
-            } elseif ($dateFrom && !$dateTo) {
-                $dateMode = 'after';
-                $dateVal = $dateFrom;
-            } elseif (!$dateFrom && $dateTo) {
-                $dateMode = 'before';
-                $dateVal = $dateTo;
+        if ($dateVal && !$dateAfter && !$dateBefore && !$dateOn) {
+            if ($dateMode === 'before') {
+                $dateBefore = $dateVal;
+            } elseif ($dateMode === 'after') {
+                $dateAfter = $dateVal;
+            } else {
+                $dateOn = $dateVal;
             }
         }
 
-        // Date filters for Payment Date (before, after, on)
-        $payDateMode = $request->input('pay_date_mode', 'on');
+        // Date filters for Payment Date (after, before, on)
+        $payDateAfter = $request->input('pay_date_after', $request->input('pay_date_from'));
+        $payDateBefore = $request->input('pay_date_before', $request->input('pay_date_to'));
+        $payDateOn = $request->input('pay_date_on');
         $payDateVal = $request->input('pay_date_val');
-        $payDateFrom = $request->input('pay_date_from');
-        $payDateTo = $request->input('pay_date_to');
+        $payDateMode = $request->input('pay_date_mode');
 
-        if (!$payDateVal) {
-            if ($payDateFrom && $payDateTo && $payDateFrom === $payDateTo) {
-                $payDateMode = 'on';
-                $payDateVal = $payDateFrom;
-            } elseif ($payDateFrom && !$payDateTo) {
-                $payDateMode = 'after';
-                $payDateVal = $payDateFrom;
-            } elseif (!$payDateFrom && $payDateTo) {
-                $payDateMode = 'before';
-                $payDateVal = $payDateTo;
+        if ($payDateVal && !$payDateAfter && !$payDateBefore && !$payDateOn) {
+            if ($payDateMode === 'before') {
+                $payDateBefore = $payDateVal;
+            } elseif ($payDateMode === 'after') {
+                $payDateAfter = $payDateVal;
+            } else {
+                $payDateOn = $payDateVal;
             }
         }
 
@@ -109,23 +104,27 @@ class TicketHistoryController extends Controller
             ->filterAmount($amountMin, $amountMax)
             ->filterPassengerCount($passengerCountMin, $passengerCountMax);
 
-        if ($dateVal) {
-            if ($dateMode === 'before') {
-                $query->whereDate('ticket_date', '<=', $dateVal);
-            } elseif ($dateMode === 'after') {
-                $query->whereDate('ticket_date', '>=', $dateVal);
-            } else {
-                $query->whereDate('ticket_date', '=', $dateVal);
+        // Apply Ticket Date Filters
+        if ($dateOn) {
+            $query->whereDate('ticket_date', '=', $dateOn);
+        } else {
+            if ($dateAfter) {
+                $query->whereDate('ticket_date', '>=', $dateAfter);
+            }
+            if ($dateBefore) {
+                $query->whereDate('ticket_date', '<=', $dateBefore);
             }
         }
 
-        if ($payDateVal) {
-            if ($payDateMode === 'before') {
-                $query->whereDate('payment_date', '<=', $payDateVal);
-            } elseif ($payDateMode === 'after') {
-                $query->whereDate('payment_date', '>=', $payDateVal);
-            } else {
-                $query->whereDate('payment_date', '=', $payDateVal);
+        // Apply Payment Date Filters
+        if ($payDateOn) {
+            $query->whereDate('payment_date', '=', $payDateOn);
+        } else {
+            if ($payDateAfter) {
+                $query->whereDate('payment_date', '>=', $payDateAfter);
+            }
+            if ($payDateBefore) {
+                $query->whereDate('payment_date', '<=', $payDateBefore);
             }
         }
 
@@ -143,14 +142,12 @@ class TicketHistoryController extends Controller
                 'searchPerson' => $searchPerson,
                 'transportType' => $transportType,
                 'status' => $status,
-                'dateMode' => $dateMode,
-                'dateVal' => $dateVal,
-                'dateFrom' => $dateFrom,
-                'dateTo' => $dateTo,
-                'payDateMode' => $payDateMode,
-                'payDateVal' => $payDateVal,
-                'payDateFrom' => $payDateFrom,
-                'payDateTo' => $payDateTo,
+                'dateAfter' => $dateAfter,
+                'dateBefore' => $dateBefore,
+                'dateOn' => $dateOn,
+                'payDateAfter' => $payDateAfter,
+                'payDateBefore' => $payDateBefore,
+                'payDateOn' => $payDateOn,
                 'amountMin' => $amountMin,
                 'amountMax' => $amountMax,
                 'passengerCountMin' => $passengerCountMin,
