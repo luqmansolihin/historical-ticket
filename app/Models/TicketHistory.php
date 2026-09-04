@@ -313,4 +313,37 @@ class TicketHistory extends Model
 
         return $query;
     }
+
+    /**
+     * Scope for filtering by passenger count range
+     */
+    public function scopeFilterPassengerCount($query, $min = null, $max = null)
+    {
+        if (($min !== null && $min !== '') || ($max !== null && $max !== '')) {
+            $expr = "(LENGTH(COALESCE(passenger_name, '')) - LENGTH(REPLACE(COALESCE(passenger_name, ''), ',', '')) + CASE WHEN COALESCE(passenger_name, '') = '' THEN 0 ELSE 1 END)";
+            if ($min !== null && $min !== '') {
+                $query->whereRaw("{$expr} >= ?", [(int) $min]);
+            }
+            if ($max !== null && $max !== '') {
+                $query->whereRaw("{$expr} <= ?", [(int) $max]);
+            }
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope for filtering payment date range
+     */
+    public function scopeFilterPayDate($query, $from = null, $to = null)
+    {
+        if ($from) {
+            $query->whereDate('payment_date', '>=', $from);
+        }
+        if ($to) {
+            $query->whereDate('payment_date', '<=', $to);
+        }
+
+        return $query;
+    }
 }

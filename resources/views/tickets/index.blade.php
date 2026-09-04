@@ -14,7 +14,7 @@
             </div>
 
             <div class="flex items-center gap-2 ml-auto">
-                @if($search || $searchCode || $searchOrigin || $searchDestination || $searchPassenger || $searchBooker || $searchPayer || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateFrom || $dateTo || $amountMin || $amountMax)
+                @if($search || $searchCode || $searchOrigin || $searchDestination || $searchPassenger || $searchBooker || $searchPayer || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateFrom || $dateTo || $amountMin || $amountMax || $passengerCountMin || $passengerCountMax || $payDateFrom || $payDateTo)
                     <a href="{{ route('tickets.index') }}" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
                         <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
                     </a>
@@ -178,8 +178,32 @@
                             </th>
 
                             <!-- 7. Jml Penumpang -->
-                            <th class="py-3 px-3 text-center whitespace-nowrap border-r border-slate-800/60">
-                                <span>Jml</span>
+                            <th class="py-3 px-3 text-center whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'passenger_count') openPop = null">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <span>Jml</span>
+                                    <button type="button" @click="openPop = (openPop === 'passenger_count' ? null : 'passenger_count')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($passengerCountMin || $passengerCountMax) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Jumlah Penumpang">
+                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    </button>
+                                </div>
+                                <div x-show="openPop === 'passenger_count'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3.5 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
+                                    <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
+                                        <span>Filter Jml Penumpang</span>
+                                        <i class="fa-solid fa-users text-sky-400"></i>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div>
+                                            <label class="block text-[11px] text-slate-400 mb-1">Minimal (Orang):</label>
+                                            <input type="number" name="passenger_count_min" value="{{ $passengerCountMin }}" placeholder="Contoh: 1" min="1" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none font-mono">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] text-slate-400 mb-1">Maksimal (Orang):</label>
+                                            <input type="number" name="passenger_count_max" value="{{ $passengerCountMax }}" placeholder="Contoh: 5" min="1" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none font-mono">
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
+                                    </div>
+                                </div>
                             </th>
 
                             <!-- 8. Pemesan -->
@@ -223,8 +247,32 @@
                             </th>
 
                             <!-- 10. Tgl Bayar -->
-                            <th class="py-3 px-3 whitespace-nowrap border-r border-slate-800/60">
-                                <span>Tgl Bayar</span>
+                            <th class="py-3 px-3 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'pay_date') openPop = null">
+                                <div class="flex items-center gap-1.5 justify-between">
+                                    <span>Tgl Bayar</span>
+                                    <button type="button" @click="openPop = (openPop === 'pay_date' ? null : 'pay_date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($payDateFrom || $payDateTo) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Bayar">
+                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    </button>
+                                </div>
+                                <div x-show="openPop === 'pay_date'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3.5 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[250px]">
+                                    <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
+                                        <span>Filter Tanggal Bayar</span>
+                                        <i class="fa-regular fa-calendar-check text-sky-400"></i>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div>
+                                            <label class="block text-[11px] text-slate-400 mb-1">Dari Tanggal:</label>
+                                            <input type="date" name="pay_date_from" value="{{ $payDateFrom }}" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] text-slate-400 mb-1">Sampai Tanggal:</label>
+                                            <input type="date" name="pay_date_to" value="{{ $payDateTo }}" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none">
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
+                                    </div>
+                                </div>
                             </th>
 
                             <!-- 11. Biaya (IDR) -->

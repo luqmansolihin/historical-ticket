@@ -53,6 +53,10 @@ class TicketHistoryController extends Controller
         $dateTo = $request->input('date_to');
         $amountMin = $request->input('amount_min');
         $amountMax = $request->input('amount_max');
+        $passengerCountMin = $request->input('passenger_count_min');
+        $passengerCountMax = $request->input('passenger_count_max');
+        $payDateFrom = $request->input('pay_date_from');
+        $payDateTo = $request->input('pay_date_to');
 
         $query = TicketHistory::query()
             ->with(['bookerUser', 'payerUser', 'statusLogs'])
@@ -67,7 +71,9 @@ class TicketHistoryController extends Controller
             ->filterPerson($searchPerson)
             ->filterTransport($transportType)
             ->filterStatus($status)
-            ->filterAmount($amountMin, $amountMax);
+            ->filterAmount($amountMin, $amountMax)
+            ->filterPassengerCount($passengerCountMin, $passengerCountMax)
+            ->filterPayDate($payDateFrom, $payDateTo);
 
         if ($dateFrom) {
             $query->whereDate('ticket_date', '>=', $dateFrom);
@@ -110,6 +116,10 @@ class TicketHistoryController extends Controller
             'dateTo',
             'amountMin',
             'amountMax',
+            'passengerCountMin',
+            'passengerCountMax',
+            'payDateFrom',
+            'payDateTo',
             'totalTickets',
             'totalAmount',
             'totalLunas',
