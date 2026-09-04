@@ -110,114 +110,104 @@
         </div>
     @endif
 
-    <!-- Filter & Search Toolbar Card -->
-    <div class="glass-card rounded-2xl p-5 mb-8 relative z-20 no-print">
-        <form action="{{ route('tickets.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-end">
-            <div class="lg:col-span-3">
-                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Pencarian Keyword</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
-                    </div>
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari kode, kota, penumpang..." class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm placeholder-slate-500">
-                </div>
-            </div>
-
-            <!-- Moda Transportasi (Multi-select) -->
-            <div x-data="{ open: false, selected: {{ json_encode($transportType) }} }" class="lg:col-span-3 transition-all" :class="open ? 'relative z-50' : 'relative z-10'">
-                <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                    <span>Moda Transportasi</span>
-                    <template x-if="selected.length > 0">
-                        <span class="text-[10px] text-sky-400 font-mono font-bold" x-text="selected.length + ' Dipilih'"></span>
-                    </template>
-                </label>
-
-                <button type="button" @click="open = !open" @click.outside="open = false" class="w-full h-[42px] glass-input rounded-xl px-3 text-sm bg-slate-900 flex items-center justify-between text-left focus:border-sky-400">
-                    <span class="truncate text-slate-200 block" x-text="selected.length > 0 ? selected.join(', ') : 'Semua Transportasi'"></span>
-                    <i class="fa-solid fa-chevron-down text-xs text-slate-400 ml-2 shrink-0 transition-transform" :class="open ? 'rotate-180 text-sky-400' : ''"></i>
-                </button>
-
-                <div x-show="open" x-cloak x-transition class="absolute z-50 left-0 right-0 mt-1.5 p-2 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-1 max-h-48 overflow-y-auto">
-                    <label class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs font-semibold text-sky-400 border-b border-slate-800/80 mb-1">
-                        <input type="checkbox" @change="selected = $event.target.checked ? {{ json_encode($transportOptions) }} : []" :checked="selected.length === {{ count($transportOptions) }}" class="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-0">
-                        <span>Pilih Semua</span>
-                    </label>
-                    @foreach($transportOptions as $option)
-                        <label class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs text-slate-200">
-                            <input type="checkbox" name="transport_type[]" value="{{ $option }}" x-model="selected" class="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-0">
-                            <span>{{ $option }}</span>
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Status Pembayaran (Multi-select) -->
-            <div x-data="{ open: false, selected: {{ json_encode($status) }} }" class="lg:col-span-2 transition-all" :class="open ? 'relative z-50' : 'relative z-10'">
-                <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                    <span>Status</span>
-                    <template x-if="selected.length > 0">
-                        <span class="text-[10px] text-emerald-400 font-mono font-bold" x-text="selected.length + ' Dipilih'"></span>
-                    </template>
-                </label>
-
-                <button type="button" @click="open = !open" @click.outside="open = false" class="w-full h-[42px] glass-input rounded-xl px-3 text-sm bg-slate-900 flex items-center justify-between text-left focus:border-emerald-400">
-                    <span class="truncate text-slate-200 block" x-text="selected.length > 0 ? selected.join(', ') : 'Semua Status'"></span>
-                    <i class="fa-solid fa-chevron-down text-xs text-slate-400 ml-2 shrink-0 transition-transform" :class="open ? 'rotate-180 text-emerald-400' : ''"></i>
-                </button>
-
-                <div x-show="open" x-cloak x-transition class="absolute z-50 left-0 right-0 mt-1.5 p-2 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-1 max-h-48 overflow-y-auto">
-                    <label class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs font-semibold text-emerald-400 border-b border-slate-800/80 mb-1">
-                        <input type="checkbox" @change="selected = $event.target.checked ? {{ json_encode($statusOptions) }} : []" :checked="selected.length === {{ count($statusOptions) }}" class="rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0">
-                        <span>Pilih Semua</span>
-                    </label>
-                    @foreach($statusOptions as $optStatus)
-                        <label class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs text-slate-200">
-                            <input type="checkbox" name="status[]" value="{{ $optStatus }}" x-model="selected" class="rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0">
-                            <span>{{ $optStatus }}</span>
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-
-            <div class="lg:col-span-2">
-                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Dari Tanggal</label>
-                <input type="date" name="date_from" value="{{ $dateFrom }}" class="w-full glass-input rounded-xl px-3 py-2 text-sm bg-slate-900">
-            </div>
-
-            <div class="lg:col-span-2 flex items-center gap-2">
-                <div class="w-full">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Sampai Tanggal</label>
-                    <input type="date" name="date_to" value="{{ $dateTo }}" class="w-full glass-input rounded-xl px-3 py-2 text-sm bg-slate-900">
-                </div>
-            </div>
-
-            <div class="lg:col-span-12 flex items-center justify-end gap-3 pt-2 border-t border-slate-800/50 mt-2">
-                <a href="{{ route('tickets.index') }}" class="px-4 py-2 rounded-xl text-xs font-medium text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all flex items-center gap-1.5" title="Hapus seluruh filter pencarian">
-                    <i class="fa-solid fa-filter-circle-xmark"></i> Hapus Filter
-                </a>
-                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 shadow-md shadow-sky-600/20 transition-all">
-                    <i class="fa-solid fa-filter mr-1.5"></i> Terapkan Filter
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Tickets Data Table Container -->
+    <!-- Tickets Data Table Container & Integrated Header Filter -->
     <div class="glass-card rounded-2xl overflow-hidden shadow-2xl relative z-10 no-print">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-300 whitespace-nowrap">
-                <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 tracking-wider border-b border-slate-800 whitespace-nowrap">
-                    <tr>
-                        <th class="py-4 px-4 whitespace-nowrap">Kode Tiket</th>
-                        <th class="py-4 px-4 whitespace-nowrap">Tgl Tiket</th>
-                        <th class="py-4 px-4 whitespace-nowrap">Rute & Penumpang</th>
-                        <th class="py-4 px-4 whitespace-nowrap">Transportasi</th>
-                        <th class="py-4 px-4 whitespace-nowrap">Pemesan & Pembayar</th>
-                        <th class="py-4 px-4 text-right whitespace-nowrap">Biaya (IDR)</th>
-                        <th class="py-4 px-4 text-center whitespace-nowrap">Status</th>
-                        <th class="py-4 px-4 text-center whitespace-nowrap">Aksi</th>
-                    </tr>
-                </thead>
+        <form action="{{ route('tickets.index') }}" method="GET">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300 whitespace-nowrap">
+                    <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 tracking-wider border-b border-slate-800 whitespace-nowrap">
+                        <!-- Judul Kolom -->
+                        <tr>
+                            <th class="py-3.5 px-4 whitespace-nowrap">Kode Tiket</th>
+                            <th class="py-3.5 px-4 whitespace-nowrap">Tgl Tiket</th>
+                            <th class="py-3.5 px-4 whitespace-nowrap">Rute & Penumpang</th>
+                            <th class="py-3.5 px-4 whitespace-nowrap">Transportasi</th>
+                            <th class="py-3.5 px-4 whitespace-nowrap">Pemesan & Pembayar</th>
+                            <th class="py-3.5 px-4 text-right whitespace-nowrap">Biaya (IDR)</th>
+                            <th class="py-3.5 px-4 text-center whitespace-nowrap">Status</th>
+                            <th class="py-3.5 px-4 text-center whitespace-nowrap">Aksi</th>
+                        </tr>
+                        <!-- Baris Filter Inline Header -->
+                        <tr class="bg-slate-950/70 border-t border-slate-800/80 normal-case font-normal text-slate-300">
+                            <!-- Filter Keyword Kode -->
+                            <th class="py-2.5 px-3 whitespace-nowrap font-normal">
+                                <input type="text" name="search" value="{{ $search }}" placeholder="Cari keyword..." class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-900 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
+                            </th>
+                            <!-- Filter Tanggal Range -->
+                            <th class="py-2.5 px-3 whitespace-nowrap font-normal">
+                                <div class="flex items-center gap-1">
+                                    <input type="date" name="date_from" value="{{ $dateFrom }}" class="w-28 h-8 rounded-lg px-1.5 text-[11px] bg-slate-900 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none" title="Dari Tanggal">
+                                    <span class="text-slate-500 text-[10px]">-</span>
+                                    <input type="date" name="date_to" value="{{ $dateTo }}" class="w-28 h-8 rounded-lg px-1.5 text-[11px] bg-slate-900 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none" title="Sampai Tanggal">
+                                </div>
+                            </th>
+                            <!-- Spacer Rute -->
+                            <th class="py-2.5 px-3 whitespace-nowrap font-normal text-slate-500 text-[11px]">
+                                <span class="text-slate-500 font-mono">(Tercakup Keyword)</span>
+                            </th>
+                            <!-- Filter Transportasi -->
+                            <th class="py-2.5 px-3 whitespace-nowrap font-normal">
+                                <div x-data="{ open: false, selected: {{ json_encode($transportType) }} }" class="relative">
+                                    <button type="button" @click="open = !open" @click.outside="open = false" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-900 border border-slate-700/80 text-slate-200 flex items-center justify-between font-normal">
+                                        <span class="truncate" x-text="selected.length > 0 ? selected.length + ' Dipilih' : 'Semua'"></span>
+                                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-1 shrink-0"></i>
+                                    </button>
+                                    <div x-show="open" x-cloak x-transition class="absolute z-50 left-0 mt-1 p-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl space-y-1 max-h-48 overflow-y-auto text-left font-normal normal-case min-w-[160px]">
+                                        <label class="flex items-center gap-2 px-2 py-1 rounded hover:bg-slate-800 cursor-pointer text-xs font-semibold text-sky-400 border-b border-slate-800 mb-1">
+                                            <input type="checkbox" @change="selected = $event.target.checked ? {{ json_encode($transportOptions) }} : []" :checked="selected.length === {{ count($transportOptions) }}" class="rounded bg-slate-800 border-slate-700 text-sky-500">
+                                            <span>Pilih Semua</span>
+                                        </label>
+                                        @foreach($transportOptions as $option)
+                                            <label class="flex items-center gap-2 px-2 py-1 rounded hover:bg-slate-800 cursor-pointer text-xs text-slate-200">
+                                                <input type="checkbox" name="transport_type[]" value="{{ $option }}" x-model="selected" class="rounded bg-slate-800 border-slate-700 text-sky-500">
+                                                <span>{{ $option }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </th>
+                            <!-- Spacer Pemesan -->
+                            <th class="py-2.5 px-3 whitespace-nowrap font-normal text-slate-500 text-[11px]">
+                                <span class="text-slate-500 font-mono">(Tercakup Keyword)</span>
+                            </th>
+                            <!-- Spacer Biaya -->
+                            <th class="py-2.5 px-3 whitespace-nowrap font-normal"></th>
+                            <!-- Filter Status -->
+                            <th class="py-2.5 px-3 whitespace-nowrap font-normal">
+                                <div x-data="{ open: false, selected: {{ json_encode($status) }} }" class="relative">
+                                    <button type="button" @click="open = !open" @click.outside="open = false" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-900 border border-slate-700/80 text-slate-200 flex items-center justify-between font-normal">
+                                        <span class="truncate" x-text="selected.length > 0 ? selected.length + ' Dipilih' : 'Semua'"></span>
+                                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-1 shrink-0"></i>
+                                    </button>
+                                    <div x-show="open" x-cloak x-transition class="absolute z-50 right-0 mt-1 p-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl space-y-1 max-h-48 overflow-y-auto text-left font-normal normal-case min-w-[140px]">
+                                        <label class="flex items-center gap-2 px-2 py-1 rounded hover:bg-slate-800 cursor-pointer text-xs font-semibold text-emerald-400 border-b border-slate-800 mb-1">
+                                            <input type="checkbox" @change="selected = $event.target.checked ? {{ json_encode($statusOptions) }} : []" :checked="selected.length === {{ count($statusOptions) }}" class="rounded bg-slate-800 border-slate-700 text-emerald-500">
+                                            <span>Pilih Semua</span>
+                                        </label>
+                                        @foreach($statusOptions as $optStatus)
+                                            <label class="flex items-center gap-2 px-2 py-1 rounded hover:bg-slate-800 cursor-pointer text-xs text-slate-200">
+                                                <input type="checkbox" name="status[]" value="{{ $optStatus }}" x-model="selected" class="rounded bg-slate-800 border-slate-700 text-emerald-500">
+                                                <span>{{ $optStatus }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </th>
+                            <!-- Tombol Aksi Filter -->
+                            <th class="py-2.5 px-3 whitespace-nowrap font-normal text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button type="submit" class="h-8 px-3 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors inline-flex items-center gap-1" title="Terapkan Filter">
+                                        <i class="fa-solid fa-filter text-[10px]"></i> Filter
+                                    </button>
+                                    @if($search || !empty($transportType) || !empty($status) || $dateFrom || $dateTo)
+                                        <a href="{{ route('tickets.index') }}" class="h-8 w-8 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs flex items-center justify-center transition-colors" title="Reset Filter">
+                                            <i class="fa-solid fa-rotate-left"></i>
+                                        </a>
+                                    @endif
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
                 <tbody class="divide-y divide-slate-800/60 whitespace-nowrap">
                     @forelse($tickets as $ticket)
                         <tr class="hover:bg-slate-900/50 transition-colors group whitespace-nowrap">
@@ -373,6 +363,7 @@
                 {{ $tickets->links() }}
             </div>
         @endif
+        </form>
     </div>
 
     <!-- Boarding Pass Modal -->
