@@ -3,10 +3,10 @@
 @section('title', 'Daftar Histori Tiket')
 
 @section('content')
-<div x-data="{ selectedTicket: null, showModal: false }" class="flex-1 flex flex-col">
+<div x-data="{ selectedTicket: null, showModal: false }" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
 
     <!-- ERP Data Table Container & Column Header Filters -->
-    <div x-data="{ openPop: null }" class="glass-card rounded-2xl overflow-hidden shadow-2xl relative z-10 no-print flex-1 flex flex-col min-h-[calc(100vh-8rem)]">
+    <div x-data="{ openPop: null }" class="glass-card rounded-2xl shadow-2xl relative z-10 no-print flex-1 flex flex-col min-h-0 h-full overflow-hidden">
         <!-- ERP Data Grid Action Toolbar -->
         <div class="px-4 py-2.5 bg-slate-900/90 border-b border-slate-800/80 flex items-center justify-end gap-2 shrink-0">
             <a href="{{ route('tickets.export', request()->query()) }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-sm">
@@ -20,8 +20,8 @@
             @endcan
         </div>
 
-        <form action="{{ route('tickets.index') }}" method="GET" class="flex-1 flex flex-col justify-between">
-            <div class="overflow-x-auto flex-1">
+        <form action="{{ route('tickets.index') }}" method="GET" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
+            <div class="overflow-auto flex-1 min-h-0">
                 <table class="w-full text-left text-sm text-slate-300 whitespace-nowrap">
                     <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 tracking-wider border-b border-slate-800 whitespace-nowrap">
                         <tr>

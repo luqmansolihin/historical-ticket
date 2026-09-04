@@ -108,12 +108,12 @@
         }
     </style>
 </head>
-<body class="h-full font-sans antialiased bg-slate-950 text-slate-100 selection:bg-sky-500 selection:text-white">
+<body class="h-screen w-screen overflow-hidden font-sans antialiased bg-slate-950 text-slate-100 selection:bg-sky-500 selection:text-white">
 
-    <div x-data="{ mobileSidebarOpen: false, isCollapsed: true }" class="min-h-screen flex flex-col md:flex-row bg-slate-950">
+    <div x-data="{ mobileSidebarOpen: false, isCollapsed: true }" class="h-screen w-screen flex flex-col md:flex-row overflow-hidden bg-slate-950">
 
         <!-- Mobile Header Bar -->
-        <header class="md:hidden sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between no-print">
+        <header class="md:hidden sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between no-print shrink-0">
             <div class="flex items-center space-x-3">
                 <button @click="mobileSidebarOpen = !mobileSidebarOpen" type="button" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white focus:outline-none">
                     <i class="fa-solid fa-bars text-lg"></i>
@@ -234,68 +234,39 @@
         </aside>
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col min-w-0 min-h-screen">
-            <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto flex flex-col">
+        <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+            <main class="flex-1 p-3 sm:p-4 lg:p-5 overflow-y-auto flex flex-col min-h-0">
                 @if(session('success'))
-                    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-4 p-4 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 flex items-center justify-between shadow-xl backdrop-blur-sm no-print">
+                    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-3 p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 flex items-center justify-between shadow-xl backdrop-blur-sm no-print shrink-0">
                         <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                                <i class="fa-solid fa-circle-check text-lg"></i>
+                            <div class="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                                <i class="fa-solid fa-circle-check text-sm"></i>
                             </div>
-                            <span class="text-sm font-medium">{{ session('success') }}</span>
+                            <span class="text-xs font-medium">{{ session('success') }}</span>
                         </div>
                         <button @click="show = false" class="text-emerald-400 hover:text-emerald-200">
-                            <i class="fa-solid fa-xmark"></i>
+                            <i class="fa-solid fa-xmark text-sm"></i>
                         </button>
                     </div>
                 @endif
 
                 @if(session('error'))
-                    <div x-data="{ show: true }" x-show="show" class="mb-4 p-4 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 flex items-center justify-between shadow-xl no-print">
+                    <div x-data="{ show: true }" x-show="show" class="mb-3 p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 flex items-center justify-between shadow-xl no-print shrink-0">
                         <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center text-rose-400">
-                                <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                            <div class="w-7 h-7 rounded-lg bg-rose-500/20 flex items-center justify-center text-rose-400">
+                                <i class="fa-solid fa-triangle-exclamation text-sm"></i>
                             </div>
-                            <span class="text-sm font-medium">{{ session('error') }}</span>
+                            <span class="text-xs font-medium">{{ session('error') }}</span>
                         </div>
                         <button @click="show = false" class="text-rose-400 hover:text-rose-200">
-                            <i class="fa-solid fa-xmark"></i>
+                            <i class="fa-solid fa-xmark text-sm"></i>
                         </button>
                     </div>
                 @endif
 
                 @yield('content')
             </main>
-
-            <footer class="mt-auto border-t border-slate-900 bg-slate-950 py-4 px-6 text-xs text-slate-500 no-print">
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
-                    <p>&copy; {{ date('Y') }} TicketTrace ERP &bull; Sistem Histori Tiket Perjalanan</p>
-                    <div class="flex items-center space-x-4 text-slate-400 font-mono text-[11px]">
-                        <span><i class="fa-solid fa-shield-halved text-sky-400 mr-1"></i> Role: {{ ucfirst(Auth::user()->role ?? 'Guest') }}</span>
-                    </div>
-                </div>
-            </footer>
         </div>
-    </div>
-
-    <!-- Scroll To Top Floating Button -->
-    <div x-data="{ showScrollTop: false }"
-         @scroll.window="showScrollTop = (window.pageYOffset > 300)"
-         class="fixed bottom-6 right-6 z-50 no-print">
-        <button x-show="showScrollTop"
-                x-cloak
-                x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 translate-y-4 scale-90"
-                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                x-transition:leave="transition ease-in duration-150"
-                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                x-transition:leave-end="opacity-0 translate-y-4 scale-90"
-                @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
-                type="button"
-                class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 shadow-xl border border-slate-700 flex items-center justify-center transition-all duration-200"
-                title="Kembali ke Atas">
-            <i class="fa-solid fa-arrow-up text-sm"></i>
-        </button>
     </div>
 
     <!-- html2pdf Library for 100% UI Accurate PDF Export -->
