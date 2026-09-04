@@ -48,8 +48,8 @@ class TicketHistoryPolicy
             return false;
         }
 
-        // Booker CANNOT edit tickets that are already canceled ('Dibatalkan')
-        if (($user->role === 'booker' || $user->isBooker()) && $ticket->status === 'Dibatalkan') {
+        // Non-admin users (Booker & Payer) CANNOT edit tickets that are already canceled ('Dibatalkan')
+        if ($ticket->status === 'Dibatalkan') {
             return false;
         }
 
@@ -58,8 +58,8 @@ class TicketHistoryPolicy
             return true;
         }
 
-        // Payer assigned to this ticket can edit it
-        if ($user->role === 'payer' && $ticket->paid_by_user_id && $ticket->paid_by_user_id === $user->id) {
+        // Payer can edit tickets assigned to them OR unpaid tickets (where paid_by_user_id is null)
+        if (($user->role === 'payer' || $user->isPayer()) && ($ticket->paid_by_user_id === $user->id || $ticket->paid_by_user_id === null || $ticket->status === 'Belum Bayar')) {
             return true;
         }
 

@@ -64,6 +64,7 @@ class TicketHistoryController extends Controller
         $totalAmount = (float) $statsQuery->sum('amount');
         $totalLunas = (clone $statsQuery)->where('status', 'Lunas')->count();
         $totalBelumBayar = (clone $statsQuery)->where('status', 'Belum Bayar')->count();
+        $totalDibatalkan = (clone $statsQuery)->where('status', 'Dibatalkan')->count();
 
         $tickets = $query->orderBy('ticket_date', 'desc')
             ->orderBy('id', 'desc')
@@ -84,6 +85,7 @@ class TicketHistoryController extends Controller
             'totalAmount',
             'totalLunas',
             'totalBelumBayar',
+            'totalDibatalkan',
             'transportOptions',
             'statusOptions'
         ));
@@ -214,6 +216,23 @@ class TicketHistoryController extends Controller
     {
         Gate::authorize('update', $ticket);
 
+        // Non-admin users editing a Lunas ticket have disabled HTML fields. Merge original ticket values into request so validation passes.
+        if (!Auth::user()->isAdmin() && $ticket->status === 'Lunas') {
+            $request->merge([
+                'ticket_code' => $request->input('ticket_code', $ticket->ticket_code),
+                'ticket_date' => $request->input('ticket_date', $ticket->ticket_date->format('Y-m-d')),
+                'origin' => $request->input('origin', $ticket->origin),
+                'destination' => $request->input('destination', $ticket->destination),
+                'transport_type' => $request->input('transport_type', $ticket->transport_type),
+                'passenger_names' => $request->input('passenger_names', $ticket->passengers_list ?: [$ticket->passenger_name]),
+                'booked_by' => $request->input('booked_by', $ticket->booked_by),
+                'booked_by_user_id' => $request->input('booked_by_user_id', $ticket->booked_by_user_id),
+                'amount' => $request->input('amount', $ticket->amount),
+                'paid_by' => $request->input('paid_by', $ticket->paid_by ?: Auth::user()->name),
+                'paid_by_user_id' => $request->input('paid_by_user_id', $ticket->paid_by_user_id ?: Auth::id()),
+            ]);
+        }
+
         $validated = $request->validate([
             'ticket_code' => 'required|string|max:50|unique:ticket_histories,ticket_code,' . $ticket->id,
             'ticket_date' => 'required|date',
@@ -245,6 +264,11 @@ class TicketHistoryController extends Controller
 
         // Payer (non-admin) edit rules:
         if (Auth::user()->role === 'payer' || (Auth::user()->isPayer() && !Auth::user()->isAdmin())) {
+            if ($ticket->status === 'Dibatalkan') {
+                return redirect()->route('tickets.show', $ticket->id)
+                    ->with('error', 'Tiket yang berstatus Dibatalkan telah dikunci dan tidak dapat diubah kembali.');
+            }
+
             $validated['paid_by'] = Auth::user()->name;
             $validated['paid_by_user_id'] = Auth::id();
 
@@ -320,6 +344,20 @@ class TicketHistoryController extends Controller
                 } else {
                     $validated['status'] = 'Belum Bayar';
                 }
+            }
+        }
+
+        // Strict Validation for Lunas Status:
+        if ($validated['status'] === 'Lunas') {
+            if (Auth::user()->isPayer() && !Auth::user()->isAdmin()) {
+                $validated['paid_by'] = Auth::user()->name;
+                $validated['paid_by_user_id'] = Auth::id();
+            }
+
+            if (empty($validated['paid_by_user_id']) || empty($validated['paid_by']) || $validated['paid_by'] === '-') {
+                return back()->withErrors([
+                    'paid_by' => 'Untuk mengubah status menjadi Lunas, data Pembayaran Oleh wajib terisi dan terhubung dengan Akun Payer yang valid.',
+                ])->withInput();
             }
         }
 

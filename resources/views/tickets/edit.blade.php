@@ -48,6 +48,20 @@
             @csrf
             @method('PUT')
 
+            @if($isDataLocked)
+                <input type="hidden" name="ticket_code" value="{{ old('ticket_code', $ticket->ticket_code) }}">
+                <input type="hidden" name="ticket_date" value="{{ old('ticket_date', $ticket->ticket_date->format('Y-m-d')) }}">
+                <input type="hidden" name="origin" value="{{ old('origin', $ticket->origin) }}">
+                <input type="hidden" name="destination" value="{{ old('destination', $ticket->destination) }}">
+                <input type="hidden" name="transport_type" value="{{ old('transport_type', $ticket->transport_type) }}">
+                @foreach($ticket->passengers_list as $pName)
+                    <input type="hidden" name="passenger_names[]" value="{{ $pName }}">
+                @endforeach
+                <input type="hidden" name="amount" value="{{ old('amount', $ticket->amount) }}">
+                <input type="hidden" name="booked_by" value="{{ old('booked_by', $ticket->booked_by) }}">
+                <input type="hidden" name="booked_by_user_id" value="{{ old('booked_by_user_id', $ticket->booked_by_user_id) }}">
+            @endif
+
             <!-- Section 1: Informasi Perjalanan -->
             <div>
                 <h3 class="text-sm font-semibold text-sky-400 uppercase tracking-wider mb-4 flex items-center gap-2">
