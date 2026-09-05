@@ -277,15 +277,19 @@ class TicketHistoryController extends Controller
 
         $newTicket = TicketHistory::create($validated);
 
-        // Record initial status log
+        // Record initial status log with creator account info
+        $creatorName = Auth::user()->name ?? 'System';
+        $creatorRole = ucfirst(Auth::user()->role ?? 'user');
+        $creatorId = Auth::id();
+
         TicketStatusLog::create([
             'ticket_history_id' => $newTicket->id,
-            'user_id' => Auth::id(),
-            'user_name' => Auth::user()->name ?? 'System',
+            'user_id' => $creatorId,
+            'user_name' => $creatorName,
             'user_role' => Auth::user()->role ?? 'user',
             'from_status' => null,
             'to_status' => $newTicket->status,
-            'notes' => 'Tiket histori baru dibuat dengan status ' . $newTicket->status . '.',
+            'notes' => 'Tiket baru dibuat oleh ' . $creatorName . ' (ID: #' . $creatorId . ' • ' . $creatorRole . ') atas nama ' . $newTicket->booked_by . ' dengan status ' . $newTicket->status . '.',
         ]);
 
         return redirect()->route('tickets.index')

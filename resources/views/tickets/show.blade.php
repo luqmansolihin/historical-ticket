@@ -102,7 +102,14 @@
             <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
                 <div>
                     <span class="text-xs text-slate-400 block">Pemesan Tiket</span>
-                    <span class="text-sm font-medium text-indigo-300 mt-0.5 block">{{ $ticket->booked_by }}</span>
+                    <span class="text-sm font-medium text-indigo-300 mt-0.5 block">
+                        {{ $ticket->booked_by }}
+                        @if($ticket->bookerUser)
+                            <span class="text-[11px] text-slate-400 font-normal block mt-0.5 font-mono">
+                                (Akun: {{ $ticket->bookerUser->name }} • ID: #{{ $ticket->bookerUser->id }} • {{ ucfirst($ticket->bookerUser->role) }})
+                            </span>
+                        @endif
+                    </span>
                 </div>
                 <div>
                     <span class="text-xs text-slate-400 block">Pembayaran Oleh</span>

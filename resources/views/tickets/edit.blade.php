@@ -168,17 +168,12 @@
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Editable Booker Name & Auto-linked User Account -->
+                    <!-- Editable Booker Name Input -->
                     <div class="md:col-span-2">
                         <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Nama Pemesan <span class="text-rose-400">*</span>
                         </label>
                         <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by', $ticket->booked_by) }}" required placeholder="Contoh: Luqman" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('booked_by') border-rose-500 @enderror">
-                        <p class="text-[11px] text-slate-400 mt-1.5 flex items-center gap-1.5">
-                            <i class="fa-solid fa-link text-sky-400"></i> Akun Pembuat/Pemesan Terhubung: 
-                            <strong class="text-sky-300 font-semibold">{{ $ticket->bookerUser ? $ticket->bookerUser->name : Auth::user()->name }}</strong> 
-                            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-400/20 text-sky-300 border border-sky-400/30">ID: #{{ $ticket->booked_by_user_id ?: Auth::id() }}</span>
-                        </p>
                         @error('booked_by')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
