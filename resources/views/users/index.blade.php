@@ -8,6 +8,17 @@
         nextPageUrl: '{{ $users->nextPageUrl() }}',
         loading: false,
         hasMore: {{ $users->hasMorePages() ? 'true' : 'false' }},
+        init() {
+            this.checkAutoFill();
+        },
+        checkAutoFill() {
+            this.$nextTick(() => {
+                const el = this.$refs.scrollContainer;
+                if (el && this.hasMore && !this.loading && el.scrollHeight <= el.clientHeight + 100) {
+                    this.loadMore();
+                }
+            });
+        },
         loadMore() {
             if (this.loading || !this.nextPageUrl) return;
             this.loading = true;
@@ -25,6 +36,7 @@
                 this.nextPageUrl = data.next_page_url;
                 this.hasMore = data.has_more;
                 this.loading = false;
+                this.checkAutoFill();
             })
             .catch(err => {
                 console.error(err);
@@ -33,7 +45,9 @@
         },
         onScroll(e) {
             const el = e.target;
-            if (el.scrollHeight - el.scrollTop - el.clientHeight < 150) {
+            if (!el) return;
+            const bottomDistance = el.scrollHeight - (el.scrollTop + el.clientHeight);
+            if (bottomDistance < 250 && this.hasMore && !this.loading) {
                 this.loadMore();
             }
         }
@@ -61,7 +75,7 @@
         </div>
 
         <form action="{{ route('users.index') }}" method="GET" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
-            <div class="overflow-auto flex-1 min-h-0" @scroll.passive="onScroll($event)">
+            <div x-ref="scrollContainer" class="overflow-auto flex-1 min-h-0" @scroll.passive="onScroll($event)">
                 <table class="w-full text-left text-[9.5px] leading-tight text-slate-300 whitespace-nowrap border-collapse">
                     <thead class="bg-slate-900/95 text-[9px] uppercase font-bold text-slate-400 tracking-tight border-b border-slate-800 whitespace-nowrap sticky top-0 z-20 backdrop-blur-md">
                         <tr>
