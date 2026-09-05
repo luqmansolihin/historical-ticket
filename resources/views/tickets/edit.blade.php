@@ -224,10 +224,10 @@
 
                         <div>
                             <label for="paid_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
-                                Linkkan dengan Akun Pembayar (Sistem)
+                                Linkkan dengan User Pembayar (Sistem)
                             </label>
                             <select id="paid_by_user_id" name="paid_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
-                                <option value="">-- Pilih Akun User Pembayar --</option>
+                                <option value="">-- Pilih User Pembayar --</option>
                                 @foreach($users as $user)
                                     <option value="{{ $user->id }}" {{ old('paid_by_user_id', $ticket->paid_by_user_id) == $user->id ? 'selected' : '' }}>
                                         {{ $user->name }} ({{ ucfirst($user->role) }})

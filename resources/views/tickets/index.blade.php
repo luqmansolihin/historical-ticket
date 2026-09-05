@@ -522,17 +522,11 @@
                                 <!-- 8. Pemesan -->
                                 <td class="py-2.5 px-3 whitespace-nowrap border-r border-slate-800/40">
                                     <span class="text-indigo-300 font-medium">{{ $ticket->booked_by }}</span>
-                                    @if($ticket->bookerUser)
-                                        <span class="ml-1 text-[9px] px-1 py-0.2 rounded bg-indigo-950 text-indigo-400 border border-indigo-800 font-mono">Akun</span>
-                                    @endif
                                 </td>
 
                                 <!-- 9. Pembayar -->
                                 <td class="py-2.5 px-3 whitespace-nowrap border-r border-slate-800/40">
                                     <span class="text-emerald-300 font-medium">{{ $ticket->paid_by }}</span>
-                                    @if($ticket->payerUser)
-                                        <span class="ml-1 text-[9px] px-1 py-0.2 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono">Akun</span>
-                                    @endif
                                 </td>
 
                                 <!-- 10. Tgl Bayar -->

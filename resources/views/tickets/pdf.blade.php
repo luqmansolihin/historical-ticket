@@ -281,14 +281,7 @@
                     <tr>
                         <td class="grid-cell">
                             <span class="info-label">PEMESAN TIKET</span>
-                            <span class="info-value info-value-indigo">
-                                {{ $ticket->booked_by }}
-                                @if($ticket->bookerUser)
-                                    <div style="font-size: 9px; color: #94a3b8; font-weight: normal; margin-top: 2px;">
-                                        (Akun: {{ $ticket->bookerUser->name }} • ID: #{{ $ticket->bookerUser->id }} • {{ ucfirst($ticket->bookerUser->role) }})
-                                    </div>
-                                @endif
-                            </span>
+                            <span class="info-value info-value-indigo">{{ $ticket->booked_by }}</span>
                         </td>
                         <td class="grid-cell">
                             <span class="info-label">PEMBAYARAN OLEH</span>
