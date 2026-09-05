@@ -56,19 +56,27 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user is Booker
+     * Check if user is Finance
      */
-    public function isBooker(): bool
+    public function isFinance(): bool
     {
-        return $this->role === 'booker' || $this->isAdmin();
+        return $this->role === 'finance' || $this->role === 'booker' || $this->isAdmin();
     }
 
     /**
-     * Check if user is Payer (Booker also handles Payer duties)
+     * Check if user is Booker (Alias for Finance)
+     */
+    public function isBooker(): bool
+    {
+        return $this->isFinance();
+    }
+
+    /**
+     * Check if user is Payer (Alias for Finance)
      */
     public function isPayer(): bool
     {
-        return $this->role === 'booker' || $this->role === 'payer' || $this->isAdmin();
+        return $this->isFinance();
     }
 
     /**
@@ -94,7 +102,7 @@ class User extends Authenticatable
     {
         return match ($this->role) {
             'admin' => 'bg-amber-500/10 text-amber-300 border-amber-500/30',
-            'booker', 'payer' => 'bg-sky-500/10 text-sky-300 border-sky-500/30',
+            'finance', 'booker', 'payer' => 'bg-sky-500/10 text-sky-300 border-sky-500/30',
             default => 'bg-slate-500/10 text-slate-300 border-slate-500/30',
         };
     }

@@ -235,8 +235,8 @@
                             <div class="text-[10px] font-mono text-sky-400 truncate mt-0.5 capitalize">
                                 @if(Auth::user()->isAdmin())
                                     Admin
-                                @elseif(Auth::user()->isBooker() || Auth::user()->role === 'payer')
-                                    Booker & Payer
+                                @elseif(Auth::user()->isFinance() || Auth::user()->isBooker() || Auth::user()->role === 'payer')
+                                    Finance
                                 @else
                                     User
                                 @endif

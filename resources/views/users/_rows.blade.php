@@ -23,12 +23,12 @@
             <span class="px-1.5 py-0 text-[8.5px] font-semibold rounded-full border inline-flex items-center gap-1 {{ $userItem->role_badge_class }}">
                 @if($userItem->isAdmin())
                     <i class="fa-solid fa-shield-halved text-amber-400 text-[8px]"></i>
-                @elseif($userItem->role === 'booker' || $userItem->role === 'payer')
+                @elseif($userItem->role === 'finance' || $userItem->role === 'booker' || $userItem->role === 'payer')
                     <i class="fa-solid fa-user-check text-sky-400 text-[8px]"></i>
                 @else
                     <i class="fa-solid fa-user text-slate-400 text-[8px]"></i>
                 @endif
-                {{ $userItem->role === 'booker' || $userItem->role === 'payer' ? 'Booker & Payer' : ucfirst($userItem->role) }}
+                {{ ($userItem->role === 'finance' || $userItem->role === 'booker' || $userItem->role === 'payer') ? 'Finance' : ucfirst($userItem->role) }}
             </span>
         </td>
 

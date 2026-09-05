@@ -178,10 +178,10 @@ class TicketHistorySeeder extends Seeder
                     'ticket_history_id' => $ticket->id,
                     'user_id' => $ticket->booked_by_user_id ?: $bookerUser?->id,
                     'user_name' => $ticket->booked_by,
-                    'user_role' => 'booker',
+                    'user_role' => 'finance',
                     'from_status' => null,
                     'to_status' => 'Belum Bayar',
-                    'notes' => 'Tiket baru dibuat oleh Booker dengan status Belum Bayar.',
+                    'notes' => 'Tiket baru dibuat oleh Finance dengan status Belum Bayar.',
                 ]);
 
                 if ($ticket->status === 'Lunas') {
@@ -190,7 +190,7 @@ class TicketHistorySeeder extends Seeder
                         'ticket_history_id' => $ticket->id,
                         'user_id' => $ticket->paid_by_user_id ?: $payerUser?->id,
                         'user_name' => $ticket->paid_by,
-                        'user_role' => 'booker',
+                        'user_role' => 'finance',
                         'from_status' => 'Belum Bayar',
                         'to_status' => 'Lunas',
                         'notes' => 'Pembayaran dikonfirmasi Lunas.',
@@ -201,10 +201,10 @@ class TicketHistorySeeder extends Seeder
                         'ticket_history_id' => $ticket->id,
                         'user_id' => $ticket->booked_by_user_id ?: $bookerUser?->id,
                         'user_name' => $ticket->booked_by,
-                        'user_role' => 'booker',
+                        'user_role' => 'finance',
                         'from_status' => 'Belum Bayar',
                         'to_status' => 'Dibatalkan',
-                        'notes' => 'Tiket dibatalkan oleh Booker.',
+                        'notes' => 'Tiket dibatalkan oleh Finance.',
                     ]);
                 }
             }
