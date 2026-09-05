@@ -141,7 +141,7 @@ class TicketHistoryController extends Controller
             'destination' => 'destination',
             'transport_type' => 'transport_type',
             'passenger_name' => 'passenger_name',
-            'passenger_count' => 'passenger_name',
+            'passenger_count' => 'passenger_count',
             'booked_by' => 'booked_by',
             'paid_by' => 'paid_by',
             'amount' => 'amount',
@@ -150,7 +150,12 @@ class TicketHistoryController extends Controller
         ];
 
         if ($sortBy && array_key_exists($sortBy, $allowedSorts)) {
-            $query->orderBy($allowedSorts[$sortBy], $sortDir)->orderBy('id', 'desc');
+            if ($sortBy === 'passenger_count') {
+                $expr = "(LENGTH(COALESCE(passenger_name, '')) - LENGTH(REPLACE(COALESCE(passenger_name, ''), ',', '')) + CASE WHEN COALESCE(passenger_name, '') = '' THEN 0 ELSE 1 END)";
+                $query->orderByRaw("{$expr} {$sortDir}")->orderBy('id', 'desc');
+            } else {
+                $query->orderBy($allowedSorts[$sortBy], $sortDir)->orderBy('id', 'desc');
+            }
         } else {
             $sortBy = null;
             $query->orderBy('id', 'desc');
