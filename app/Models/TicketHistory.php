@@ -299,10 +299,14 @@ class TicketHistory extends Model
     }
 
     /**
-     * Scope for amount range filter (min and max)
+     * Scope for amount filter (min >=, max <=, eq =)
      */
-    public function scopeFilterAmount($query, $min = null, $max = null)
+    public function scopeFilterAmount($query, $min = null, $max = null, $eq = null)
     {
+        if ($eq !== null && $eq !== '') {
+            return $query->where('amount', '=', (float) $eq);
+        }
+
         if ($min !== null && $min !== '') {
             $query->where('amount', '>=', (float) $min);
         }
@@ -315,18 +319,22 @@ class TicketHistory extends Model
     }
 
     /**
-     * Scope for filtering by passenger count range
+     * Scope for passenger count filter (min >=, max <=, eq =)
      */
-    public function scopeFilterPassengerCount($query, $min = null, $max = null)
+    public function scopeFilterPassengerCount($query, $min = null, $max = null, $eq = null)
     {
-        if (($min !== null && $min !== '') || ($max !== null && $max !== '')) {
-            $expr = "(LENGTH(COALESCE(passenger_name, '')) - LENGTH(REPLACE(COALESCE(passenger_name, ''), ',', '')) + CASE WHEN COALESCE(passenger_name, '') = '' THEN 0 ELSE 1 END)";
-            if ($min !== null && $min !== '') {
-                $query->whereRaw("{$expr} >= ?", [(int) $min]);
-            }
-            if ($max !== null && $max !== '') {
-                $query->whereRaw("{$expr} <= ?", [(int) $max]);
-            }
+        $expr = "(LENGTH(COALESCE(passenger_name, '')) - LENGTH(REPLACE(COALESCE(passenger_name, ''), ',', '')) + CASE WHEN COALESCE(passenger_name, '') = '' THEN 0 ELSE 1 END)";
+
+        if ($eq !== null && $eq !== '') {
+            return $query->whereRaw("{$expr} = ?", [(int) $eq]);
+        }
+
+        if ($min !== null && $min !== '') {
+            $query->whereRaw("{$expr} >= ?", [(int) $min]);
+        }
+
+        if ($max !== null && $max !== '') {
+            $query->whereRaw("{$expr} <= ?", [(int) $max]);
         }
 
         return $query;

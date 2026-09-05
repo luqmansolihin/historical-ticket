@@ -51,8 +51,10 @@ class TicketHistoryController extends Controller
         $status = array_values(array_filter((array) $request->input('status', [])));
         $amountMin = $request->input('amount_min');
         $amountMax = $request->input('amount_max');
+        $amountEq = $request->input('amount_eq');
         $passengerCountMin = $request->input('passenger_count_min');
         $passengerCountMax = $request->input('passenger_count_max');
+        $passengerCountEq = $request->input('passenger_count_eq');
 
         // Date filters for Ticket Date (after, before, on)
         $dateAfter = $request->input('date_after', $request->input('date_from'));
@@ -101,8 +103,8 @@ class TicketHistoryController extends Controller
             ->filterPerson($searchPerson)
             ->filterTransport($transportType)
             ->filterStatus($status)
-            ->filterAmount($amountMin, $amountMax)
-            ->filterPassengerCount($passengerCountMin, $passengerCountMax);
+            ->filterAmount($amountMin, $amountMax, $amountEq)
+            ->filterPassengerCount($passengerCountMin, $passengerCountMax, $passengerCountEq);
 
         // Apply Ticket Date Filters
         if ($dateOn) {
@@ -150,8 +152,10 @@ class TicketHistoryController extends Controller
                 'payDateOn' => $payDateOn,
                 'amountMin' => $amountMin,
                 'amountMax' => $amountMax,
+                'amountEq' => $amountEq,
                 'passengerCountMin' => $passengerCountMin,
                 'passengerCountMax' => $passengerCountMax,
+                'passengerCountEq' => $passengerCountEq,
             ]
         ];
     }
