@@ -8,8 +8,7 @@
         nextPageUrl: '{{ $users->nextPageUrl() }}',
         loading: false,
         hasMore: {{ $users->hasMorePages() ? 'true' : 'false' }},
-        sortBy: {{ json_encode($sortBy) }},
-        sortDir: '{{ $sortDir ?? 'desc' }}',
+        sorts: {{ json_encode($sorts ?? []) }},
         init() {
             this.checkAutoFill();
             window.addEventListener('popstate', () => {
@@ -57,17 +56,33 @@
             }
         },
         toggleSort(col) {
-            if (this.sortBy === col) {
-                this.sortDir = (this.sortDir === 'asc') ? 'desc' : 'asc';
+            const idx = this.sorts.findIndex(s => s.col === col);
+            const defaultDir = (col === 'created_at' || col === 'id') ? 'desc' : 'asc';
+            
+            if (idx === -1) {
+                this.sorts.push({ col: col, dir: defaultDir });
             } else {
-                this.sortBy = col;
-                this.sortDir = (col === 'created_at' || col === 'id') ? 'desc' : 'asc';
+                const currentDir = this.sorts[idx].dir;
+                const altDir = defaultDir === 'desc' ? 'asc' : 'desc';
+                if (currentDir === defaultDir) {
+                    this.sorts[idx].dir = altDir;
+                } else {
+                    this.sorts.splice(idx, 1);
+                }
             }
-            const sortByInput = document.getElementById('users_sort_by_input');
-            const sortDirInput = document.getElementById('users_sort_dir_input');
-            if (sortByInput) sortByInput.value = this.sortBy;
-            if (sortDirInput) sortDirInput.value = this.sortDir;
+            const sortInput = document.getElementById('users_sort_input');
+            if (sortInput) sortInput.value = this.serializeSorts();
             this.applyFilters();
+        },
+        getSortIndex(col) {
+            return this.sorts.findIndex(s => s.col === col);
+        },
+        getSortDir(col) {
+            const item = this.sorts.find(s => s.col === col);
+            return item ? item.dir : null;
+        },
+        serializeSorts() {
+            return this.sorts.map(s => `${s.col}:${s.dir}`).join(',');
         },
         applyFilters(customUrl = null, updateHistory = true) {
             this.loading = true;
@@ -118,12 +133,9 @@
         resetFilters() {
             const form = document.getElementById('users-filter-form');
             if (form) form.reset();
-            this.sortBy = null;
-            this.sortDir = 'desc';
-            const sortByInput = document.getElementById('users_sort_by_input');
-            const sortDirInput = document.getElementById('users_sort_dir_input');
-            if (sortByInput) sortByInput.value = '';
-            if (sortDirInput) sortDirInput.value = 'desc';
+            this.sorts = [];
+            const sortInput = document.getElementById('users_sort_input');
+            if (sortInput) sortInput.value = '';
             this.applyFilters(form.action);
         }
     }" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
@@ -137,7 +149,7 @@
             </div>
 
             <div class="flex items-center gap-2 ml-auto">
-                @if($search || $searchName || $searchEmail || $roleFilter || $dateAfter || $dateBefore || $dateOn)
+                @if($search || $searchName || $searchEmail || $roleFilter || $dateAfter || $dateBefore || $dateOn || !empty($sorts))
                     <a href="{{ route('users.index') }}" @click.prevent="resetFilters()" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
                         <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
                     </a>
@@ -150,8 +162,7 @@
         </div>
 
         <form id="users-filter-form" action="{{ route('users.index') }}" method="GET" @submit.prevent="applyFilters()" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
-            <input type="hidden" id="users_sort_by_input" name="sort_by" value="{{ $sortBy ?? '' }}">
-            <input type="hidden" id="users_sort_dir_input" name="sort_dir" value="{{ $sortDir ?? 'desc' }}">
+            <input type="hidden" id="users_sort_input" name="sort" :value="serializeSorts()">
 
             <div x-ref="scrollContainer" class="overflow-auto flex-1 min-h-0" @scroll.passive="onScroll($event)">
                 <table class="w-full text-left text-[9.5px] leading-tight text-slate-300 whitespace-nowrap border-collapse">
@@ -160,13 +171,17 @@
                             <!-- 1. ID & Nama Pengguna -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'name') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <button type="button" @click="toggleSort('name')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Nama Pengguna">
+                                    <button type="button" @click="toggleSort('name')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('name') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Nama Pengguna">
                                         <span>Nama Pengguna</span>
-                                        @if(($sortBy ?? '') === 'name')
-                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
-                                        @else
+                                        <template x-if="getSortIndex('name') === -1">
                                             <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
-                                        @endif
+                                        </template>
+                                        <template x-if="getSortIndex('name') !== -1">
+                                            <span class="inline-flex items-center gap-0.5 text-sky-400 font-bold text-[10px]">
+                                                <i class="fa-solid" :class="getSortDir('name') === 'asc' ? 'fa-arrow-up-wide-short' : 'fa-arrow-down-wide-short'"></i>
+                                                <span x-show="sorts.length > 1" class="text-[8px] bg-sky-500/20 px-1 py-0.2 rounded-full border border-sky-500/40 font-mono" x-text="getSortIndex('name') + 1"></span>
+                                            </span>
+                                        </template>
                                     </button>
                                     <button type="button" @click="openPop = (openPop === 'name' ? null : 'name')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchName ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Nama Pengguna">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
@@ -187,13 +202,17 @@
                             <!-- 2. Alamat Email -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'email') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <button type="button" @click="toggleSort('email')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Alamat Email">
+                                    <button type="button" @click="toggleSort('email')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('email') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Alamat Email">
                                         <span>Alamat Email</span>
-                                        @if(($sortBy ?? '') === 'email')
-                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
-                                        @else
+                                        <template x-if="getSortIndex('email') === -1">
                                             <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
-                                        @endif
+                                        </template>
+                                        <template x-if="getSortIndex('email') !== -1">
+                                            <span class="inline-flex items-center gap-0.5 text-sky-400 font-bold text-[10px]">
+                                                <i class="fa-solid" :class="getSortDir('email') === 'asc' ? 'fa-arrow-up-wide-short' : 'fa-arrow-down-wide-short'"></i>
+                                                <span x-show="sorts.length > 1" class="text-[8px] bg-sky-500/20 px-1 py-0.2 rounded-full border border-sky-500/40 font-mono" x-text="getSortIndex('email') + 1"></span>
+                                            </span>
+                                        </template>
                                     </button>
                                     <button type="button" @click="openPop = (openPop === 'email' ? null : 'email')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchEmail ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Email">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
@@ -214,13 +233,17 @@
                             <!-- 3. Role Akses -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'role') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <button type="button" @click="toggleSort('role')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Role Akses">
+                                    <button type="button" @click="toggleSort('role')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('role') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Role Akses">
                                         <span>Role Akses</span>
-                                        @if(($sortBy ?? '') === 'role')
-                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
-                                        @else
+                                        <template x-if="getSortIndex('role') === -1">
                                             <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
-                                        @endif
+                                        </template>
+                                        <template x-if="getSortIndex('role') !== -1">
+                                            <span class="inline-flex items-center gap-0.5 text-sky-400 font-bold text-[10px]">
+                                                <i class="fa-solid" :class="getSortDir('role') === 'asc' ? 'fa-arrow-up-wide-short' : 'fa-arrow-down-wide-short'"></i>
+                                                <span x-show="sorts.length > 1" class="text-[8px] bg-sky-500/20 px-1 py-0.2 rounded-full border border-sky-500/40 font-mono" x-text="getSortIndex('role') + 1"></span>
+                                            </span>
+                                        </template>
                                     </button>
                                     <button type="button" @click="openPop = (openPop === 'role' ? null : 'role')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $roleFilter ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Role">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
@@ -252,13 +275,17 @@
                             <!-- 4. Tanggal Terdaftar -->
                             <th class="py-1 px-2 whitespace-nowrap relative" @click.outside="if (openPop === 'date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <button type="button" @click="toggleSort('created_at')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Tanggal Terdaftar">
+                                    <button type="button" @click="toggleSort('created_at')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('created_at') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Tanggal Terdaftar">
                                         <span>Tgl Terdaftar</span>
-                                        @if(($sortBy ?? '') === 'created_at')
-                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
-                                        @else
+                                        <template x-if="getSortIndex('created_at') === -1">
                                             <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
-                                        @endif
+                                        </template>
+                                        <template x-if="getSortIndex('created_at') !== -1">
+                                            <span class="inline-flex items-center gap-0.5 text-sky-400 font-bold text-[10px]">
+                                                <i class="fa-solid" :class="getSortDir('created_at') === 'asc' ? 'fa-arrow-up-wide-short' : 'fa-arrow-down-wide-short'"></i>
+                                                <span x-show="sorts.length > 1" class="text-[8px] bg-sky-500/20 px-1 py-0.2 rounded-full border border-sky-500/40 font-mono" x-text="getSortIndex('created_at') + 1"></span>
+                                            </span>
+                                        </template>
                                     </button>
                                     <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($dateAfter || $dateBefore || $dateOn) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Terdaftar">
                                         <i class="fa-solid fa-caret-down text-xs"></i>

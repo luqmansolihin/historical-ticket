@@ -130,9 +130,9 @@ class TicketHistoryController extends Controller
             }
         }
 
-        // Sorting / Ordering Logic (Default: sort by id desc, no active column highlight)
-        $sortBy = $request->input('sort_by');
-        $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        // Multi-column sorting logic
+        $sortParam = $request->input('sort');
+        $sorts = [];
 
         $allowedSorts = [
             'ticket_code' => 'ticket_code',
@@ -149,15 +149,39 @@ class TicketHistoryController extends Controller
             'status' => 'status',
         ];
 
-        if ($sortBy && array_key_exists($sortBy, $allowedSorts)) {
-            if ($sortBy === 'passenger_count') {
-                $expr = "(LENGTH(COALESCE(passenger_name, '')) - LENGTH(REPLACE(COALESCE(passenger_name, ''), ',', '')) + CASE WHEN COALESCE(passenger_name, '') = '' THEN 0 ELSE 1 END)";
-                $query->orderByRaw("{$expr} {$sortDir}")->orderBy('id', 'desc');
-            } else {
-                $query->orderBy($allowedSorts[$sortBy], $sortDir)->orderBy('id', 'desc');
+        if (!empty($sortParam)) {
+            $pairs = explode(',', $sortParam);
+            foreach ($pairs as $pair) {
+                $parts = explode(':', trim($pair));
+                if (count($parts) === 2) {
+                    $col = trim($parts[0]);
+                    $dir = strtolower(trim($parts[1])) === 'asc' ? 'asc' : 'desc';
+                    if (array_key_exists($col, $allowedSorts)) {
+                        $sorts[] = ['col' => $col, 'dir' => $dir];
+                    }
+                }
             }
+        } elseif ($request->filled('sort_by')) {
+            $col = $request->input('sort_by');
+            $dir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+            if (array_key_exists($col, $allowedSorts)) {
+                $sorts[] = ['col' => $col, 'dir' => $dir];
+            }
+        }
+
+        if (!empty($sorts)) {
+            foreach ($sorts as $s) {
+                $c = $s['col'];
+                $d = $s['dir'];
+                if ($c === 'passenger_count') {
+                    $expr = "(LENGTH(COALESCE(passenger_name, '')) - LENGTH(REPLACE(COALESCE(passenger_name, ''), ',', '')) + CASE WHEN COALESCE(passenger_name, '') = '' THEN 0 ELSE 1 END)";
+                    $query->orderByRaw("{$expr} {$d}");
+                } else {
+                    $query->orderBy($allowedSorts[$c], $d);
+                }
+            }
+            $query->orderBy('id', 'desc');
         } else {
-            $sortBy = null;
             $query->orderBy('id', 'desc');
         }
 
@@ -187,8 +211,10 @@ class TicketHistoryController extends Controller
                 'passengerCountMin' => $passengerCountMin,
                 'passengerCountMax' => $passengerCountMax,
                 'passengerCountEq' => $passengerCountEq,
-                'sortBy' => $sortBy,
-                'sortDir' => $sortDir,
+                'sorts' => $sorts,
+                'sortParam' => $sortParam,
+                'sortBy' => !empty($sorts) ? $sorts[0]['col'] : null,
+                'sortDir' => !empty($sorts) ? $sorts[0]['dir'] : 'desc',
             ]
         ];
     }

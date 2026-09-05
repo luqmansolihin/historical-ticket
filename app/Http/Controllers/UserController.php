@@ -56,9 +56,9 @@ class UserController extends Controller
             }
         }
 
-        // Sorting / Ordering Logic (Default: sort by id desc, no active column highlight)
-        $sortBy = $request->input('sort_by');
-        $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        // Multi-column sorting logic
+        $sortParam = $request->input('sort');
+        $sorts = [];
 
         $allowedSorts = [
             'id' => 'id',
@@ -68,10 +68,34 @@ class UserController extends Controller
             'created_at' => 'created_at',
         ];
 
-        if ($sortBy && array_key_exists($sortBy, $allowedSorts)) {
-            $query->orderBy($allowedSorts[$sortBy], $sortDir)->orderBy('id', 'desc');
+        if (!empty($sortParam)) {
+            $pairs = explode(',', $sortParam);
+            foreach ($pairs as $pair) {
+                $parts = explode(':', trim($pair));
+                if (count($parts) === 2) {
+                    $col = trim($parts[0]);
+                    $dir = strtolower(trim($parts[1])) === 'asc' ? 'asc' : 'desc';
+                    if (array_key_exists($col, $allowedSorts)) {
+                        $sorts[] = ['col' => $col, 'dir' => $dir];
+                    }
+                }
+            }
+        } elseif ($request->filled('sort_by')) {
+            $col = $request->input('sort_by');
+            $dir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+            if (array_key_exists($col, $allowedSorts)) {
+                $sorts[] = ['col' => $col, 'dir' => $dir];
+            }
+        }
+
+        if (!empty($sorts)) {
+            foreach ($sorts as $s) {
+                $c = $s['col'];
+                $d = $s['dir'];
+                $query->orderBy($allowedSorts[$c], $d);
+            }
+            $query->orderBy('id', 'desc');
         } else {
-            $sortBy = null;
             $query->orderBy('id', 'desc');
         }
 
@@ -95,6 +119,9 @@ class UserController extends Controller
             ]);
         }
 
+        $sortBy = !empty($sorts) ? $sorts[0]['col'] : null;
+        $sortDir = !empty($sorts) ? $sorts[0]['dir'] : 'desc';
+
         return view('users.index', compact(
             'users',
             'search',
@@ -109,6 +136,7 @@ class UserController extends Controller
             'totalBooker',
             'totalRegularUser',
             'roleOptions',
+            'sorts',
             'sortBy',
             'sortDir'
         ));
