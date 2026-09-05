@@ -146,12 +146,16 @@
                 this.loading = false;
             });
         },
+        resetSorting() {
+            this.sorts = [];
+            const sortInput = document.getElementById('users_sort_input');
+            if (sortInput) sortInput.value = '';
+            this.applyFilters();
+        },
         resetFilters() {
             const form = document.getElementById('users-filter-form');
             if (form) form.reset();
             this.hasFilters = false;
-            const sortInput = document.getElementById('users_sort_input');
-            if (sortInput) sortInput.value = this.serializeSorts();
             this.applyFilters(form.action);
         }
     }" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
@@ -165,9 +169,13 @@
             </div>
 
             <div class="flex items-center gap-2 ml-auto">
-                <a href="{{ route('users.index') }}" x-show="hasFilters" x-cloak @click.prevent="resetFilters()" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
-                    <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
+                <a href="{{ route('users.index') }}" x-show="hasFilters" x-cloak @click.prevent="resetFilters()" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter Input">
+                    <i class="fa-solid fa-filter-circle-xmark mr-1.5 text-xs"></i> Reset Filter
                 </a>
+
+                <button type="button" x-show="sorts.length > 0" x-cloak @click="resetSorting()" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-all shadow-sm" title="Kembalikan Urutan Tabel ke Default (ID Terbaru)">
+                    <i class="fa-solid fa-arrow-rotate-left mr-1.5 text-xs"></i> Reset Urutan
+                </button>
 
                 <a href="{{ route('users.create') }}" class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-md shadow-sky-500/20 transition-all active:scale-95">
                     <i class="fa-solid fa-user-plus mr-1.5"></i> Tambah Akun Baru

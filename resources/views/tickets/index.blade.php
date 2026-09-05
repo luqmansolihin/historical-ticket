@@ -154,12 +154,16 @@
                 this.loading = false;
             });
         },
+        resetSorting() {
+            this.sorts = [];
+            const sortInput = document.getElementById('sort_input');
+            if (sortInput) sortInput.value = '';
+            this.applyFilters();
+        },
         resetFilters() {
             const form = document.getElementById('filter-form');
             if (form) form.reset();
             this.hasFilters = false;
-            const sortInput = document.getElementById('sort_input');
-            if (sortInput) sortInput.value = this.serializeSorts();
             this.applyFilters(form.action);
         }
     }" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
@@ -173,9 +177,13 @@
             </div>
 
             <div class="flex items-center gap-2 ml-auto">
-                <a href="{{ route('tickets.index') }}" x-show="hasFilters" x-cloak @click.prevent="resetFilters()" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
-                    <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
+                <a href="{{ route('tickets.index') }}" x-show="hasFilters" x-cloak @click.prevent="resetFilters()" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter Input">
+                    <i class="fa-solid fa-filter-circle-xmark mr-1.5 text-xs"></i> Reset Filter
                 </a>
+
+                <button type="button" x-show="sorts.length > 0" x-cloak @click="resetSorting()" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-all shadow-sm" title="Kembalikan Urutan Tabel ke Default (ID Terbaru)">
+                    <i class="fa-solid fa-arrow-rotate-left mr-1.5 text-xs"></i> Reset Urutan
+                </button>
 
                 <a id="export-csv-btn" href="{{ route('tickets.export', request()->query()) }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-sm">
                     <i class="fa-solid fa-file-csv text-emerald-400 mr-1.5 text-xs"></i> Export CSV
