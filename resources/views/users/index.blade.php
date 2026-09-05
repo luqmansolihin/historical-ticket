@@ -4,6 +4,7 @@
 
 @section('content')
 <div x-data="{
+        openPop: null,
         nextPageUrl: '{{ $users->nextPageUrl() }}',
         loading: false,
         hasMore: {{ $users->hasMorePages() ? 'true' : 'false' }},
@@ -17,7 +18,7 @@
             })
             .then(res => res.json())
             .then(data => {
-                const tbody = this.$refs.usersBody;
+                const tbody = document.getElementById('users-tbody');
                 if (tbody && data.html) {
                     tbody.insertAdjacentHTML('beforeend', data.html);
                 }
@@ -32,14 +33,14 @@
         },
         onScroll(e) {
             const el = e.target;
-            if (el.scrollHeight - el.scrollTop - el.clientHeight < 120) {
+            if (el.scrollHeight - el.scrollTop - el.clientHeight < 150) {
                 this.loadMore();
             }
         }
     }" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
 
     <!-- ERP Data Table Container & Column Header Filters -->
-    <div x-data="{ openPop: null }" class="glass-card rounded-2xl shadow-2xl relative z-10 no-print flex-1 flex flex-col min-h-0 h-full overflow-hidden">
+    <div class="glass-card rounded-2xl shadow-2xl relative z-10 no-print flex-1 flex flex-col min-h-0 h-full overflow-hidden">
         <!-- ERP Data Grid Action Toolbar -->
         <div class="px-3 py-1.5 bg-slate-900/90 border-b border-slate-800/80 flex items-center justify-between gap-2 shrink-0">
             <div class="text-xs text-slate-400 font-mono hidden sm:block">
@@ -192,28 +193,10 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody x-ref="usersBody" class="divide-y divide-slate-800/60 whitespace-nowrap font-sans">
+                    <tbody id="users-tbody" class="divide-y divide-slate-800/60 whitespace-nowrap font-sans">
                         @include('users._rows', ['users' => $users])
                     </tbody>
                 </table>
-            </div>
-
-            <div class="p-2 bg-slate-900/90 border-t border-slate-800 shrink-0 text-center text-xs font-mono">
-                <template x-if="loading">
-                    <span class="text-sky-400 font-semibold inline-flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-circle-notch fa-spin text-sm"></i> Memuat akun berikutnya...
-                    </span>
-                </template>
-                <template x-if="!loading && hasMore">
-                    <button type="button" @click="loadMore()" class="text-slate-400 hover:text-sky-400 transition-colors">
-                        <i class="fa-solid fa-angles-down mr-1"></i> Scroll ke bawah atau klik di sini untuk memuat data lebih banyak
-                    </button>
-                </template>
-                <template x-if="!loading && !hasMore">
-                    <span class="text-slate-500">
-                        Semua data akun telah ditampilkan (Total: <strong class="text-slate-300">{{ $users->total() }}</strong> akun)
-                    </span>
-                </template>
             </div>
         </form>
     </div>
