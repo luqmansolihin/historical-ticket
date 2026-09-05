@@ -292,7 +292,7 @@ class TicketHistoryController extends Controller
             'notes' => 'Tiket baru dibuat oleh ' . $creatorName . ' (ID: #' . $creatorId . ' • ' . $creatorRole . ') atas nama ' . $newTicket->booked_by . ' dengan status ' . $newTicket->status . '.',
         ]);
 
-        return redirect()->route('tickets.index')
+        return redirect()->route('tickets.edit', $newTicket->id)
             ->with('success', 'Tiket histori dengan ' . count($names) . ' penumpang berhasil ditambahkan!');
     }
 
