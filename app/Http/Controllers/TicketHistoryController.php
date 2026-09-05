@@ -127,6 +127,9 @@ class TicketHistoryController extends Controller
             }
             if ($payDateBefore) {
                 $query->whereDate('payment_date', '<=', $payDateBefore);
+            }
+        }
+
         // Sorting / Ordering Logic
         $sortBy = $request->input('sort_by', 'ticket_date');
         $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
