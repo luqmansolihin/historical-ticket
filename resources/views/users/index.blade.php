@@ -14,9 +14,7 @@
             </div>
 
             <div class="flex items-center gap-2 ml-auto">
-                <span class="text-[10px] text-slate-400 font-mono hidden md:inline-block px-2.5 py-1 rounded bg-slate-800 border border-slate-700/60">
-                    Total: <strong class="text-sky-300">{{ $totalUsers }}</strong> (Admin: <strong class="text-amber-300">{{ $totalAdmin }}</strong>, Booker & Payer: <strong class="text-sky-300">{{ $totalBooker }}</strong>, Regular: <strong class="text-slate-300">{{ $totalRegularUser }}</strong>)
-                </span>
+
 
                 @if($search || $searchName || $searchEmail || $roleFilter || $dateAfter || $dateBefore || $dateOn)
                     <a href="{{ route('users.index') }}" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
