@@ -20,19 +20,40 @@ class UserController extends Controller
         }
 
         $search = $request->input('search');
+        $searchName = $request->input('search_name', $search);
+        $searchEmail = $request->input('search_email');
         $roleFilter = $request->input('role');
+        $dateAfter = $request->input('date_after');
+        $dateBefore = $request->input('date_before');
+        $dateOn = $request->input('date_on');
 
         $query = User::query();
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            });
+        if ($searchName) {
+            $query->where('name', 'like', "%{$searchName}%");
+        }
+
+        if ($searchEmail) {
+            $query->where('email', 'like', "%{$searchEmail}%");
         }
 
         if ($roleFilter) {
-            $query->where('role', $roleFilter);
+            if ($roleFilter === 'booker') {
+                $query->whereIn('role', ['booker', 'payer']);
+            } else {
+                $query->where('role', $roleFilter);
+            }
+        }
+
+        if ($dateOn) {
+            $query->whereDate('created_at', '=', $dateOn);
+        } else {
+            if ($dateAfter) {
+                $query->whereDate('created_at', '>=', $dateAfter);
+            }
+            if ($dateBefore) {
+                $query->whereDate('created_at', '<=', $dateBefore);
+            }
         }
 
         // Summary Statistics
@@ -42,7 +63,7 @@ class UserController extends Controller
         $totalRegularUser = User::where('role', 'user')->count();
 
         $users = $query->orderBy('created_at', 'desc')
-            ->paginate(10)
+            ->paginate(25)
             ->withQueryString();
 
         $roleOptions = ['admin', 'booker', 'user'];
@@ -50,7 +71,12 @@ class UserController extends Controller
         return view('users.index', compact(
             'users',
             'search',
+            'searchName',
+            'searchEmail',
             'roleFilter',
+            'dateAfter',
+            'dateBefore',
+            'dateOn',
             'totalUsers',
             'totalAdmin',
             'totalBooker',
