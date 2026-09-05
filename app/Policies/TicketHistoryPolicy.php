@@ -35,7 +35,8 @@ class TicketHistoryPolicy
 
     /**
      * Determine whether the user can update the ticket record.
-     * Admin, Booker (who booked it or is handling payment). Regular 'user' CANNOT edit.
+     * Admin can edit any ticket.
+     * Non-admin users can ONLY edit tickets that they created/booked.
      */
     public function update(User $user, TicketHistory $ticket): bool
     {
@@ -53,14 +54,8 @@ class TicketHistoryPolicy
             return false;
         }
 
-        // Booker (merangkap Payer) who booked this ticket, is assigned as payer, or for unpaid tickets
-        if ($user->isBooker() || $user->isPayer()) {
-            if ($ticket->booked_by_user_id === $user->id || $ticket->paid_by_user_id === $user->id || $ticket->paid_by_user_id === null || $ticket->status === 'Belum Bayar') {
-                return true;
-            }
-        }
-
-        return false;
+        // Ticket can ONLY be edited by the user who created/booked it
+        return $ticket->booked_by_user_id !== null && (int)$ticket->booked_by_user_id === (int)$user->id;
     }
 
     /**
@@ -76,12 +71,13 @@ class TicketHistoryPolicy
             return false;
         }
 
-        return ($user->isBooker() || $user->isPayer()) && ($ticket->paid_by_user_id === $user->id || $ticket->paid_by_user_id === null);
+        return $ticket->booked_by_user_id !== null && (int)$ticket->booked_by_user_id === (int)$user->id;
     }
 
     /**
      * Determine whether the user can delete the ticket record.
-     * Admin can delete any ticket. Booker (merangkap Payer) can delete tickets if status is 'Belum Bayar'.
+     * Admin can delete any ticket.
+     * Booker can delete tickets created by them if status is 'Belum Bayar'.
      */
     public function delete(User $user, TicketHistory $ticket): bool
     {
@@ -90,9 +86,7 @@ class TicketHistoryPolicy
         }
 
         if ($ticket->status === 'Belum Bayar') {
-            if ($user->isBooker() || $user->isPayer()) {
-                return true;
-            }
+            return $ticket->booked_by_user_id !== null && (int)$ticket->booked_by_user_id === (int)$user->id;
         }
 
         return false;
