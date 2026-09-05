@@ -4,14 +4,28 @@
 
 @section('content')
 <div class="max-w-2xl mx-auto">
-    <div class="mb-6">
-        <a href="{{ route('users.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
-            <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Akun
-        </a>
-        <h1 class="font-display text-2xl sm:text-3xl font-bold text-white">Edit Akun Pengguna</h1>
-        <p class="text-slate-400 text-sm mt-1">Perbarui informasi akun & hak akses role untuk <span class="font-semibold text-white">{{ $user->name }}</span></p>
+    <!-- Header with Back Link, Title, and Delete Account Button above Card -->
+    <div class="mb-6 flex items-start justify-between gap-4">
+        <div>
+            <a href="{{ route('users.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Akun
+            </a>
+            <h1 class="font-display text-2xl sm:text-3xl font-bold text-white">Edit Akun Pengguna</h1>
+            <p class="text-slate-400 text-sm mt-1">Perbarui informasi akun & hak akses role untuk <span class="font-semibold text-white">{{ $user->name }}</span></p>
+        </div>
+
+        @if(Auth::id() !== $user->id)
+            <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun {{ $user->name }}?');" class="shrink-0 mt-2">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all inline-flex items-center gap-1.5 shadow-sm" title="Hapus Akun Ini">
+                    <i class="fa-solid fa-trash-can"></i> Hapus Akun Ini
+                </button>
+            </form>
+        @endif
     </div>
 
+    <!-- Edit User Card -->
     <div class="glass-card p-6 sm:p-8 rounded-2xl shadow-2xl">
         <form action="{{ route('users.update', $user->id) }}" method="POST" class="space-y-6">
             @csrf
@@ -70,32 +84,15 @@
                 @enderror
             </div>
 
-            <div class="flex items-center justify-between pt-4 border-t border-slate-800">
-                <div>
-                    @if(Auth::id() !== $user->id)
-                        <button type="button" onclick="if(confirm('Apakah Anda yakin ingin menghapus akun {{ $user->name }}?')) document.getElementById('delete-user-form').submit();" class="px-4 py-2 rounded-xl text-xs font-semibold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all inline-flex items-center gap-1.5" title="Hapus Akun Ini">
-                            <i class="fa-solid fa-trash-can"></i> Hapus Akun Ini
-                        </button>
-                    @endif
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('users.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
-                        Batal
-                    </a>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-500/25 transition-all">
-                        <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Perubahan
-                    </button>
-                </div>
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+                <a href="{{ route('users.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
+                    Batal
+                </a>
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-500/25 transition-all">
+                    <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Perubahan
+                </button>
             </div>
         </form>
-
-        @if(Auth::id() !== $user->id)
-            <form id="delete-user-form" action="{{ route('users.destroy', $user->id) }}" method="POST" class="hidden">
-                @csrf
-                @method('DELETE')
-            </form>
-        @endif
     </div>
 </div>
 @endsection
