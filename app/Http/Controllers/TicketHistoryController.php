@@ -250,8 +250,10 @@ class TicketHistoryController extends Controller
             $validated['ticket_code'] = 'TCK-' . strtoupper(Str::random(6));
         }
 
-        // Automatically bind Booker name and User ID strictly to currently logged in user
-        $validated['booked_by'] = Auth::user()->name;
+        // Use custom booked_by text if entered (fallback to Auth::user()->name) while strictly linking booked_by_user_id to logged in user
+        if (empty($validated['booked_by'])) {
+            $validated['booked_by'] = Auth::user()->name;
+        }
         $validated['booked_by_user_id'] = Auth::id();
 
         // Default paid_by if omitted during creation
@@ -367,10 +369,9 @@ class TicketHistoryController extends Controller
         $validated['passenger_name'] = implode(', ', $names);
         unset($validated['passenger_names']);
 
-        // Non-admin users cannot alter original Booker information
+        // Keep booked_by_user_id linked to creator/booker account
         if (!Auth::user()->isAdmin()) {
-            $validated['booked_by'] = $ticket->booked_by;
-            $validated['booked_by_user_id'] = $ticket->booked_by_user_id;
+            $validated['booked_by_user_id'] = $ticket->booked_by_user_id ?: Auth::id();
         }
 
         // Booker (merangkap Payer) non-admin edit rules:
