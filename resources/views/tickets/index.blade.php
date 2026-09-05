@@ -12,24 +12,11 @@
         hasMore: {{ $tickets->hasMorePages() ? 'true' : 'false' }},
         sortBy: '{{ $sortBy ?? 'ticket_date' }}',
         sortDir: '{{ $sortDir ?? 'desc' }}',
-        toggleSort(col) {
-            if (this.sortBy === col) {
-                this.sortDir = (this.sortDir === 'asc') ? 'desc' : 'asc';
-            } else {
-                this.sortBy = col;
-                this.sortDir = (col === 'ticket_date' || col === 'payment_date' || col === 'amount') ? 'desc' : 'asc';
-            }
-            this.$nextTick(() => {
-                const form = document.getElementById('filter-form');
-                if (form) {
-                    document.getElementById('sort_by_input').value = this.sortBy;
-                    document.getElementById('sort_dir_input').value = this.sortDir;
-                    form.submit();
-                }
-            });
-        },
         init() {
             this.checkAutoFill();
+            window.addEventListener('popstate', () => {
+                this.applyFilters(window.location.href, false);
+            });
         },
         checkAutoFill() {
             this.$nextTick(() => {
@@ -70,6 +57,82 @@
             if (bottomDistance < 250 && this.hasMore && !this.loading) {
                 this.loadMore();
             }
+        },
+        toggleSort(col) {
+            if (this.sortBy === col) {
+                this.sortDir = (this.sortDir === 'asc') ? 'desc' : 'asc';
+            } else {
+                this.sortBy = col;
+                this.sortDir = (col === 'ticket_date' || col === 'payment_date' || col === 'amount') ? 'desc' : 'asc';
+            }
+            const sortByInput = document.getElementById('sort_by_input');
+            const sortDirInput = document.getElementById('sort_dir_input');
+            if (sortByInput) sortByInput.value = this.sortBy;
+            if (sortDirInput) sortDirInput.value = this.sortDir;
+            this.applyFilters();
+        },
+        applyFilters(customUrl = null, updateHistory = true) {
+            this.loading = true;
+            const form = document.getElementById('filter-form');
+            let fetchUrl = customUrl;
+
+            if (!fetchUrl && form) {
+                const formData = new FormData(form);
+                const params = new URLSearchParams();
+                for (const [key, value] of formData.entries()) {
+                    if (value && value.toString().trim() !== '') {
+                        params.append(key, value);
+                    }
+                }
+                fetchUrl = form.action + (params.toString() ? '?' + params.toString() : '');
+            }
+
+            fetch(fetchUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('tickets-tbody');
+                if (tbody && data.html) {
+                    tbody.innerHTML = data.html;
+                }
+                this.nextPageUrl = data.next_page_url;
+                this.hasMore = data.has_more;
+                this.loading = false;
+                this.openPop = null;
+
+                const el = this.$refs.scrollContainer;
+                if (el) el.scrollTop = 0;
+
+                if (updateHistory && fetchUrl) {
+                    window.history.pushState(null, '', fetchUrl);
+                }
+
+                const exportBtn = document.getElementById('export-csv-btn');
+                if (exportBtn && fetchUrl) {
+                    const u = new URL(fetchUrl, window.location.origin);
+                    exportBtn.href = '{{ route('tickets.export') }}' + u.search;
+                }
+
+                this.checkAutoFill();
+            })
+            .catch(err => {
+                console.error(err);
+                this.loading = false;
+            });
+        },
+        resetFilters() {
+            const form = document.getElementById('filter-form');
+            if (form) form.reset();
+            this.sortBy = 'ticket_date';
+            this.sortDir = 'desc';
+            const sortByInput = document.getElementById('sort_by_input');
+            const sortDirInput = document.getElementById('sort_dir_input');
+            if (sortByInput) sortByInput.value = 'ticket_date';
+            if (sortDirInput) sortDirInput.value = 'desc';
+            this.applyFilters(form.action);
         }
     }" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
 
@@ -83,12 +146,12 @@
 
             <div class="flex items-center gap-2 ml-auto">
                 @if($search || $searchCode || $searchOrigin || $searchDestination || $searchPassenger || $searchBooker || $searchPayer || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateAfter || $dateBefore || $dateOn || $payDateAfter || $payDateBefore || $payDateOn || $amountMin || $amountMax || $amountEq || $passengerCountMin || $passengerCountMax || $passengerCountEq)
-                    <a href="{{ route('tickets.index') }}" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
+                    <a href="{{ route('tickets.index') }}" @click.prevent="resetFilters()" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
                         <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
                     </a>
                 @endif
 
-                <a href="{{ route('tickets.export', request()->query()) }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-sm">
+                <a id="export-csv-btn" href="{{ route('tickets.export', request()->query()) }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-sm">
                     <i class="fa-solid fa-file-csv text-emerald-400 mr-1.5 text-xs"></i> Export CSV
                 </a>
 
@@ -100,7 +163,7 @@
             </div>
         </div>
 
-        <form id="filter-form" action="{{ route('tickets.index') }}" method="GET" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
+        <form id="filter-form" action="{{ route('tickets.index') }}" method="GET" @submit.prevent="applyFilters()" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
             <input type="hidden" id="sort_by_input" name="sort_by" value="{{ $sortBy ?? 'ticket_date' }}">
             <input type="hidden" id="sort_dir_input" name="sort_dir" value="{{ $sortDir ?? 'desc' }}">
 

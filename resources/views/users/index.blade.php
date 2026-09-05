@@ -10,24 +10,11 @@
         hasMore: {{ $users->hasMorePages() ? 'true' : 'false' }},
         sortBy: '{{ $sortBy ?? 'created_at' }}',
         sortDir: '{{ $sortDir ?? 'desc' }}',
-        toggleSort(col) {
-            if (this.sortBy === col) {
-                this.sortDir = (this.sortDir === 'asc') ? 'desc' : 'asc';
-            } else {
-                this.sortBy = col;
-                this.sortDir = (col === 'created_at' || col === 'id') ? 'desc' : 'asc';
-            }
-            this.$nextTick(() => {
-                const form = document.getElementById('users-filter-form');
-                if (form) {
-                    document.getElementById('users_sort_by_input').value = this.sortBy;
-                    document.getElementById('users_sort_dir_input').value = this.sortDir;
-                    form.submit();
-                }
-            });
-        },
         init() {
             this.checkAutoFill();
+            window.addEventListener('popstate', () => {
+                this.applyFilters(window.location.href, false);
+            });
         },
         checkAutoFill() {
             this.$nextTick(() => {
@@ -68,6 +55,76 @@
             if (bottomDistance < 250 && this.hasMore && !this.loading) {
                 this.loadMore();
             }
+        },
+        toggleSort(col) {
+            if (this.sortBy === col) {
+                this.sortDir = (this.sortDir === 'asc') ? 'desc' : 'asc';
+            } else {
+                this.sortBy = col;
+                this.sortDir = (col === 'created_at' || col === 'id') ? 'desc' : 'asc';
+            }
+            const sortByInput = document.getElementById('users_sort_by_input');
+            const sortDirInput = document.getElementById('users_sort_dir_input');
+            if (sortByInput) sortByInput.value = this.sortBy;
+            if (sortDirInput) sortDirInput.value = this.sortDir;
+            this.applyFilters();
+        },
+        applyFilters(customUrl = null, updateHistory = true) {
+            this.loading = true;
+            const form = document.getElementById('users-filter-form');
+            let fetchUrl = customUrl;
+
+            if (!fetchUrl && form) {
+                const formData = new FormData(form);
+                const params = new URLSearchParams();
+                for (const [key, value] of formData.entries()) {
+                    if (value && value.toString().trim() !== '') {
+                        params.append(key, value);
+                    }
+                }
+                fetchUrl = form.action + (params.toString() ? '?' + params.toString() : '');
+            }
+
+            fetch(fetchUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('users-tbody');
+                if (tbody && data.html) {
+                    tbody.innerHTML = data.html;
+                }
+                this.nextPageUrl = data.next_page_url;
+                this.hasMore = data.has_more;
+                this.loading = false;
+                this.openPop = null;
+
+                const el = this.$refs.scrollContainer;
+                if (el) el.scrollTop = 0;
+
+                if (updateHistory && fetchUrl) {
+                    window.history.pushState(null, '', fetchUrl);
+                }
+
+                this.checkAutoFill();
+            })
+            .catch(err => {
+                console.error(err);
+                this.loading = false;
+            });
+        },
+        resetFilters() {
+            const form = document.getElementById('users-filter-form');
+            if (form) form.reset();
+            this.sortBy = 'created_at';
+            this.sortDir = 'desc';
+            const sortByInput = document.getElementById('users_sort_by_input');
+            const sortDirInput = document.getElementById('users_sort_dir_input');
+            if (sortByInput) sortByInput.value = 'created_at';
+            if (sortDirInput) sortDirInput.value = 'desc';
+            this.applyFilters(form.action);
         }
     }" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
 
@@ -81,7 +138,7 @@
 
             <div class="flex items-center gap-2 ml-auto">
                 @if($search || $searchName || $searchEmail || $roleFilter || $dateAfter || $dateBefore || $dateOn)
-                    <a href="{{ route('users.index') }}" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
+                    <a href="{{ route('users.index') }}" @click.prevent="resetFilters()" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
                         <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
                     </a>
                 @endif
@@ -92,7 +149,7 @@
             </div>
         </div>
 
-        <form id="users-filter-form" action="{{ route('users.index') }}" method="GET" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
+        <form id="users-filter-form" action="{{ route('users.index') }}" method="GET" @submit.prevent="applyFilters()" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
             <input type="hidden" id="users_sort_by_input" name="sort_by" value="{{ $sortBy ?? 'created_at' }}">
             <input type="hidden" id="users_sort_dir_input" name="sort_dir" value="{{ $sortDir ?? 'desc' }}">
 
