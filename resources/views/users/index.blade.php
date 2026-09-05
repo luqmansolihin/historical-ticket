@@ -8,7 +8,7 @@
         nextPageUrl: '{{ $users->nextPageUrl() }}',
         loading: false,
         hasMore: {{ $users->hasMorePages() ? 'true' : 'false' }},
-        sortBy: '{{ $sortBy ?? 'created_at' }}',
+        sortBy: {{ json_encode($sortBy) }},
         sortDir: '{{ $sortDir ?? 'desc' }}',
         init() {
             this.checkAutoFill();
@@ -118,11 +118,11 @@
         resetFilters() {
             const form = document.getElementById('users-filter-form');
             if (form) form.reset();
-            this.sortBy = 'created_at';
+            this.sortBy = null;
             this.sortDir = 'desc';
             const sortByInput = document.getElementById('users_sort_by_input');
             const sortDirInput = document.getElementById('users_sort_dir_input');
-            if (sortByInput) sortByInput.value = 'created_at';
+            if (sortByInput) sortByInput.value = '';
             if (sortDirInput) sortDirInput.value = 'desc';
             this.applyFilters(form.action);
         }
@@ -150,7 +150,7 @@
         </div>
 
         <form id="users-filter-form" action="{{ route('users.index') }}" method="GET" @submit.prevent="applyFilters()" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
-            <input type="hidden" id="users_sort_by_input" name="sort_by" value="{{ $sortBy ?? 'created_at' }}">
+            <input type="hidden" id="users_sort_by_input" name="sort_by" value="{{ $sortBy ?? '' }}">
             <input type="hidden" id="users_sort_dir_input" name="sort_dir" value="{{ $sortDir ?? 'desc' }}">
 
             <div x-ref="scrollContainer" class="overflow-auto flex-1 min-h-0" @scroll.passive="onScroll($event)">

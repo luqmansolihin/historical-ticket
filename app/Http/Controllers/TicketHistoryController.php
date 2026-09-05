@@ -130,8 +130,8 @@ class TicketHistoryController extends Controller
             }
         }
 
-        // Sorting / Ordering Logic
-        $sortBy = $request->input('sort_by', 'ticket_date');
+        // Sorting / Ordering Logic (Default: sort by id desc, no active column highlight)
+        $sortBy = $request->input('sort_by');
         $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = [
@@ -149,12 +149,12 @@ class TicketHistoryController extends Controller
             'status' => 'status',
         ];
 
-        if (array_key_exists($sortBy, $allowedSorts)) {
-            $query->orderBy($allowedSorts[$sortBy], $sortDir);
+        if ($sortBy && array_key_exists($sortBy, $allowedSorts)) {
+            $query->orderBy($allowedSorts[$sortBy], $sortDir)->orderBy('id', 'desc');
         } else {
-            $query->orderBy('ticket_date', 'desc');
+            $sortBy = null;
+            $query->orderBy('id', 'desc');
         }
-        $query->orderBy('id', 'desc');
 
         return [
             'query' => $query,

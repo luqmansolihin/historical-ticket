@@ -56,8 +56,8 @@ class UserController extends Controller
             }
         }
 
-        // Sorting / Ordering Logic
-        $sortBy = $request->input('sort_by', 'created_at');
+        // Sorting / Ordering Logic (Default: sort by id desc, no active column highlight)
+        $sortBy = $request->input('sort_by');
         $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = [
@@ -68,10 +68,11 @@ class UserController extends Controller
             'created_at' => 'created_at',
         ];
 
-        if (array_key_exists($sortBy, $allowedSorts)) {
-            $query->orderBy($allowedSorts[$sortBy], $sortDir);
+        if ($sortBy && array_key_exists($sortBy, $allowedSorts)) {
+            $query->orderBy($allowedSorts[$sortBy], $sortDir)->orderBy('id', 'desc');
         } else {
-            $query->orderBy('created_at', 'desc');
+            $sortBy = null;
+            $query->orderBy('id', 'desc');
         }
 
         // Summary Statistics

@@ -10,7 +10,7 @@
         nextPageUrl: '{{ $tickets->nextPageUrl() }}',
         loading: false,
         hasMore: {{ $tickets->hasMorePages() ? 'true' : 'false' }},
-        sortBy: '{{ $sortBy ?? 'ticket_date' }}',
+        sortBy: {{ json_encode($sortBy) }},
         sortDir: '{{ $sortDir ?? 'desc' }}',
         init() {
             this.checkAutoFill();
@@ -67,7 +67,7 @@
             }
             const sortByInput = document.getElementById('sort_by_input');
             const sortDirInput = document.getElementById('sort_dir_input');
-            if (sortByInput) sortByInput.value = this.sortBy;
+            if (sortByInput) sortByInput.value = this.sortBy || '';
             if (sortDirInput) sortDirInput.value = this.sortDir;
             this.applyFilters();
         },
@@ -126,11 +126,11 @@
         resetFilters() {
             const form = document.getElementById('filter-form');
             if (form) form.reset();
-            this.sortBy = 'ticket_date';
+            this.sortBy = null;
             this.sortDir = 'desc';
             const sortByInput = document.getElementById('sort_by_input');
             const sortDirInput = document.getElementById('sort_dir_input');
-            if (sortByInput) sortByInput.value = 'ticket_date';
+            if (sortByInput) sortByInput.value = '';
             if (sortDirInput) sortDirInput.value = 'desc';
             this.applyFilters(form.action);
         }
@@ -164,7 +164,7 @@
         </div>
 
         <form id="filter-form" action="{{ route('tickets.index') }}" method="GET" @submit.prevent="applyFilters()" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
-            <input type="hidden" id="sort_by_input" name="sort_by" value="{{ $sortBy ?? 'ticket_date' }}">
+            <input type="hidden" id="sort_by_input" name="sort_by" value="{{ $sortBy ?? '' }}">
             <input type="hidden" id="sort_dir_input" name="sort_dir" value="{{ $sortDir ?? 'desc' }}">
 
             <div x-ref="scrollContainer" class="overflow-auto flex-1 min-h-0" @scroll.passive="onScroll($event)">
