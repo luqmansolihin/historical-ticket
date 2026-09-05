@@ -11,11 +11,26 @@
         loading: false,
         hasMore: {{ $tickets->hasMorePages() ? 'true' : 'false' }},
         sorts: {{ json_encode($sorts ?? []) }},
+        hasFilters: {{ ($search || $searchCode || $searchOrigin || $searchDestination || $searchPassenger || $searchBooker || $searchPayer || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateAfter || $dateBefore || $dateOn || $payDateAfter || $payDateBefore || $payDateOn || $amountMin || $amountMax || $amountEq || $passengerCountMin || $passengerCountMax || $passengerCountEq) ? 'true' : 'false' }},
         init() {
             this.checkAutoFill();
             window.addEventListener('popstate', () => {
                 this.applyFilters(window.location.href, false);
             });
+        },
+        checkHasFilters() {
+            const form = document.getElementById('filter-form');
+            if (!form) { this.hasFilters = false; return; }
+            const formData = new FormData(form);
+            let active = false;
+            for (const [key, value] of formData.entries()) {
+                if (key === 'sort' || key === 'sort_by' || key === 'sort_dir') continue;
+                if (value && value.toString().trim() !== '') {
+                    active = true;
+                    break;
+                }
+            }
+            this.hasFilters = active;
         },
         checkAutoFill() {
             this.$nextTick(() => {
@@ -88,6 +103,7 @@
         },
         applyFilters(customUrl = null, updateHistory = true) {
             this.loading = true;
+            this.checkHasFilters();
             const form = document.getElementById('filter-form');
             let fetchUrl = customUrl;
 
@@ -141,9 +157,9 @@
         resetFilters() {
             const form = document.getElementById('filter-form');
             if (form) form.reset();
-            this.sorts = [];
+            this.hasFilters = false;
             const sortInput = document.getElementById('sort_input');
-            if (sortInput) sortInput.value = '';
+            if (sortInput) sortInput.value = this.serializeSorts();
             this.applyFilters(form.action);
         }
     }" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
@@ -157,11 +173,9 @@
             </div>
 
             <div class="flex items-center gap-2 ml-auto">
-                @if($search || $searchCode || $searchOrigin || $searchDestination || $searchPassenger || $searchBooker || $searchPayer || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateAfter || $dateBefore || $dateOn || $payDateAfter || $payDateBefore || $payDateOn || $amountMin || $amountMax || $amountEq || $passengerCountMin || $passengerCountMax || $passengerCountEq || !empty($sorts))
-                    <a href="{{ route('tickets.index') }}" @click.prevent="resetFilters()" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
-                        <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
-                    </a>
-                @endif
+                <a href="{{ route('tickets.index') }}" x-show="hasFilters" x-cloak @click.prevent="resetFilters()" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
+                    <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
+                </a>
 
                 <a id="export-csv-btn" href="{{ route('tickets.export', request()->query()) }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-sm">
                     <i class="fa-solid fa-file-csv text-emerald-400 mr-1.5 text-xs"></i> Export CSV

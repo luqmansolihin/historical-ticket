@@ -9,11 +9,26 @@
         loading: false,
         hasMore: {{ $users->hasMorePages() ? 'true' : 'false' }},
         sorts: {{ json_encode($sorts ?? []) }},
+        hasFilters: {{ ($search || $searchName || $searchEmail || $roleFilter || $dateAfter || $dateBefore || $dateOn) ? 'true' : 'false' }},
         init() {
             this.checkAutoFill();
             window.addEventListener('popstate', () => {
                 this.applyFilters(window.location.href, false);
             });
+        },
+        checkHasFilters() {
+            const form = document.getElementById('users-filter-form');
+            if (!form) { this.hasFilters = false; return; }
+            const formData = new FormData(form);
+            let active = false;
+            for (const [key, value] of formData.entries()) {
+                if (key === 'sort' || key === 'sort_by' || key === 'sort_dir') continue;
+                if (value && value.toString().trim() !== '') {
+                    active = true;
+                    break;
+                }
+            }
+            this.hasFilters = active;
         },
         checkAutoFill() {
             this.$nextTick(() => {
@@ -86,6 +101,7 @@
         },
         applyFilters(customUrl = null, updateHistory = true) {
             this.loading = true;
+            this.checkHasFilters();
             const form = document.getElementById('users-filter-form');
             let fetchUrl = customUrl;
 
@@ -133,9 +149,9 @@
         resetFilters() {
             const form = document.getElementById('users-filter-form');
             if (form) form.reset();
-            this.sorts = [];
+            this.hasFilters = false;
             const sortInput = document.getElementById('users_sort_input');
-            if (sortInput) sortInput.value = '';
+            if (sortInput) sortInput.value = this.serializeSorts();
             this.applyFilters(form.action);
         }
     }" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
@@ -149,11 +165,9 @@
             </div>
 
             <div class="flex items-center gap-2 ml-auto">
-                @if($search || $searchName || $searchEmail || $roleFilter || $dateAfter || $dateBefore || $dateOn || !empty($sorts))
-                    <a href="{{ route('users.index') }}" @click.prevent="resetFilters()" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
-                        <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
-                    </a>
-                @endif
+                <a href="{{ route('users.index') }}" x-show="hasFilters" x-cloak @click.prevent="resetFilters()" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
+                    <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
+                </a>
 
                 <a href="{{ route('users.create') }}" class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-md shadow-sky-500/20 transition-all active:scale-95">
                     <i class="fa-solid fa-user-plus mr-1.5"></i> Tambah Akun Baru
