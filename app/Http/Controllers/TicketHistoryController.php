@@ -127,8 +127,31 @@ class TicketHistoryController extends Controller
             }
             if ($payDateBefore) {
                 $query->whereDate('payment_date', '<=', $payDateBefore);
-            }
+        // Sorting / Ordering Logic
+        $sortBy = $request->input('sort_by', 'ticket_date');
+        $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        $allowedSorts = [
+            'ticket_code' => 'ticket_code',
+            'ticket_date' => 'ticket_date',
+            'origin' => 'origin',
+            'destination' => 'destination',
+            'transport_type' => 'transport_type',
+            'passenger_name' => 'passenger_name',
+            'passenger_count' => 'passenger_name',
+            'booked_by' => 'booked_by',
+            'paid_by' => 'paid_by',
+            'amount' => 'amount',
+            'payment_date' => 'payment_date',
+            'status' => 'status',
+        ];
+
+        if (array_key_exists($sortBy, $allowedSorts)) {
+            $query->orderBy($allowedSorts[$sortBy], $sortDir);
+        } else {
+            $query->orderBy('ticket_date', 'desc');
         }
+        $query->orderBy('id', 'desc');
 
         return [
             'query' => $query,
@@ -156,6 +179,8 @@ class TicketHistoryController extends Controller
                 'passengerCountMin' => $passengerCountMin,
                 'passengerCountMax' => $passengerCountMax,
                 'passengerCountEq' => $passengerCountEq,
+                'sortBy' => $sortBy,
+                'sortDir' => $sortDir,
             ]
         ];
     }
@@ -177,9 +202,7 @@ class TicketHistoryController extends Controller
         $totalBelumBayar = (clone $statsQuery)->where('status', 'Belum Bayar')->count();
         $totalDibatalkan = (clone $statsQuery)->where('status', 'Dibatalkan')->count();
 
-        $tickets = $query->orderBy('ticket_date', 'desc')
-            ->orderBy('id', 'desc')
-            ->paginate(25)
+        $tickets = $query->paginate(25)
             ->withQueryString();
 
         $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];

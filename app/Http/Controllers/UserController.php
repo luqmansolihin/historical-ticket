@@ -56,14 +56,31 @@ class UserController extends Controller
             }
         }
 
+        // Sorting / Ordering Logic
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        $allowedSorts = [
+            'id' => 'id',
+            'name' => 'name',
+            'email' => 'email',
+            'role' => 'role',
+            'created_at' => 'created_at',
+        ];
+
+        if (array_key_exists($sortBy, $allowedSorts)) {
+            $query->orderBy($allowedSorts[$sortBy], $sortDir);
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
         // Summary Statistics
         $totalUsers = User::count();
         $totalAdmin = User::where('role', 'admin')->count();
         $totalBooker = User::whereIn('role', ['finance', 'booker', 'payer'])->count();
         $totalRegularUser = User::where('role', 'user')->count();
 
-        $users = $query->orderBy('created_at', 'desc')
-            ->paginate(25)
+        $users = $query->paginate(25)
             ->withQueryString();
 
         $roleOptions = ['admin', 'finance', 'user'];
@@ -90,7 +107,9 @@ class UserController extends Controller
             'totalAdmin',
             'totalBooker',
             'totalRegularUser',
-            'roleOptions'
+            'roleOptions',
+            'sortBy',
+            'sortDir'
         ));
     }
 

@@ -10,6 +10,24 @@
         nextPageUrl: '{{ $tickets->nextPageUrl() }}',
         loading: false,
         hasMore: {{ $tickets->hasMorePages() ? 'true' : 'false' }},
+        sortBy: '{{ $sortBy ?? 'ticket_date' }}',
+        sortDir: '{{ $sortDir ?? 'desc' }}',
+        toggleSort(col) {
+            if (this.sortBy === col) {
+                this.sortDir = (this.sortDir === 'asc') ? 'desc' : 'asc';
+            } else {
+                this.sortBy = col;
+                this.sortDir = (col === 'ticket_date' || col === 'payment_date' || col === 'amount') ? 'desc' : 'asc';
+            }
+            this.$nextTick(() => {
+                const form = document.getElementById('filter-form');
+                if (form) {
+                    document.getElementById('sort_by_input').value = this.sortBy;
+                    document.getElementById('sort_dir_input').value = this.sortDir;
+                    form.submit();
+                }
+            });
+        },
         init() {
             this.checkAutoFill();
         },
@@ -82,7 +100,10 @@
             </div>
         </div>
 
-        <form action="{{ route('tickets.index') }}" method="GET" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
+        <form id="filter-form" action="{{ route('tickets.index') }}" method="GET" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
+            <input type="hidden" id="sort_by_input" name="sort_by" value="{{ $sortBy ?? 'ticket_date' }}">
+            <input type="hidden" id="sort_dir_input" name="sort_dir" value="{{ $sortDir ?? 'desc' }}">
+
             <div x-ref="scrollContainer" class="overflow-auto flex-1 min-h-0" @scroll.passive="onScroll($event)">
                 <table class="w-full text-left text-[9.5px] leading-tight text-slate-300 whitespace-nowrap border-collapse">
                     <thead class="bg-slate-900/95 text-[9px] uppercase font-bold text-slate-400 tracking-tight border-b border-slate-800 whitespace-nowrap sticky top-0 z-20 backdrop-blur-md">
@@ -90,7 +111,14 @@
                             <!-- 1. Kode Tiket -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'code') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <span>Kode Tiket</span>
+                                    <button type="button" @click="toggleSort('ticket_code')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Kode Tiket">
+                                        <span>Kode Tiket</span>
+                                        @if(($sortBy ?? '') === 'ticket_code')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'code' ? null : 'code')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchCode ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kode Tiket">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
@@ -110,7 +138,14 @@
                             <!-- 2. Tgl SPK / Tiket -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <span>Tgl Tiket</span>
+                                    <button type="button" @click="toggleSort('ticket_date')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Tanggal Tiket">
+                                        <span>Tgl Tiket</span>
+                                        @if(($sortBy ?? '') === 'ticket_date')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($dateAfter || $dateBefore || $dateOn) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Tiket">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
@@ -171,7 +206,14 @@
                             <!-- 3. Asal -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'origin') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <span>Asal</span>
+                                    <button type="button" @click="toggleSort('origin')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Kota Asal">
+                                        <span>Asal</span>
+                                        @if(($sortBy ?? '') === 'origin')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'origin' ? null : 'origin')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchOrigin ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kota Asal">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
@@ -191,7 +233,14 @@
                             <!-- 4. Tujuan -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'destination') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <span>Tujuan</span>
+                                    <button type="button" @click="toggleSort('destination')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Kota Tujuan">
+                                        <span>Tujuan</span>
+                                        @if(($sortBy ?? '') === 'destination')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'destination' ? null : 'destination')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchDestination ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kota Tujuan">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
@@ -211,7 +260,14 @@
                             <!-- 5. Transportasi -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'transport') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <span>Transportasi</span>
+                                    <button type="button" @click="toggleSort('transport_type')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Transportasi">
+                                        <span>Transportasi</span>
+                                        @if(($sortBy ?? '') === 'transport_type')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'transport' ? null : 'transport')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($transportType) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Transportasi">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
@@ -242,7 +298,14 @@
                             <!-- 6. Penumpang -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'passenger') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <span>Nama Penumpang</span>
+                                    <button type="button" @click="toggleSort('passenger_name')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Nama Penumpang">
+                                        <span>Nama Penumpang</span>
+                                        @if(($sortBy ?? '') === 'passenger_name')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'passenger' ? null : 'passenger')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchPassenger ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Penumpang">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
@@ -262,7 +325,14 @@
                             <!-- 7. Jml Penumpang -->
                             <th class="py-1 px-2 text-center whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'passenger_count') openPop = null">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    <span>Jml</span>
+                                    <button type="button" @click="toggleSort('passenger_count')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Jumlah Penumpang">
+                                        <span>Jml</span>
+                                        @if(($sortBy ?? '') === 'passenger_count')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'passenger_count' ? null : 'passenger_count')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($passengerCountMin || $passengerCountMax || $passengerCountEq) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Jumlah Penumpang">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
@@ -313,7 +383,14 @@
                             <!-- 8. Pemesan -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'booker') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <span>Pemesan</span>
+                                    <button type="button" @click="toggleSort('booked_by')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Pemesan">
+                                        <span>Pemesan</span>
+                                        @if(($sortBy ?? '') === 'booked_by')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'booker' ? null : 'booker')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchBooker ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pemesan">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
@@ -333,7 +410,14 @@
                             <!-- 9. Pembayar -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'payer') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <span>Pembayar</span>
+                                    <button type="button" @click="toggleSort('paid_by')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Pembayar">
+                                        <span>Pembayar</span>
+                                        @if(($sortBy ?? '') === 'paid_by')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'payer' ? null : 'payer')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchPayer ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pembayar">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
@@ -353,7 +437,14 @@
                             <!-- 10. Tgl Bayar -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'pay_date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
-                                    <span>Tgl Bayar</span>
+                                    <button type="button" @click="toggleSort('payment_date')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Tanggal Bayar">
+                                        <span>Tgl Bayar</span>
+                                        @if(($sortBy ?? '') === 'payment_date')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-sky-400' : 'fa-arrow-down-wide-short text-sky-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'pay_date' ? null : 'pay_date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($payDateAfter || $payDateBefore || $payDateOn) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Bayar">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
@@ -414,7 +505,14 @@
                             <!-- 11. Biaya (IDR) -->
                             <th class="py-1 px-2 text-right whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'amount') openPop = null">
                                 <div class="flex items-center justify-end gap-1.5">
-                                    <span>Biaya (IDR)</span>
+                                    <button type="button" @click="toggleSort('amount')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Biaya">
+                                        <span>Biaya (IDR)</span>
+                                        @if(($sortBy ?? '') === 'amount')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-emerald-400' : 'fa-arrow-down-wide-short text-emerald-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'amount' ? null : 'amount')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($amountMin || $amountMax || $amountEq) ? 'text-emerald-400 font-bold bg-emerald-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Rentang Biaya">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
@@ -465,7 +563,14 @@
                             <!-- 12. Status -->
                             <th class="py-1 px-2 text-center whitespace-nowrap relative" @click.outside="if (openPop === 'status') openPop = null">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    <span>Status</span>
+                                    <button type="button" @click="toggleSort('status')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Status">
+                                        <span>Status</span>
+                                        @if(($sortBy ?? '') === 'status')
+                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-emerald-400' : 'fa-arrow-down-wide-short text-emerald-400' }} text-[10px]"></i>
+                                        @else
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        @endif
+                                    </button>
                                     <button type="button" @click="openPop = (openPop === 'status' ? null : 'status')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($status) ? 'text-emerald-400 font-bold bg-emerald-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Status">
                                         <i class="fa-solid fa-caret-down text-xs"></i>
                                     </button>
