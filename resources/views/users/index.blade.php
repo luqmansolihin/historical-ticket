@@ -107,7 +107,7 @@
                             </th>
 
                             <!-- 4. Tanggal Terdaftar -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'date') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative" @click.outside="if (openPop === 'date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Tgl Terdaftar</span>
                                     <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($dateAfter || $dateBefore || $dateOn) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Terdaftar">
@@ -161,9 +161,6 @@
                                     </div>
                                 </div>
                             </th>
-
-                            <!-- 5. Aksi -->
-                            <th class="py-1 px-2 text-right whitespace-nowrap">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800/60 whitespace-nowrap font-sans">
@@ -202,32 +199,13 @@
                                 </td>
 
                                 <!-- 4. Tanggal Terdaftar -->
-                                <td class="py-0.5 px-2 whitespace-nowrap font-mono text-slate-400 border-r border-slate-800/40">
+                                <td class="py-0.5 px-2 whitespace-nowrap font-mono text-slate-400">
                                     {{ $userItem->created_at ? $userItem->created_at->format('d/m/Y H:i') : '-' }}
-                                </td>
-
-                                <!-- 5. Aksi -->
-                                <td class="py-0.5 px-2 text-right whitespace-nowrap">
-                                    <div class="flex items-center justify-end gap-1.5">
-                                        <a href="{{ route('users.edit', $userItem->id) }}" class="p-1 text-amber-400 hover:text-amber-300 transition-colors" title="Edit Akun & Role">
-                                            <i class="fa-solid fa-pen-to-square text-[11px]"></i>
-                                        </a>
-
-                                        @if(Auth::id() !== $userItem->id)
-                                            <form action="{{ route('users.destroy', $userItem->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun {{ $userItem->name }}?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="p-1 text-rose-400 hover:text-rose-300 transition-colors" title="Hapus Akun Ini">
-                                                    <i class="fa-solid fa-trash-can text-[11px]"></i>
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-12 text-center text-slate-500">
+                                <td colspan="4" class="py-12 text-center text-slate-500">
                                     <p class="text-xs font-medium text-slate-400">Tidak ada akun pengguna ditemukan</p>
                                 </td>
                             </tr>

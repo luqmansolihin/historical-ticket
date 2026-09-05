@@ -70,15 +70,32 @@
                 @enderror
             </div>
 
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-                <a href="{{ route('users.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
-                    Batal
-                </a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-500/25 transition-all">
-                    <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Perubahan
-                </button>
+            <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                <div>
+                    @if(Auth::id() !== $user->id)
+                        <button type="button" onclick="if(confirm('Apakah Anda yakin ingin menghapus akun {{ $user->name }}?')) document.getElementById('delete-user-form').submit();" class="px-4 py-2 rounded-xl text-xs font-semibold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all inline-flex items-center gap-1.5" title="Hapus Akun Ini">
+                            <i class="fa-solid fa-trash-can"></i> Hapus Akun Ini
+                        </button>
+                    @endif
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('users.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
+                        Batal
+                    </a>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-500/25 transition-all">
+                        <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Perubahan
+                    </button>
+                </div>
             </div>
         </form>
+
+        @if(Auth::id() !== $user->id)
+            <form id="delete-user-form" action="{{ route('users.destroy', $user->id) }}" method="POST" class="hidden">
+                @csrf
+                @method('DELETE')
+            </form>
+        @endif
     </div>
 </div>
 @endsection
