@@ -3,7 +3,40 @@
 @section('title', 'Daftar List Akun - Management Users')
 
 @section('content')
-<div class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
+<div x-data="{
+        nextPageUrl: '{{ $users->nextPageUrl() }}',
+        loading: false,
+        hasMore: {{ $users->hasMorePages() ? 'true' : 'false' }},
+        loadMore() {
+            if (this.loading || !this.nextPageUrl) return;
+            this.loading = true;
+            fetch(this.nextPageUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = this.$refs.usersBody;
+                if (tbody && data.html) {
+                    tbody.insertAdjacentHTML('beforeend', data.html);
+                }
+                this.nextPageUrl = data.next_page_url;
+                this.hasMore = data.has_more;
+                this.loading = false;
+            })
+            .catch(err => {
+                console.error(err);
+                this.loading = false;
+            });
+        },
+        onScroll(e) {
+            const el = e.target;
+            if (el.scrollHeight - el.scrollTop - el.clientHeight < 120) {
+                this.loadMore();
+            }
+        }
+    }" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
 
     <!-- ERP Data Table Container & Column Header Filters -->
     <div x-data="{ openPop: null }" class="glass-card rounded-2xl shadow-2xl relative z-10 no-print flex-1 flex flex-col min-h-0 h-full overflow-hidden">
@@ -14,8 +47,6 @@
             </div>
 
             <div class="flex items-center gap-2 ml-auto">
-
-
                 @if($search || $searchName || $searchEmail || $roleFilter || $dateAfter || $dateBefore || $dateOn)
                     <a href="{{ route('users.index') }}" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all shadow-sm" title="Reset Semua Filter">
                         <i class="fa-solid fa-rotate-left mr-1.5 text-xs"></i> Reset Filter
@@ -29,7 +60,7 @@
         </div>
 
         <form action="{{ route('users.index') }}" method="GET" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
-            <div class="overflow-auto flex-1 min-h-0">
+            <div class="overflow-auto flex-1 min-h-0" @scroll.passive="onScroll($event)">
                 <table class="w-full text-left text-[9.5px] leading-tight text-slate-300 whitespace-nowrap border-collapse">
                     <thead class="bg-slate-900/95 text-[9px] uppercase font-bold text-slate-400 tracking-tight border-b border-slate-800 whitespace-nowrap sticky top-0 z-20 backdrop-blur-md">
                         <tr>
@@ -161,62 +192,29 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-800/60 whitespace-nowrap font-sans">
-                        @forelse($users as $userItem)
-                            <tr @dblclick="window.location.href = '{{ route('users.edit', $userItem->id) }}'"
-                                class="hover:bg-sky-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
-                                title="Double klik untuk mengedit akun {{ $userItem->name }}">
-                                <!-- 1. Nama Pengguna -->
-                                <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-mono text-slate-400 text-[9px]">#{{ $userItem->id }}</span>
-                                        <span class="font-semibold text-slate-200">{{ $userItem->name }}</span>
-                                        @if(Auth::id() === $userItem->id)
-                                            <span class="px-1.5 py-0 text-[8.5px] font-mono rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">Anda</span>
-                                        @endif
-                                    </div>
-                                </td>
-
-                                <!-- 2. Email -->
-                                <td class="py-0.5 px-2 whitespace-nowrap font-mono text-slate-300 border-r border-slate-800/40">
-                                    {{ $userItem->email }}
-                                </td>
-
-                                <!-- 3. Role Akses -->
-                                <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
-                                    <span class="px-1.5 py-0 text-[8.5px] font-semibold rounded-full border inline-flex items-center gap-1 {{ $userItem->role_badge_class }}">
-                                        @if($userItem->isAdmin())
-                                            <i class="fa-solid fa-shield-halved text-amber-400 text-[8px]"></i>
-                                        @elseif($userItem->role === 'booker' || $userItem->role === 'payer')
-                                            <i class="fa-solid fa-user-check text-sky-400 text-[8px]"></i>
-                                        @else
-                                            <i class="fa-solid fa-user text-slate-400 text-[8px]"></i>
-                                        @endif
-                                        {{ $userItem->role === 'booker' || $userItem->role === 'payer' ? 'Booker & Payer' : ucfirst($userItem->role) }}
-                                    </span>
-                                </td>
-
-                                <!-- 4. Tanggal Terdaftar -->
-                                <td class="py-0.5 px-2 whitespace-nowrap font-mono text-slate-400">
-                                    {{ $userItem->created_at ? $userItem->created_at->format('d/m/Y H:i') : '-' }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="py-12 text-center text-slate-500">
-                                    <p class="text-xs font-medium text-slate-400">Tidak ada akun pengguna ditemukan</p>
-                                </td>
-                            </tr>
-                        @endforelse
+                    <tbody x-ref="usersBody" class="divide-y divide-slate-800/60 whitespace-nowrap font-sans">
+                        @include('users._rows', ['users' => $users])
                     </tbody>
                 </table>
             </div>
 
-            @if($users->hasPages())
-                <div class="p-3 bg-slate-900/90 border-t border-slate-800 mt-auto shrink-0">
-                    {{ $users->links() }}
-                </div>
-            @endif
+            <div class="p-2 bg-slate-900/90 border-t border-slate-800 shrink-0 text-center text-xs font-mono">
+                <template x-if="loading">
+                    <span class="text-sky-400 font-semibold inline-flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-notch fa-spin text-sm"></i> Memuat akun berikutnya...
+                    </span>
+                </template>
+                <template x-if="!loading && hasMore">
+                    <button type="button" @click="loadMore()" class="text-slate-400 hover:text-sky-400 transition-colors">
+                        <i class="fa-solid fa-angles-down mr-1"></i> Scroll ke bawah atau klik di sini untuk memuat data lebih banyak
+                    </button>
+                </template>
+                <template x-if="!loading && !hasMore">
+                    <span class="text-slate-500">
+                        Semua data akun telah ditampilkan (Total: <strong class="text-slate-300">{{ $users->total() }}</strong> akun)
+                    </span>
+                </template>
+            </div>
         </form>
     </div>
 </div>

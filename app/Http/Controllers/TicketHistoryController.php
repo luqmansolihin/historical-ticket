@@ -185,6 +185,15 @@ class TicketHistoryController extends Controller
         $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
         $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
 
+        if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response()->json([
+                'html' => view('tickets._rows', compact('tickets'))->render(),
+                'next_page_url' => $tickets->nextPageUrl(),
+                'has_more' => $tickets->hasMorePages(),
+                'total' => $tickets->total(),
+            ]);
+        }
+
         return view('tickets.index', array_merge(
             $params,
             compact(

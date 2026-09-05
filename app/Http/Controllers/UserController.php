@@ -68,6 +68,15 @@ class UserController extends Controller
 
         $roleOptions = ['admin', 'booker', 'user'];
 
+        if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response()->json([
+                'html' => view('users._rows', compact('users'))->render(),
+                'next_page_url' => $users->nextPageUrl(),
+                'has_more' => $users->hasMorePages(),
+                'total' => $users->total(),
+            ]);
+        }
+
         return view('users.index', compact(
             'users',
             'search',
