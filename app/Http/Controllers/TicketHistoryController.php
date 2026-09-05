@@ -245,9 +245,12 @@ class TicketHistoryController extends Controller
         $validated['passenger_name'] = implode(', ', $names);
         unset($validated['passenger_names']);
 
-        // Auto-generate ticket code if not specified
+        // Auto-generate ticket code if not specified (looping to guarantee uniqueness)
         if (empty($validated['ticket_code'])) {
-            $validated['ticket_code'] = 'TCK-' . strtoupper(Str::random(6));
+            do {
+                $code = 'TCK-' . strtoupper(Str::random(6));
+            } while (TicketHistory::where('ticket_code', $code)->exists());
+            $validated['ticket_code'] = $code;
         }
 
         // Use custom booked_by text if entered (fallback to Auth::user()->name) while strictly linking booked_by_user_id to logged in user
