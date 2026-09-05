@@ -13,6 +13,10 @@ return new class extends Migration
         DB::table('users')
             ->where('role', 'payer')
             ->update(['role' => 'booker']);
+
+        DB::table('ticket_status_logs')
+            ->where('user_role', 'payer')
+            ->update(['user_role' => 'booker']);
     }
 
     /**

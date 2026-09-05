@@ -190,7 +190,7 @@ class TicketHistorySeeder extends Seeder
                         'ticket_history_id' => $ticket->id,
                         'user_id' => $ticket->paid_by_user_id ?: $payerUser?->id,
                         'user_name' => $ticket->paid_by,
-                        'user_role' => 'payer',
+                        'user_role' => 'booker',
                         'from_status' => 'Belum Bayar',
                         'to_status' => 'Lunas',
                         'notes' => 'Pembayaran dikonfirmasi Lunas.',

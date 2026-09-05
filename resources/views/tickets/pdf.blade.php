@@ -315,7 +315,7 @@
                                 {{ $log->to_status }} @if($log->from_status)<span style="color: #64748b; font-weight: normal;">(dari {{ $log->from_status }})</span>@endif
                             </div>
                             <div class="timeline-notes">{{ $log->notes }}</div>
-                            <div class="timeline-meta">{{ $log->user_name }} ({{ ucfirst($log->user_role) }}) • {{ $log->created_at->format('d M Y, H:i') }}</div>
+                            <div class="timeline-meta">{{ $log->user_name }} ({{ $log->display_role }}) • {{ $log->created_at->format('d M Y, H:i') }}</div>
                         </div>
                     @endforeach
                 </div>

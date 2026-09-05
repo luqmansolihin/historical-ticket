@@ -37,6 +37,15 @@ class TicketStatusLog extends Model
     }
 
     /**
+     * Get display role (always synchronized with the active user account role if available)
+     */
+    public function getDisplayRoleAttribute(): string
+    {
+        $role = $this->user ? $this->user->role : $this->user_role;
+        return ucfirst($role ?? 'user');
+    }
+
+    /**
      * Get CSS badge class for the target status (to_status)
      */
     public function getStatusBadgeClassAttribute(): string

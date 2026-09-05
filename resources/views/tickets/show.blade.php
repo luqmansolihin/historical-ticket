@@ -156,7 +156,7 @@
                                     </div>
                                     <p class="text-xs text-slate-300 mt-1 leading-relaxed">{{ $log->notes }}</p>
                                     <span class="text-[11px] text-slate-500 font-mono mt-0.5 block">
-                                        <i class="fa-solid fa-user text-slate-600 mr-1"></i> {{ $log->user_name }} ({{ ucfirst($log->user_role) }}) &bull; {{ $log->created_at->format('d M Y, H:i') }}
+                                        <i class="fa-solid fa-user text-slate-600 mr-1"></i> {{ $log->user_name }} ({{ $log->display_role }}) &bull; {{ $log->created_at->format('d M Y, H:i') }}
                                     </span>
                                 </div>
                             </div>

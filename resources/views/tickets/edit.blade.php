@@ -457,7 +457,7 @@
                                                     @endif
                                                 </div>
                                                 <p class="text-xs text-slate-300 mt-0.5 leading-relaxed">{{ $log->notes }}</p>
-                                                <span class="text-[10px] text-slate-500 font-mono mt-0.5 block">{{ $log->user_name }} ({{ ucfirst($log->user_role) }}) • {{ $log->created_at->format('d M Y, H:i') }}</span>
+                                                <span class="text-[10px] text-slate-500 font-mono mt-0.5 block">{{ $log->user_name }} ({{ $log->display_role }}) • {{ $log->created_at->format('d M Y, H:i') }}</span>
                                             </div>
                                         </div>
                                     @endforeach

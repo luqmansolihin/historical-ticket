@@ -473,7 +473,7 @@
                                             'to_status' => $log->to_status,
                                             'from_status' => $log->from_status,
                                             'user_name' => $log->user_name,
-                                            'user_role' => ucfirst($log->user_role),
+                                            'user_role' => $log->display_role,
                                             'notes' => $log->notes,
                                             'date' => $log->created_at->format('d M Y, H:i'),
                                             'badge' => $log->status_badge_class,
