@@ -168,53 +168,28 @@
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Booker account info in edit (Locked for Non-Admin) -->
-                    @if(!$isAdmin)
-                        <div class="md:col-span-2 bg-sky-500/10 border border-sky-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-sm shrink-0">
-                                    <i class="fa-solid fa-user-check"></i>
-                                </div>
-                                <div>
-                                    <div class="text-xs text-sky-400 font-semibold uppercase tracking-wider">Pemesan Tiket</div>
-                                    <div class="text-sm font-bold text-white flex items-center gap-2">
-                                        {{ $ticket->booked_by ?: Auth::user()->name }}
-                                        @if($ticket->bookerUser)
-                                            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-400/20 text-sky-300 border border-sky-400/30">
-                                                ID: #{{ $ticket->bookerUser->id }} • {{ ucfirst($ticket->bookerUser->role) }}
-                                            </span>
-                                        @endif
-                                    </div>
+                    <!-- Booker account info in edit (Locked & Auto-linked) -->
+                    <div class="md:col-span-2 bg-sky-500/10 border border-sky-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-sm shrink-0">
+                                <i class="fa-solid fa-user-check"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-sky-400 font-semibold uppercase tracking-wider">Pemesan Tiket (Booker Terhubung)</div>
+                                <div class="text-sm font-bold text-white flex items-center gap-2 flex-wrap">
+                                    {{ $ticket->booked_by ?: Auth::user()->name }}
+                                    @if($ticket->bookerUser)
+                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-400/20 text-sky-300 border border-sky-400/30">
+                                            ID: #{{ $ticket->bookerUser->id }} • {{ ucfirst($ticket->bookerUser->role) }}
+                                        </span>
+                                    @endif
+                                    <span class="text-[10px] text-slate-400 font-normal italic">(Terkunci - Otomatis Terhubung)</span>
                                 </div>
                             </div>
-                            <input type="hidden" name="booked_by" value="{{ old('booked_by', $ticket->booked_by ?: Auth::user()->name) }}">
-                            <input type="hidden" name="booked_by_user_id" value="{{ old('booked_by_user_id', $ticket->booked_by_user_id ?: Auth::id()) }}">
                         </div>
-                    @else
-                        <div>
-                            <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
-                                Pemesan Tiket <span class="text-rose-400">*</span>
-                            </label>
-                            <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by', $ticket->booked_by) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('booked_by') border-rose-500 @enderror">
-                            @error('booked_by')
-                                <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="booked_by_user_id" class="block text-xs font-medium text-slate-300 mb-1.5">
-                                Linkkan dengan Akun Pemesan (Sistem)
-                            </label>
-                            <select id="booked_by_user_id" name="booked_by_user_id" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900">
-                                <option value="">-- Pilih Akun User Pemesan --</option>
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}" {{ old('booked_by_user_id', $ticket->booked_by_user_id) == $user->id ? 'selected' : '' }}>
-                                        {{ $user->name }} ({{ ucfirst($user->role) }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    @endif
+                        <input type="hidden" name="booked_by" value="{{ old('booked_by', $ticket->booked_by ?: Auth::user()->name) }}">
+                        <input type="hidden" name="booked_by_user_id" value="{{ old('booked_by_user_id', $ticket->booked_by_user_id ?: Auth::id()) }}">
+                    </div>
 
                     <!-- Payer & Payment Date info logic -->
                     @if($isBooker)

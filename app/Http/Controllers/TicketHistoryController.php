@@ -250,13 +250,9 @@ class TicketHistoryController extends Controller
             $validated['ticket_code'] = 'TCK-' . strtoupper(Str::random(6));
         }
 
-        // Automatically bind Booker name and User ID to currently logged in user
-        if (empty($validated['booked_by'])) {
-            $validated['booked_by'] = Auth::user()->name;
-        }
-        if (empty($validated['booked_by_user_id'])) {
-            $validated['booked_by_user_id'] = Auth::id();
-        }
+        // Automatically bind Booker name and User ID strictly to currently logged in user
+        $validated['booked_by'] = Auth::user()->name;
+        $validated['booked_by_user_id'] = Auth::id();
 
         // Default paid_by if omitted during creation
         if (empty($validated['paid_by'])) {

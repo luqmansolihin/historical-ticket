@@ -129,12 +129,13 @@
                                 <i class="fa-solid fa-user-check"></i>
                             </div>
                             <div>
-                                <div class="text-xs text-sky-400 font-semibold uppercase tracking-wider">Pemesan Tiket (Booker Terhubung)</div>
-                                <div class="text-sm font-bold text-white flex items-center gap-2">
+                                <div class="text-xs text-sky-400 font-semibold uppercase tracking-wider">Pemesan Tiket (Booker Terhubung - Akun Login)</div>
+                                <div class="text-sm font-bold text-white flex items-center gap-2 flex-wrap">
                                     {{ Auth::user()->name }}
                                     <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-400/20 text-sky-300 border border-sky-400/30">
                                         ID: #{{ Auth::id() }} • {{ ucfirst(Auth::user()->role) }}
                                     </span>
+                                    <span class="text-[10px] text-slate-400 font-normal italic">(Terkunci - Otomatis Terhubung)</span>
                                 </div>
                             </div>
                         </div>
