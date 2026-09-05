@@ -12,6 +12,20 @@
         hasMore: {{ $tickets->hasMorePages() ? 'true' : 'false' }},
         sorts: {{ json_encode($sorts ?? []) }},
         hasFilters: {{ ($search || $searchCode || $searchOrigin || $searchDestination || $searchPassenger || $searchBooker || $searchPayer || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateAfter || $dateBefore || $dateOn || $payDateAfter || $payDateBefore || $payDateOn || $amountMin || $amountMax || $amountEq || $passengerCountMin || $passengerCountMax || $passengerCountEq) ? 'true' : 'false' }},
+        activeFilters: {
+            code: {{ !empty($searchCode) ? 'true' : 'false' }},
+            date: {{ ($dateAfter || $dateBefore || $dateOn) ? 'true' : 'false' }},
+            origin: {{ !empty($searchOrigin) ? 'true' : 'false' }},
+            destination: {{ !empty($searchDestination) ? 'true' : 'false' }},
+            transport: {{ !empty($transportType) ? 'true' : 'false' }},
+            passenger: {{ !empty($searchPassenger) ? 'true' : 'false' }},
+            passenger_count: {{ ($passengerCountMin || $passengerCountMax || $passengerCountEq) ? 'true' : 'false' }},
+            booker: {{ !empty($searchBooker) ? 'true' : 'false' }},
+            payer: {{ !empty($searchPayer) ? 'true' : 'false' }},
+            pay_date: {{ ($payDateAfter || $payDateBefore || $payDateOn) ? 'true' : 'false' }},
+            amount: {{ ($amountMin || $amountMax || $amountEq) ? 'true' : 'false' }},
+            status: {{ !empty($status) ? 'true' : 'false' }},
+        },
         init() {
             this.checkAutoFill();
             window.addEventListener('popstate', () => {
@@ -22,15 +36,26 @@
             const form = document.getElementById('filter-form');
             if (!form) { this.hasFilters = false; return; }
             const formData = new FormData(form);
-            let active = false;
-            for (const [key, value] of formData.entries()) {
-                if (key === 'sort' || key === 'sort_by' || key === 'sort_dir') continue;
-                if (value && value.toString().trim() !== '') {
-                    active = true;
-                    break;
-                }
-            }
-            this.hasFilters = active;
+            
+            this.activeFilters.code = !!(formData.get('search_code') && formData.get('search_code').trim());
+            this.activeFilters.date = !!((formData.get('date_after') && formData.get('date_after').trim()) || (formData.get('date_before') && formData.get('date_before').trim()) || (formData.get('date_on') && formData.get('date_on').trim()));
+            this.activeFilters.origin = !!(formData.get('search_origin') && formData.get('search_origin').trim());
+            this.activeFilters.destination = !!(formData.get('search_destination') && formData.get('search_destination').trim());
+            
+            const transports = formData.getAll('transport_type[]');
+            this.activeFilters.transport = transports.length > 0 && transports.some(t => t.trim() !== '');
+            
+            this.activeFilters.passenger = !!(formData.get('search_passenger') && formData.get('search_passenger').trim());
+            this.activeFilters.passenger_count = !!((formData.get('passenger_count_min') && formData.get('passenger_count_min').trim()) || (formData.get('passenger_count_max') && formData.get('passenger_count_max').trim()) || (formData.get('passenger_count_eq') && formData.get('passenger_count_eq').trim()));
+            this.activeFilters.booker = !!(formData.get('search_booker') && formData.get('search_booker').trim());
+            this.activeFilters.payer = !!(formData.get('search_payer') && formData.get('search_payer').trim());
+            this.activeFilters.pay_date = !!((formData.get('pay_date_after') && formData.get('pay_date_after').trim()) || (formData.get('pay_date_before') && formData.get('pay_date_before').trim()) || (formData.get('pay_date_on') && formData.get('pay_date_on').trim()));
+            this.activeFilters.amount = !!((formData.get('amount_min') && formData.get('amount_min').trim()) || (formData.get('amount_max') && formData.get('amount_max').trim()) || (formData.get('amount_eq') && formData.get('amount_eq').trim()));
+            
+            const statuses = formData.getAll('status[]');
+            this.activeFilters.status = statuses.length > 0 && statuses.some(s => s.trim() !== '');
+
+            this.hasFilters = Object.values(this.activeFilters).some(v => v === true);
         },
         checkAutoFill() {
             this.$nextTick(() => {
@@ -159,6 +184,7 @@
             if (form) form.reset();
             this.sorts = [];
             this.hasFilters = false;
+            Object.keys(this.activeFilters).forEach(k => this.activeFilters[k] = false);
             const sortInput = document.getElementById('sort_input');
             if (sortInput) sortInput.value = '';
             this.applyFilters(form.action);
@@ -198,7 +224,7 @@
                     <thead class="bg-slate-900/95 text-[9px] uppercase font-bold text-slate-400 tracking-tight border-b border-slate-800 whitespace-nowrap sticky top-0 z-20 backdrop-blur-md">
                         <tr>
                             <!-- 1. Kode Tiket -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'code') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.code ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'code') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('ticket_code')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('ticket_code') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Kode Tiket">
                                         <span>Kode Tiket</span>
@@ -212,8 +238,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'code' ? null : 'code')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchCode ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kode Tiket">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'code' ? null : 'code')" class="p-1 rounded transition-colors" :class="activeFilters.code ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Kode Tiket">
+                                        <i class="fa-solid" :class="activeFilters.code ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'code'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
@@ -229,7 +255,7 @@
                             </th>
 
                             <!-- 2. Tgl SPK / Tiket -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'date') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.date ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('ticket_date')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('ticket_date') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Tanggal Tiket">
                                         <span>Tgl Tiket</span>
@@ -243,8 +269,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($dateAfter || $dateBefore || $dateOn) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Tiket">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded transition-colors" :class="activeFilters.date ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Tanggal Tiket">
+                                        <i class="fa-solid" :class="activeFilters.date ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <!-- 3-Input Date Filter Popover for Tgl Tiket -->
@@ -301,7 +327,7 @@
                             </th>
 
                             <!-- 3. Asal -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'origin') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.origin ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'origin') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('origin')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('origin') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Kota Asal">
                                         <span>Asal</span>
@@ -315,8 +341,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'origin' ? null : 'origin')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchOrigin ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kota Asal">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'origin' ? null : 'origin')" class="p-1 rounded transition-colors" :class="activeFilters.origin ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Kota Asal">
+                                        <i class="fa-solid" :class="activeFilters.origin ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'origin'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
@@ -332,7 +358,7 @@
                             </th>
 
                             <!-- 4. Tujuan -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'destination') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.destination ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'destination') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('destination')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('destination') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Kota Tujuan">
                                         <span>Tujuan</span>
@@ -346,8 +372,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'destination' ? null : 'destination')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchDestination ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kota Tujuan">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'destination' ? null : 'destination')" class="p-1 rounded transition-colors" :class="activeFilters.destination ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Kota Tujuan">
+                                        <i class="fa-solid" :class="activeFilters.destination ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'destination'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
@@ -363,7 +389,7 @@
                             </th>
 
                             <!-- 5. Transportasi -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'transport') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.transport ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'transport') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('transport_type')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('transport_type') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Transportasi">
                                         <span>Transportasi</span>
@@ -377,8 +403,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'transport' ? null : 'transport')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($transportType) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Transportasi">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'transport' ? null : 'transport')" class="p-1 rounded transition-colors" :class="activeFilters.transport ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Transportasi">
+                                        <i class="fa-solid" :class="activeFilters.transport ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'transport'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-2 text-left font-normal normal-case min-w-[200px]" x-data="{ selected: {{ json_encode($transportType) }} }">
@@ -405,7 +431,7 @@
                             </th>
 
                             <!-- 6. Penumpang -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'passenger') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.passenger ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'passenger') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('passenger_name')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('passenger_name') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Nama Penumpang">
                                         <span>Nama Penumpang</span>
@@ -419,8 +445,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'passenger' ? null : 'passenger')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchPassenger ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Penumpang">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'passenger' ? null : 'passenger')" class="p-1 rounded transition-colors" :class="activeFilters.passenger ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Penumpang">
+                                        <i class="fa-solid" :class="activeFilters.passenger ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'passenger'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
@@ -436,7 +462,7 @@
                             </th>
 
                             <!-- 7. Jml Penumpang -->
-                            <th class="py-1 px-2 text-center whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'passenger_count') openPop = null">
+                            <th class="py-1 px-2 text-center whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.passenger_count ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'passenger_count') openPop = null">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <button type="button" @click="toggleSort('passenger_count')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('passenger_count') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Jumlah Penumpang">
                                         <span>Jml</span>
@@ -450,8 +476,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'passenger_count' ? null : 'passenger_count')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($passengerCountMin || $passengerCountMax || $passengerCountEq) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Jumlah Penumpang">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'passenger_count' ? null : 'passenger_count')" class="p-1 rounded transition-colors" :class="activeFilters.passenger_count ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Jumlah Penumpang">
+                                        <i class="fa-solid" :class="activeFilters.passenger_count ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'passenger_count'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3.5 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[250px]"
@@ -498,7 +524,7 @@
                             </th>
 
                             <!-- 8. Pemesan -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'booker') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.booker ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'booker') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('booked_by')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('booked_by') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Pemesan">
                                         <span>Pemesan</span>
@@ -512,8 +538,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'booker' ? null : 'booker')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchBooker ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pemesan">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'booker' ? null : 'booker')" class="p-1 rounded transition-colors" :class="activeFilters.booker ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Pemesan">
+                                        <i class="fa-solid" :class="activeFilters.booker ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'booker'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
@@ -529,7 +555,7 @@
                             </th>
 
                             <!-- 9. Pembayar -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'payer') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.payer ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'payer') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('paid_by')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('paid_by') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Pembayar">
                                         <span>Pembayar</span>
@@ -543,8 +569,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'payer' ? null : 'payer')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchPayer ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pembayar">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'payer' ? null : 'payer')" class="p-1 rounded transition-colors" :class="activeFilters.payer ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Pembayar">
+                                        <i class="fa-solid" :class="activeFilters.payer ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'payer'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
@@ -560,7 +586,7 @@
                             </th>
 
                             <!-- 10. Tgl Bayar -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'pay_date') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.pay_date ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'pay_date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('payment_date')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('payment_date') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Tanggal Bayar">
                                         <span>Tgl Bayar</span>
@@ -574,8 +600,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'pay_date' ? null : 'pay_date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($payDateAfter || $payDateBefore || $payDateOn) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Bayar">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'pay_date' ? null : 'pay_date')" class="p-1 rounded transition-colors" :class="activeFilters.pay_date ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Tanggal Bayar">
+                                        <i class="fa-solid" :class="activeFilters.pay_date ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <!-- 3-Input Date Filter Popover for Tgl Bayar -->
@@ -632,7 +658,7 @@
                             </th>
 
                             <!-- 11. Biaya (IDR) -->
-                            <th class="py-1 px-2 text-right whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'amount') openPop = null">
+                            <th class="py-1 px-2 text-right whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.amount ? 'bg-emerald-950/80 border-b-2 border-b-emerald-400 text-emerald-200' : ''" @click.outside="if (openPop === 'amount') openPop = null">
                                 <div class="flex items-center justify-end gap-1.5">
                                     <button type="button" @click="toggleSort('amount')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('amount') !== -1 ? 'text-emerald-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Biaya">
                                         <span>Biaya (IDR)</span>
@@ -646,8 +672,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'amount' ? null : 'amount')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($amountMin || $amountMax || $amountEq) ? 'text-emerald-400 font-bold bg-emerald-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Rentang Biaya">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'amount' ? null : 'amount')" class="p-1 rounded transition-colors" :class="activeFilters.amount ? 'text-emerald-300 bg-emerald-500/30 ring-1 ring-emerald-400/50 font-bold shadow-sm shadow-emerald-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Rentang Biaya">
+                                        <i class="fa-solid" :class="activeFilters.amount ? 'fa-filter text-emerald-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'amount'" x-cloak x-transition class="absolute z-50 right-0 mt-2 p-3.5 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[250px]"
@@ -694,18 +720,22 @@
                             </th>
 
                             <!-- 12. Status -->
-                            <th class="py-1 px-2 text-center whitespace-nowrap relative" @click.outside="if (openPop === 'status') openPop = null">
+                            <th class="py-1 px-2 text-center whitespace-nowrap relative transition-colors" :class="activeFilters.status ? 'bg-emerald-950/80 border-b-2 border-b-emerald-400 text-emerald-200' : ''" @click.outside="if (openPop === 'status') openPop = null">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    <button type="button" @click="toggleSort('status')" class="flex items-center gap-1 font-bold text-slate-300 hover:text-white transition-colors cursor-pointer select-none group/sort" title="Urutkan Status">
+                                    <button type="button" @click="toggleSort('status')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('status') !== -1 ? 'text-emerald-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Status">
                                         <span>Status</span>
-                                        @if(($sortBy ?? '') === 'status')
-                                            <i class="fa-solid {{ ($sortDir ?? '') === 'asc' ? 'fa-arrow-up-wide-short text-emerald-400' : 'fa-arrow-down-wide-short text-emerald-400' }} text-[10px]"></i>
-                                        @else
+                                        <template x-if="getSortIndex('status') === -1">
                                             <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
-                                        @endif
+                                        </template>
+                                        <template x-if="getSortIndex('status') !== -1">
+                                            <span class="inline-flex items-center gap-0.5 text-emerald-400 font-bold text-[10px]">
+                                                <i class="fa-solid" :class="getSortDir('status') === 'asc' ? 'fa-arrow-up-wide-short' : 'fa-arrow-down-wide-short'"></i>
+                                                <span x-show="sorts.length > 1" class="text-[8px] bg-emerald-500/20 px-1 py-0.2 rounded-full border border-emerald-500/40 font-mono" x-text="getSortIndex('status') + 1"></span>
+                                            </span>
+                                        </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'status' ? null : 'status')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($status) ? 'text-emerald-400 font-bold bg-emerald-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Status">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'status' ? null : 'status')" class="p-1 rounded transition-colors" :class="activeFilters.status ? 'text-emerald-300 bg-emerald-500/30 ring-1 ring-emerald-400/50 font-bold shadow-sm shadow-emerald-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Status">
+                                        <i class="fa-solid" :class="activeFilters.status ? 'fa-filter text-emerald-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'status'" x-cloak x-transition class="absolute z-50 right-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-2 text-left font-normal normal-case min-w-[180px]" x-data="{ selected: {{ json_encode($status) }} }">

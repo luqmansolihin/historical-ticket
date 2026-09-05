@@ -10,6 +10,12 @@
         hasMore: {{ $users->hasMorePages() ? 'true' : 'false' }},
         sorts: {{ json_encode($sorts ?? []) }},
         hasFilters: {{ ($search || $searchName || $searchEmail || $roleFilter || $dateAfter || $dateBefore || $dateOn) ? 'true' : 'false' }},
+        activeFilters: {
+            name: {{ !empty($searchName) ? 'true' : 'false' }},
+            email: {{ !empty($searchEmail) ? 'true' : 'false' }},
+            role: {{ !empty($roleFilter) ? 'true' : 'false' }},
+            date: {{ ($dateAfter || $dateBefore || $dateOn) ? 'true' : 'false' }},
+        },
         init() {
             this.checkAutoFill();
             window.addEventListener('popstate', () => {
@@ -20,15 +26,13 @@
             const form = document.getElementById('users-filter-form');
             if (!form) { this.hasFilters = false; return; }
             const formData = new FormData(form);
-            let active = false;
-            for (const [key, value] of formData.entries()) {
-                if (key === 'sort' || key === 'sort_by' || key === 'sort_dir') continue;
-                if (value && value.toString().trim() !== '') {
-                    active = true;
-                    break;
-                }
-            }
-            this.hasFilters = active;
+            
+            this.activeFilters.name = !!(formData.get('search_name') && formData.get('search_name').trim());
+            this.activeFilters.email = !!(formData.get('search_email') && formData.get('search_email').trim());
+            this.activeFilters.role = !!(formData.get('role') && formData.get('role').trim());
+            this.activeFilters.date = !!((formData.get('date_after') && formData.get('date_after').trim()) || (formData.get('date_before') && formData.get('date_before').trim()) || (formData.get('date_on') && formData.get('date_on').trim()));
+            
+            this.hasFilters = Object.values(this.activeFilters).some(v => v === true);
         },
         checkAutoFill() {
             this.$nextTick(() => {
@@ -151,6 +155,7 @@
             if (form) form.reset();
             this.sorts = [];
             this.hasFilters = false;
+            Object.keys(this.activeFilters).forEach(k => this.activeFilters[k] = false);
             const sortInput = document.getElementById('users_sort_input');
             if (sortInput) sortInput.value = '';
             this.applyFilters(form.action);
@@ -184,7 +189,7 @@
                     <thead class="bg-slate-900/95 text-[9px] uppercase font-bold text-slate-400 tracking-tight border-b border-slate-800 whitespace-nowrap sticky top-0 z-20 backdrop-blur-md">
                         <tr>
                             <!-- 1. ID & Nama Pengguna -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'name') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.name ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'name') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('name')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('name') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Nama Pengguna">
                                         <span>Nama Pengguna</span>
@@ -198,8 +203,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'name' ? null : 'name')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchName ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Nama Pengguna">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'name' ? null : 'name')" class="p-1 rounded transition-colors" :class="activeFilters.name ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Nama Pengguna">
+                                        <i class="fa-solid" :class="activeFilters.name ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'name'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
@@ -215,7 +220,7 @@
                             </th>
 
                             <!-- 2. Alamat Email -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'email') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.email ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'email') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('email')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('email') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Alamat Email">
                                         <span>Alamat Email</span>
@@ -229,8 +234,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'email' ? null : 'email')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchEmail ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Email">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'email' ? null : 'email')" class="p-1 rounded transition-colors" :class="activeFilters.email ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Email">
+                                        <i class="fa-solid" :class="activeFilters.email ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'email'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
@@ -246,7 +251,7 @@
                             </th>
 
                             <!-- 3. Role Akses -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'role') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.role ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'role') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('role')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('role') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Role Akses">
                                         <span>Role Akses</span>
@@ -260,8 +265,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'role' ? null : 'role')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $roleFilter ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Role">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'role' ? null : 'role')" class="p-1 rounded transition-colors" :class="activeFilters.role ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Role">
+                                        <i class="fa-solid" :class="activeFilters.role ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'role'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[200px]">
@@ -288,7 +293,7 @@
                             </th>
 
                             <!-- 4. Tanggal Terdaftar -->
-                            <th class="py-1 px-2 whitespace-nowrap relative" @click.outside="if (openPop === 'date') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative transition-colors" :class="activeFilters.date ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('created_at')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('created_at') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Tanggal Terdaftar">
                                         <span>Tgl Terdaftar</span>
@@ -302,8 +307,8 @@
                                             </span>
                                         </template>
                                     </button>
-                                    <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($dateAfter || $dateBefore || $dateOn) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Terdaftar">
-                                        <i class="fa-solid fa-caret-down text-xs"></i>
+                                    <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded transition-colors" :class="activeFilters.date ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Tanggal Terdaftar">
+                                        <i class="fa-solid" :class="activeFilters.date ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
                                     </button>
                                 </div>
                                 <div x-show="openPop === 'date'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3.5 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[260px]"
