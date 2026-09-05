@@ -179,7 +179,7 @@ class TicketHistoryController extends Controller
 
         $tickets = $query->orderBy('ticket_date', 'desc')
             ->orderBy('id', 'desc')
-            ->paginate(15)
+            ->paginate(25)
             ->withQueryString();
 
         $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];

@@ -8,7 +8,7 @@
     <!-- ERP Data Table Container & Column Header Filters -->
     <div x-data="{ openPop: null }" class="glass-card rounded-2xl shadow-2xl relative z-10 no-print flex-1 flex flex-col min-h-0 h-full overflow-hidden">
         <!-- ERP Data Grid Action Toolbar -->
-        <div class="px-4 py-2.5 bg-slate-900/90 border-b border-slate-800/80 flex items-center justify-between gap-2 shrink-0">
+        <div class="px-3 py-1.5 bg-slate-900/90 border-b border-slate-800/80 flex items-center justify-between gap-2 shrink-0">
             <div class="text-xs text-slate-400 font-mono hidden sm:block">
                 <i class="fa-solid fa-mouse-pointer text-sky-400 mr-1"></i> Double klik baris tabel untuk edit atau lihat Boarding Pass
             </div>
@@ -34,11 +34,11 @@
 
         <form action="{{ route('tickets.index') }}" method="GET" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
             <div class="overflow-auto flex-1 min-h-0">
-                <table class="w-full text-left text-[11px] text-slate-300 whitespace-nowrap border-collapse">
-                    <thead class="bg-slate-900/95 text-[10px] uppercase font-semibold text-slate-400 tracking-wider border-b border-slate-800 whitespace-nowrap sticky top-0 z-20 backdrop-blur-md">
+                <table class="w-full text-left text-[9.5px] leading-tight text-slate-300 whitespace-nowrap border-collapse">
+                    <thead class="bg-slate-900/95 text-[9px] uppercase font-bold text-slate-400 tracking-tight border-b border-slate-800 whitespace-nowrap sticky top-0 z-20 backdrop-blur-md">
                         <tr>
                             <!-- 1. Kode Tiket -->
-                            <th class="py-1.5 px-2.5 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'code') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'code') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Kode Tiket</span>
                                     <button type="button" @click="openPop = (openPop === 'code' ? null : 'code')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchCode ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kode Tiket">
@@ -58,7 +58,7 @@
                             </th>
 
                             <!-- 2. Tgl SPK / Tiket -->
-                            <th class="py-1.5 px-2.5 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'date') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Tgl Tiket</span>
                                     <button type="button" @click="openPop = (openPop === 'date' ? null : 'date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($dateAfter || $dateBefore || $dateOn) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Tiket">
@@ -119,7 +119,7 @@
                             </th>
 
                             <!-- 3. Asal -->
-                            <th class="py-1.5 px-2.5 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'origin') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'origin') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Asal</span>
                                     <button type="button" @click="openPop = (openPop === 'origin' ? null : 'origin')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchOrigin ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kota Asal">
@@ -139,7 +139,7 @@
                             </th>
 
                             <!-- 4. Tujuan -->
-                            <th class="py-1.5 px-2.5 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'destination') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'destination') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Tujuan</span>
                                     <button type="button" @click="openPop = (openPop === 'destination' ? null : 'destination')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchDestination ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Kota Tujuan">
@@ -159,7 +159,7 @@
                             </th>
 
                             <!-- 5. Transportasi -->
-                            <th class="py-1.5 px-2.5 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'transport') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'transport') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Transportasi</span>
                                     <button type="button" @click="openPop = (openPop === 'transport' ? null : 'transport')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($transportType) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Transportasi">
@@ -190,7 +190,7 @@
                             </th>
 
                             <!-- 6. Penumpang -->
-                            <th class="py-1.5 px-2.5 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'passenger') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'passenger') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Nama Penumpang</span>
                                     <button type="button" @click="openPop = (openPop === 'passenger' ? null : 'passenger')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchPassenger ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Penumpang">
@@ -210,7 +210,7 @@
                             </th>
 
                             <!-- 7. Jml Penumpang -->
-                            <th class="py-1.5 px-2.5 text-center whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'passenger_count') openPop = null">
+                            <th class="py-1 px-2 text-center whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'passenger_count') openPop = null">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <span>Jml</span>
                                     <button type="button" @click="openPop = (openPop === 'passenger_count' ? null : 'passenger_count')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($passengerCountMin || $passengerCountMax || $passengerCountEq) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Jumlah Penumpang">
@@ -261,7 +261,7 @@
                             </th>
 
                             <!-- 8. Pemesan -->
-                            <th class="py-1.5 px-2.5 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'booker') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'booker') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Pemesan</span>
                                     <button type="button" @click="openPop = (openPop === 'booker' ? null : 'booker')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchBooker ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pemesan">
@@ -281,7 +281,7 @@
                             </th>
 
                             <!-- 9. Pembayar -->
-                            <th class="py-1.5 px-2.5 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'payer') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'payer') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Pembayar</span>
                                     <button type="button" @click="openPop = (openPop === 'payer' ? null : 'payer')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ $searchPayer ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Pembayar">
@@ -301,7 +301,7 @@
                             </th>
 
                             <!-- 10. Tgl Bayar -->
-                            <th class="py-1.5 px-2.5 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'pay_date') openPop = null">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'pay_date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <span>Tgl Bayar</span>
                                     <button type="button" @click="openPop = (openPop === 'pay_date' ? null : 'pay_date')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($payDateAfter || $payDateBefore || $payDateOn) ? 'text-sky-400 font-bold bg-sky-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Tanggal Bayar">
@@ -362,7 +362,7 @@
                             </th>
 
                             <!-- 11. Biaya (IDR) -->
-                            <th class="py-1.5 px-2.5 text-right whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'amount') openPop = null">
+                            <th class="py-1 px-2 text-right whitespace-nowrap relative border-r border-slate-800/60" @click.outside="if (openPop === 'amount') openPop = null">
                                 <div class="flex items-center justify-end gap-1.5">
                                     <span>Biaya (IDR)</span>
                                     <button type="button" @click="openPop = (openPop === 'amount' ? null : 'amount')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ ($amountMin || $amountMax || $amountEq) ? 'text-emerald-400 font-bold bg-emerald-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Rentang Biaya">
@@ -413,7 +413,7 @@
                             </th>
 
                             <!-- 12. Status -->
-                            <th class="py-1.5 px-2.5 text-center whitespace-nowrap relative" @click.outside="if (openPop === 'status') openPop = null">
+                            <th class="py-1 px-2 text-center whitespace-nowrap relative" @click.outside="if (openPop === 'status') openPop = null">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <span>Status</span>
                                     <button type="button" @click="openPop = (openPop === 'status' ? null : 'status')" class="p-1 rounded hover:bg-slate-800 transition-colors {{ !empty($status) ? 'text-emerald-400 font-bold bg-emerald-500/20' : 'text-slate-500 hover:text-slate-300' }}" title="Filter Status">
@@ -483,65 +483,65 @@
                                     title="Double klik untuk melihat Boarding Pass {{ $ticket->ticket_code }}">
                             @endcan
                                 <!-- 1. Kode Tiket -->
-                                <td class="py-1.5 px-2.5 font-mono font-semibold text-sky-400 whitespace-nowrap border-r border-slate-800/40">
+                                <td class="py-0.5 px-2 font-mono font-semibold text-sky-400 whitespace-nowrap border-r border-slate-800/40">
                                     {{ $ticket->ticket_code }}
                                 </td>
 
                                 <!-- 2. Tgl Tiket -->
-                                <td class="py-1.5 px-2.5 whitespace-nowrap font-medium text-slate-300 border-r border-slate-800/40">
+                                <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-300 border-r border-slate-800/40">
                                     {{ $ticket->ticket_date->format('d/m/Y') }}
                                 </td>
 
                                 <!-- 3. Asal -->
-                                <td class="py-1.5 px-2.5 whitespace-nowrap font-medium text-slate-200 border-r border-slate-800/40">
+                                <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-200 border-r border-slate-800/40">
                                     {{ $ticket->origin }}
                                 </td>
 
                                 <!-- 4. Tujuan -->
-                                <td class="py-1.5 px-2.5 whitespace-nowrap font-medium text-slate-200 border-r border-slate-800/40">
+                                <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-200 border-r border-slate-800/40">
                                     {{ $ticket->destination }}
                                 </td>
 
                                 <!-- 5. Transportasi -->
-                                <td class="py-1.5 px-2.5 whitespace-nowrap border-r border-slate-800/40">
-                                    <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700/60 whitespace-nowrap">
+                                <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
+                                    <span class="inline-block px-1 py-0 rounded text-[8.5px] font-medium bg-slate-800 text-slate-300 border border-slate-700/60 whitespace-nowrap">
                                         {{ $ticket->transport_type }}
                                     </span>
                                 </td>
 
                                 <!-- 6. Penumpang -->
-                                <td class="py-1.5 px-2.5 whitespace-nowrap text-slate-200 font-medium border-r border-slate-800/40">
+                                <td class="py-0.5 px-2 whitespace-nowrap text-slate-200 font-medium border-r border-slate-800/40">
                                     {{ implode(', ', $ticket->passengers_list) ?: $ticket->passenger_name }}
                                 </td>
 
                                 <!-- 7. Jml Penumpang -->
-                                <td class="py-1.5 px-2.5 text-center whitespace-nowrap font-mono text-slate-300 font-bold border-r border-slate-800/40">
+                                <td class="py-0.5 px-2 text-center whitespace-nowrap font-mono text-slate-300 font-bold border-r border-slate-800/40">
                                     {{ $ticket->passenger_count }}
                                 </td>
 
                                 <!-- 8. Pemesan -->
-                                <td class="py-1.5 px-2.5 whitespace-nowrap border-r border-slate-800/40">
+                                <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
                                     <span class="text-indigo-300 font-medium">{{ $ticket->booked_by }}</span>
                                 </td>
 
                                 <!-- 9. Pembayar -->
-                                <td class="py-1.5 px-2.5 whitespace-nowrap border-r border-slate-800/40">
+                                <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
                                     <span class="text-emerald-300 font-medium">{{ $ticket->paid_by }}</span>
                                 </td>
 
                                 <!-- 10. Tgl Bayar -->
-                                <td class="py-1.5 px-2.5 whitespace-nowrap text-slate-400 font-mono text-[10px] border-r border-slate-800/40">
+                                <td class="py-0.5 px-2 whitespace-nowrap text-slate-400 font-mono text-[9px] border-r border-slate-800/40">
                                     {{ $ticket->payment_date ? $ticket->payment_date->format('d/m/Y') : '-' }}
                                 </td>
 
                                 <!-- 11. Biaya (IDR) -->
-                                <td class="py-1.5 px-2.5 text-right whitespace-nowrap font-mono font-bold text-emerald-400 border-r border-slate-800/40">
+                                <td class="py-0.5 px-2 text-right whitespace-nowrap font-mono font-bold text-emerald-400 border-r border-slate-800/40">
                                     {{ $ticket->formatted_amount }}
                                 </td>
 
                                 <!-- 12. Status -->
-                                <td class="py-1.5 px-2.5 text-center whitespace-nowrap">
-                                    <span class="px-2 py-0.5 text-[10px] font-semibold rounded-full border {{ $ticket->status_badge_class }}">
+                                <td class="py-0.5 px-2 text-center whitespace-nowrap">
+                                    <span class="px-1.5 py-0 text-[8.5px] font-semibold rounded-full border {{ $ticket->status_badge_class }}">
                                         {{ $ticket->status }}
                                     </span>
                                 </td>
