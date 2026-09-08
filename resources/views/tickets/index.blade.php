@@ -191,9 +191,9 @@
         }
     }" class="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
 
-    <!-- ERP Data Table Container & Column Header Filters -->
+    <!-- Data Table Container & Column Header Filters -->
     <div class="glass-card rounded-2xl shadow-2xl relative z-10 no-print flex-1 flex flex-col min-h-0 h-full overflow-hidden">
-        <!-- ERP Data Grid Action Toolbar -->
+        <!-- Data Grid Action Toolbar -->
         <div class="px-3 py-1.5 bg-slate-900/90 border-b border-slate-800/80 flex items-center justify-between gap-2 shrink-0">
             <div class="text-xs text-slate-400 font-mono hidden sm:block">
                 <i class="fa-solid fa-mouse-pointer text-sky-400 mr-1"></i> Double klik baris tabel untuk edit atau lihat Boarding Pass
