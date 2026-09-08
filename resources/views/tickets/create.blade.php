@@ -3,7 +3,7 @@
 @section('title', 'Tambah Tiket Histori Baru')
 
 @section('content')
-<div class="max-w-4xl mx-auto min-w-0 w-full">
+<div class="max-w-4xl mx-auto min-w-0 w-full pb-12">
     <div class="mb-6">
         <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket

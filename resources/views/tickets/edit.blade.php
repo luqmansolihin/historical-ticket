@@ -14,7 +14,7 @@
     $isBookerUnpaid = $isBooker && $ticket->status === 'Belum Bayar';
 @endphp
 
-<div x-data="{ showModal: false }" class="max-w-4xl mx-auto min-w-0 w-full pb-8">
+<div x-data="{ showModal: false }" class="max-w-4xl mx-auto min-w-0 w-full pb-12">
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">

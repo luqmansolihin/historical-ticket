@@ -281,7 +281,7 @@
         </aside>
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+        <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
             <main class="flex-1 p-3 sm:p-4 lg:p-5 overflow-y-auto flex flex-col min-h-0">
                 @if(session('success'))
                     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-3 p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 flex items-center justify-between shadow-xl backdrop-blur-sm no-print shrink-0">
