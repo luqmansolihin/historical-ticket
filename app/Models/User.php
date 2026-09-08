@@ -60,7 +60,7 @@ class User extends Authenticatable
      */
     public function isFinance(): bool
     {
-        return $this->role === 'finance' || $this->role === 'booker' || $this->isAdmin();
+        return $this->role === 'finance' || $this->role === 'booker' || $this->role === 'payer' || $this->isAdmin();
     }
 
     /**

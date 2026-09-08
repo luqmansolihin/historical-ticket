@@ -282,7 +282,7 @@
                                         @foreach($roleOptions as $roleOpt)
                                             <label class="flex items-center gap-2 px-2 py-1 rounded hover:bg-slate-800 cursor-pointer text-xs text-slate-200">
                                                 <input type="radio" name="role" value="{{ $roleOpt }}" {{ $roleFilter === $roleOpt ? 'checked' : '' }} class="text-sky-500">
-                                                <span>{{ ($roleOpt === 'finance' || $roleOpt === 'booker') ? 'Finance' : ucfirst($roleOpt) }}</span>
+                                                <span>{{ ucfirst($roleOpt) }}</span>
                                             </label>
                                         @endforeach
                                     </div>

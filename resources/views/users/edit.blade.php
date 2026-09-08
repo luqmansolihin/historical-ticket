@@ -58,10 +58,10 @@
                 <select id="role" name="role" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 capitalize @error('role') border-rose-500 @enderror">
                     @foreach($roles as $rOption)
                         <option value="{{ $rOption }}" {{ old('role', $user->role) == $rOption ? 'selected' : '' }}>
-                            {{ ($rOption === 'finance' || $rOption === 'booker') ? 'Finance' : ucfirst($rOption) }} 
+                            {{ ucfirst($rOption) }} 
                             @if($rOption === 'admin')
                                 (Full Control System)
-                            @elseif($rOption === 'finance' || $rOption === 'booker')
+                            @elseif($rOption === 'finance')
                                 (Membuat, Mengelola Tiket & Pembayaran)
                             @else
                                 (Read-Only Penumpang)

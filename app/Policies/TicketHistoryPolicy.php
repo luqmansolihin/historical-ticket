@@ -9,7 +9,7 @@ class TicketHistoryPolicy
 {
     /**
      * Determine whether the user can view any ticket records.
-     * All authenticated users (Admin, Booker, Payer, User) can view ticket list.
+     * All authenticated users (Admin, Finance, User) can view ticket list.
      */
     public function viewAny(User $user): bool
     {
@@ -26,11 +26,11 @@ class TicketHistoryPolicy
 
     /**
      * Determine whether the user can create ticket records.
-     * Only Admin or Booker can create tickets.
+     * Only Admin or Finance can create tickets.
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isBooker();
+        return $user->isAdmin() || $user->isFinance();
     }
 
     /**
@@ -77,7 +77,7 @@ class TicketHistoryPolicy
     /**
      * Determine whether the user can delete the ticket record.
      * Admin can delete any ticket.
-     * Booker can delete tickets created by them if status is 'Belum Bayar'.
+     * Finance can delete tickets created by them if status is 'Belum Bayar'.
      */
     public function delete(User $user, TicketHistory $ticket): bool
     {

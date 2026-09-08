@@ -13,9 +13,9 @@ class TicketHistorySeeder extends Seeder
      */
     public function run(): void
     {
-        $adminUser = User::where('email', 'admin@ticket.com')->first();
-        $bookerUser = User::where('email', 'booker@ticket.com')->first();
-        $payerUser = User::where('email', 'payer@ticket.com')->first() ?? $bookerUser;
+        $financeUser = User::where('email', 'finance@ticket.com')->first() ?? $adminUser;
+        $bookerUser = $financeUser;
+        $payerUser = $financeUser;
         $regularUser = User::where('email', 'user@ticket.com')->first();
 
         $tickets = [

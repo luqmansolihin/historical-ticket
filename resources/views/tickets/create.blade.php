@@ -9,7 +9,7 @@
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
         </a>
         <h1 class="font-display text-2xl sm:text-3xl font-bold text-white leading-tight">Tambah Histori Tiket Baru</h1>
-        <p class="text-slate-400 text-xs sm:text-sm mt-1">Masukkan rincian tiket keberangkatan, pemesan (Booker), dan daftar penumpang (bisa lebih dari 1 orang).</p>
+        <p class="text-slate-400 text-xs sm:text-sm mt-1">Masukkan rincian tiket keberangkatan, pemesan, dan daftar penumpang (bisa lebih dari 1 orang).</p>
     </div>
 
     <div class="glass-card p-4 sm:p-8 rounded-2xl shadow-2xl overflow-hidden">
@@ -154,7 +154,7 @@
                         <label for="status" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Status Pembayaran <span class="text-rose-400">*</span>
                         </label>
-                        @if(Auth::user()->role === 'booker' || !Auth::user()->isAdmin())
+                        @if(!Auth::user()->isAdmin())
                             <div class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900/80 flex items-center justify-between border border-rose-500/30">
                                 <span class="inline-flex items-center gap-2 font-semibold text-rose-400">
                                     <i class="fa-solid fa-hourglass-half text-xs"></i> Belum Bayar

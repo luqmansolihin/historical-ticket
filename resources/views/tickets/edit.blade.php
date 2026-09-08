@@ -5,13 +5,13 @@
 @section('content')
 @php
     $isAdmin = Auth::user()->isAdmin();
-    $isBooker = Auth::user()->isBooker() && !$isAdmin;
+    $isFinance = Auth::user()->isFinance() && !$isAdmin;
     $isLunas = $ticket->status === 'Lunas';
     
-    $isBookerLunas = $isBooker && $isLunas;
+    $isBookerLunas = $isFinance && $isLunas;
     $isDataLocked = $isBookerLunas;
     
-    $isBookerUnpaid = $isBooker && $ticket->status === 'Belum Bayar';
+    $isBookerUnpaid = $isFinance && $ticket->status === 'Belum Bayar';
 @endphp
 
 <div x-data="{ showModal: false }" class="max-w-4xl mx-auto min-w-0 w-full pb-12">
@@ -37,8 +37,8 @@
             <div class="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-3">
                 <i class="fa-solid fa-lock text-xl text-amber-400 shrink-0"></i>
                 <div>
-                    <span class="font-bold block text-sm">Tiket Berstatus Lunas — Mode Pembatasan Akses (Booker & Payer)</span>
-                    <span>Data rute, penumpang, dan biaya tiket telah dikunci karena pembayaran sudah <strong>Lunas</strong>. Sebagai Booker & Payer, Anda diperbolehkan mengedit <strong>Tanggal Pembayaran</strong> atau mengubah status menjadi <strong>Dibatalkan</strong>.</span>
+                    <span class="font-bold block text-sm">Tiket Berstatus Lunas — Mode Pembatasan Akses (Finance)</span>
+                    <span>Data rute, penumpang, dan biaya tiket telah dikunci karena pembayaran sudah <strong>Lunas</strong>. Sebagai Finance, Anda diperbolehkan mengedit <strong>Tanggal Pembayaran</strong> atau mengubah status menjadi <strong>Dibatalkan</strong>.</span>
                 </div>
             </div>
         @endif
@@ -183,19 +183,19 @@
                     </div>
 
                     <!-- Payer & Payment Date info logic -->
-                    @if($isBooker)
-                        <!-- Booker & Payer Auto-Linked Card & Editable Payment Date -->
+                    @if($isFinance)
+                        <!-- Finance Auto-Linked Card & Editable Payment Date -->
                         <div class="md:col-span-2 bg-sky-500/10 border border-sky-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-sm shrink-0">
                                     <i class="fa-solid fa-credit-card"></i>
                                 </div>
                                 <div>
-                                    <div class="text-xs text-sky-400 font-semibold uppercase tracking-wider">Pembayaran Oleh (Booker & Payer)</div>
+                                    <div class="text-xs text-sky-400 font-semibold uppercase tracking-wider">Pembayaran Oleh (Finance)</div>
                                     <div class="text-sm font-bold text-white flex items-center gap-2">
                                         {{ $ticket->paid_by && $ticket->paid_by !== '-' ? $ticket->paid_by : Auth::user()->name }}
                                         <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-400/20 text-sky-300 border border-sky-400/30">
-                                            Booker & Payer
+                                            Finance
                                         </span>
                                     </div>
                                 </div>
@@ -268,7 +268,7 @@
                         <label for="status" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Status Pembayaran <span class="text-rose-400">*</span>
                         </label>
-                        @if($isBooker)
+                        @if($isFinance)
                             <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
                                 @if($ticket->status === 'Lunas')
                                     <option value="Lunas" {{ old('status', $ticket->status) == 'Lunas' ? 'selected' : '' }}>Lunas (Status Saat Ini)</option>

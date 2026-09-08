@@ -38,7 +38,7 @@ class UserController extends Controller
         }
 
         if ($roleFilter) {
-            if ($roleFilter === 'finance' || $roleFilter === 'booker') {
+            if ($roleFilter === 'finance') {
                 $query->whereIn('role', ['finance', 'booker', 'payer']);
             } else {
                 $query->where('role', $roleFilter);
@@ -102,7 +102,7 @@ class UserController extends Controller
         // Summary Statistics
         $totalUsers = User::count();
         $totalAdmin = User::where('role', 'admin')->count();
-        $totalBooker = User::whereIn('role', ['finance', 'booker', 'payer'])->count();
+        $totalFinance = User::whereIn('role', ['finance', 'booker', 'payer'])->count();
         $totalRegularUser = User::where('role', 'user')->count();
 
         $users = $query->paginate(25)
@@ -133,7 +133,7 @@ class UserController extends Controller
             'dateOn',
             'totalUsers',
             'totalAdmin',
-            'totalBooker',
+            'totalFinance',
             'totalRegularUser',
             'roleOptions',
             'sorts',
@@ -167,7 +167,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'role' => 'required|string|in:admin,finance,booker,user',
+            'role' => 'required|string|in:admin,finance,user',
             'password' => 'nullable|string|min:6',
         ]);
 

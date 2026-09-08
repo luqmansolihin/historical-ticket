@@ -1,6 +1,6 @@
 # TicketTrace — Historical Ticket Management System 🎫✈️🚆
 
-> **TicketTrace** adalah sistem manajemen & rekapitulasi histori tiket perjalanan dinas perusahaan berbasis Laravel 11. Dilengkapi dengan otorisasi berbasis Role (*Admin*, *Booker & Payer*, *User*), filter multiple selection, log aktivitas perubahan status, tampilan E-Ticket Boarding Pass, serta ekspor CSV.
+> **TicketTrace** adalah sistem manajemen & rekapitulasi histori tiket perjalanan dinas perusahaan berbasis Laravel 11. Dilengkapi dengan otorisasi berbasis Role (*Admin*, *Finance*, *User*), filter multiple selection, log aktivitas perubahan status, tampilan E-Ticket Boarding Pass, serta ekspor CSV.
 
 ---
 
@@ -30,7 +30,7 @@
 
 ## 🛡️ Matriks Hak Akses Berdasarkan Role
 
-| Fitur / Hak Akses | Admin 🛡️ | Booker & Payer 📝💳 | User Regular 👤 |
+| Fitur / Hak Akses | Admin 🛡️ | Finance 💼 | User Regular 👤 |
 |---|:---:|:---:|:---:|
 | **Lihat Daftar & Detail Tiket** | ✅ | ✅ | ✅ |
 | **Tambah Tiket Baru** | ✅ | ✅ *(Belum Bayar / Lunas)* | ❌ |
@@ -104,7 +104,7 @@ Akses aplikasi di peramban web pada alamat: `http://127.0.0.1:8000`
 |---|---|---|
 | **Admin** | `admin@ticket.com` | `password` |
 
-*(Setelah berhasil login sebagai Admin, Anda dapat mendaftarkan akun Booker, Payer, atau User baru melalui menu **Daftar Akun**)*
+*(Setelah berhasil login sebagai Admin, Anda dapat mendaftarkan akun Finance atau User baru melalui menu **Daftar Akun**)*
 
 ---
 
