@@ -128,16 +128,9 @@
 
             <!-- Dynamic Multiple Passengers Input -->
             <div x-data="{ passengers: {{ json_encode(old('passenger_names', $ticket->passengers_list)) }} }">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                    <h3 class="text-xs sm:text-sm font-semibold text-sky-400 uppercase tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-users"></i> Daftar Nama Penumpang (<span x-text="passengers.length"></span> Orang)
-                    </h3>
-                    @if(!$isDataLocked)
-                        <button type="button" @click="passengers.push('')" class="text-xs font-semibold text-sky-400 hover:text-sky-300 px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 transition-all flex items-center gap-1.5 self-start sm:self-auto">
-                            <i class="fa-solid fa-user-plus"></i> Tambah Penumpang
-                        </button>
-                    @endif
-                </div>
+                <h3 class="text-xs sm:text-sm font-semibold text-sky-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-users"></i> Daftar Nama Penumpang (<span x-text="passengers.length"></span> Orang)
+                </h3>
 
                 <div class="space-y-3">
                     <template x-for="(passenger, index) in passengers" :key="index">
@@ -154,6 +147,15 @@
                         </div>
                     </template>
                 </div>
+
+                @if(!$isDataLocked)
+                    <div class="mt-3">
+                        <button type="button" @click="passengers.push('')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 transition-all shadow-sm">
+                            <i class="fa-solid fa-user-plus text-xs"></i> Tambah Penumpang
+                        </button>
+                    </div>
+                @endif
+
                 @error('passenger_names')
                     <p class="text-rose-400 text-xs mt-2">{{ $message }}</p>
                 @enderror
