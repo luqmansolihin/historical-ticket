@@ -140,7 +140,16 @@
 </head>
 <body class="h-screen w-screen overflow-hidden font-sans antialiased bg-slate-950 text-slate-100 selection:bg-sky-500 selection:text-white">
 
-    <div x-data="{ mobileSidebarOpen: false, isCollapsed: true }" class="h-screen w-screen flex flex-col md:flex-row overflow-hidden bg-slate-950">
+    <div x-data="{ 
+        mobileSidebarOpen: false, 
+        isCollapsed: true,
+        isMobile: window.innerWidth < 768,
+        init() {
+            window.addEventListener('resize', () => {
+                this.isMobile = window.innerWidth < 768;
+            });
+        }
+    }" class="h-screen w-screen flex flex-col md:flex-row overflow-hidden bg-slate-950">
 
         <!-- Mobile Header Bar -->
         <header class="md:hidden sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between no-print shrink-0">
@@ -163,6 +172,19 @@
             @endauth
         </header>
 
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div x-show="mobileSidebarOpen" 
+             @click="mobileSidebarOpen = false" 
+             x-transition:enter="transition-opacity ease-linear duration-200" 
+             x-transition:enter-start="opacity-0" 
+             x-transition:enter-end="opacity-100" 
+             x-transition:leave="transition-opacity ease-linear duration-200" 
+             x-transition:leave-start="opacity-100" 
+             x-transition:leave-end="opacity-0" 
+             class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 md:hidden no-print" 
+             x-cloak>
+        </div>
+
         <!-- Sidebar Navigation (Left Menu - Default Minimized) -->
         <aside :class="[
             mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
@@ -171,12 +193,12 @@
             
             <div>
                 <!-- Brand / Logo Header & Toggle Button -->
-                <div class="p-4 border-b border-slate-800/80 flex items-center justify-between" :class="isCollapsed ? 'md:justify-center md:px-2' : ''">
+                <div class="p-4 border-b border-slate-800/80 flex items-center justify-between" :class="isCollapsed && !isMobile ? 'md:justify-center md:px-2' : ''">
                     <a href="{{ route('tickets.index') }}" class="flex items-center space-x-3 group" title="TicketTrace">
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform duration-200 shrink-0">
                             <i class="fa-solid fa-ticket text-lg transform -rotate-12"></i>
                         </div>
-                        <div x-show="!isCollapsed" class="transition-opacity duration-200">
+                        <div x-show="!isCollapsed || isMobile" class="transition-opacity duration-200">
                             <span class="font-display font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent block leading-tight">
                                 TicketTrace
                             </span>
@@ -200,22 +222,22 @@
                     <nav class="space-y-1">
                             <!-- Histori Tiket -->
                             <a href="{{ route('tickets.index') }}" 
-                               :class="isCollapsed ? 'md:justify-center md:px-0' : ''"
+                               :class="isCollapsed && !isMobile ? 'md:justify-center md:px-0' : ''"
                                class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all {{ request()->routeIs('tickets.*') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
-                               :title="isCollapsed ? 'Histori Tiket' : ''">
+                               :title="isCollapsed && !isMobile ? 'Histori Tiket' : ''">
                                 <i class="fa-solid fa-table-list text-base {{ request()->routeIs('tickets.*') ? 'text-sky-400' : 'text-slate-400' }}"></i>
-                                <span x-show="!isCollapsed">Histori Tiket</span>
+                                <span x-show="!isCollapsed || isMobile">Histori Tiket</span>
                             </a>
 
                             <!-- Kelola User (Admin Only) -->
                             @auth
                                 @if(Auth::user()->isAdmin())
                                     <a href="{{ route('users.index') }}" 
-                                       :class="isCollapsed ? 'md:justify-center md:px-0' : ''"
+                                       :class="isCollapsed && !isMobile ? 'md:justify-center md:px-0' : ''"
                                        class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all {{ request()->routeIs('users.*') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
-                                       :title="isCollapsed ? 'Kelola User' : ''">
+                                       :title="isCollapsed && !isMobile ? 'Kelola User' : ''">
                                         <i class="fa-solid fa-users-gear text-base {{ request()->routeIs('users.*') ? 'text-sky-400' : 'text-slate-400' }}"></i>
-                                        <span x-show="!isCollapsed">Kelola User</span>
+                                        <span x-show="!isCollapsed || isMobile">Kelola User</span>
                                     </a>
                                 @endif
                             @endauth
@@ -226,11 +248,11 @@
             <!-- User Profile & Logout Bottom Bar -->
             @auth
                 <div class="p-3 border-t border-slate-800/80 bg-slate-950/40">
-                    <div class="p-2.5 rounded-2xl bg-slate-800/60 border border-slate-700/50 mb-2 flex items-center" :class="isCollapsed ? 'md:justify-center md:p-2' : 'space-x-3'">
+                    <div class="p-2.5 rounded-2xl bg-slate-800/60 border border-slate-700/50 mb-2 flex items-center" :class="isCollapsed && !isMobile ? 'md:justify-center md:p-2' : 'space-x-3'">
                         <div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sky-400 text-sm shrink-0" :title="Auth::user()->name">
                             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                         </div>
-                        <div x-show="!isCollapsed" class="min-w-0 flex-1">
+                        <div x-show="!isCollapsed || isMobile" class="min-w-0 flex-1">
                             <div class="text-xs font-semibold text-white truncate leading-tight">{{ Auth::user()->name }}</div>
                             <div class="text-[10px] font-mono text-sky-400 truncate mt-0.5 capitalize">
                                 @if(Auth::user()->isAdmin())
@@ -247,11 +269,11 @@
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" 
-                                :class="isCollapsed ? 'md:justify-center md:px-0' : 'px-3.5'"
+                                :class="isCollapsed && !isMobile ? 'md:justify-center md:px-0' : 'px-3.5'"
                                 class="w-full py-2 rounded-xl text-xs font-medium text-rose-400 hover:text-white hover:bg-rose-500/20 border border-rose-500/30 flex items-center justify-center gap-2 transition-all" 
-                                :title="isCollapsed ? 'Logout / Keluar' : ''">
+                                :title="isCollapsed && !isMobile ? 'Logout / Keluar' : ''">
                             <i class="fa-solid fa-right-from-bracket text-sm"></i>
-                            <span x-show="!isCollapsed">Logout</span>
+                            <span x-show="!isCollapsed || isMobile">Logout</span>
                         </button>
                     </form>
                 </div>
