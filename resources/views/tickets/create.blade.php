@@ -3,26 +3,26 @@
 @section('title', 'Tambah Tiket Histori Baru')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+<div class="max-w-4xl mx-auto min-w-0 w-full">
     <div class="mb-6">
         <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
         </a>
-        <h1 class="font-display text-2xl sm:text-3xl font-bold text-white">Tambah Histori Tiket Baru</h1>
-        <p class="text-slate-400 text-sm mt-1">Masukkan rincian tiket keberangkatan, pemesan (Booker), dan daftar penumpang (bisa lebih dari 1 orang).</p>
+        <h1 class="font-display text-2xl sm:text-3xl font-bold text-white leading-tight">Tambah Histori Tiket Baru</h1>
+        <p class="text-slate-400 text-xs sm:text-sm mt-1">Masukkan rincian tiket keberangkatan, pemesan (Booker), dan daftar penumpang (bisa lebih dari 1 orang).</p>
     </div>
 
-    <div class="glass-card p-6 sm:p-8 rounded-2xl shadow-2xl">
+    <div class="glass-card p-4 sm:p-8 rounded-2xl shadow-2xl overflow-hidden">
         <form action="{{ route('tickets.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <!-- Section 1: Informasi Perjalanan -->
             <div>
-                <h3 class="text-sm font-semibold text-sky-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-sky-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-route"></i> Informasi Perjalanan
                 </h3>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                     <div>
                         <label for="ticket_date" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Tanggal Tiket / Keberangkatan <span class="text-rose-400">*</span>
@@ -84,11 +84,11 @@
 
             <!-- Dynamic Multiple Passengers Input -->
             <div x-data="{ passengers: {{ json_encode(old('passenger_names', [Auth::user()->name])) }} }">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-sm font-semibold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <h3 class="text-xs sm:text-sm font-semibold text-sky-400 uppercase tracking-wider flex items-center gap-2">
                         <i class="fa-solid fa-users"></i> Daftar Nama Penumpang (<span x-text="passengers.length"></span> Orang)
                     </h3>
-                    <button type="button" @click="passengers.push('')" class="text-xs font-semibold text-sky-400 hover:text-sky-300 px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 transition-all flex items-center gap-1.5">
+                    <button type="button" @click="passengers.push('')" class="text-xs font-semibold text-sky-400 hover:text-sky-300 px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 transition-all flex items-center gap-1.5 self-start sm:self-auto">
                         <i class="fa-solid fa-user-plus"></i> Tambah Penumpang
                     </button>
                 </div>
@@ -98,11 +98,11 @@
                 <div class="space-y-3">
                     <template x-for="(passenger, index) in passengers" :key="index">
                         <div class="flex items-center gap-2">
-                            <div class="relative flex-1">
+                            <div class="relative flex-1 min-w-0">
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-bold" x-text="(index + 1) + '.'"></div>
                                 <input type="text" :name="'passenger_names[' + index + ']'" x-model="passengers[index]" placeholder="Nama Penumpang (Lengkap)" required class="w-full glass-input rounded-xl pl-9 pr-4 py-2.5 text-sm placeholder-slate-600">
                             </div>
-                            <button type="button" @click="passengers.splice(index, 1)" x-show="passengers.length > 1" class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm" title="Hapus Penumpang Ini">
+                            <button type="button" @click="passengers.splice(index, 1)" x-show="passengers.length > 1" class="w-10 h-10 shrink-0 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm" title="Hapus Penumpang Ini">
                                 <i class="fa-solid fa-trash-can text-sm"></i>
                             </button>
                         </div>
@@ -117,11 +117,11 @@
 
             <!-- Section 3: Pemesanan & Pembayaran -->
             <div>
-                <h3 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-credit-card"></i> Detail Pemesan & Pembayaran Oleh
                 </h3>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                     <!-- Booker Name Input -->
                     <div class="md:col-span-2">
                         <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
@@ -176,7 +176,7 @@
                         <label for="attachment" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Upload Bukti / Nota Tiket <span class="text-slate-500">(PDF, JPG, PNG max 5MB)</span>
                         </label>
-                        <input type="file" id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="w-full glass-input rounded-xl px-3 py-2 text-xs bg-slate-900 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-500/20 file:text-sky-300 hover:file:bg-sky-500/30">
+                        <input type="file" id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="w-full max-w-full glass-input rounded-xl px-3 py-2 text-xs bg-slate-900 file:mr-2 sm:file:mr-4 file:py-1 file:px-2.5 sm:file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-500/20 file:text-sky-300 hover:file:bg-sky-500/30 truncate">
                         @error('attachment')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -193,11 +193,11 @@
                 <textarea id="notes" name="notes" rows="3" placeholder="Informasi tambahan seperti nomor kursi, kelas penerbangan, atau keperluan dinas..." class="w-full glass-input rounded-xl p-4 text-sm placeholder-slate-600">{{ old('notes') }}</textarea>
             </div>
 
-            <div class="flex items-center justify-end gap-3 pt-4">
-                <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
+            <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4">
+                <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-center text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
                     Batal
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition-all">
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-center text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition-all">
                     <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Tiket
                 </button>
             </div>

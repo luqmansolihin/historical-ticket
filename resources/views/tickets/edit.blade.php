@@ -14,25 +14,25 @@
     $isBookerUnpaid = $isBooker && $ticket->status === 'Belum Bayar';
 @endphp
 
-<div x-data="{ showModal: false }" class="max-w-4xl mx-auto pb-8">
+<div x-data="{ showModal: false }" class="max-w-4xl mx-auto min-w-0 w-full pb-8">
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
             </a>
-            <h1 class="font-display text-2xl sm:text-3xl font-bold text-white">Edit Histori Tiket</h1>
-            <p class="text-slate-400 text-sm mt-1">Perbarui data tiket <span class="font-mono text-sky-400 font-semibold">{{ $ticket->ticket_code }}</span></p>
+            <h1 class="font-display text-2xl sm:text-3xl font-bold text-white leading-tight">Edit Histori Tiket</h1>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Perbarui data tiket <span class="font-mono text-sky-400 font-semibold">{{ $ticket->ticket_code }}</span></p>
         </div>
 
         <!-- 1 Tombol Cetak / Preview di Atas Header -->
         <div class="flex items-center gap-2">
-            <button type="button" @click="showModal = true" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 shadow-lg shadow-sky-500/20 transition-all flex items-center gap-2">
+            <button type="button" @click="showModal = true" class="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 shadow-lg shadow-sky-500/20 transition-all flex items-center justify-center gap-2">
                 <i class="fa-solid fa-file-pdf text-sm"></i> Preview & Cetak Boarding Pass
             </button>
         </div>
     </div>
 
-    <div class="glass-card p-6 sm:p-8 rounded-2xl shadow-2xl">
+    <div class="glass-card p-4 sm:p-8 rounded-2xl shadow-2xl overflow-hidden">
         @if($isBookerLunas)
             <div class="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-3">
                 <i class="fa-solid fa-lock text-xl text-amber-400 shrink-0"></i>
@@ -128,12 +128,12 @@
 
             <!-- Dynamic Multiple Passengers Input -->
             <div x-data="{ passengers: {{ json_encode(old('passenger_names', $ticket->passengers_list)) }} }">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-sm font-semibold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <h3 class="text-xs sm:text-sm font-semibold text-sky-400 uppercase tracking-wider flex items-center gap-2">
                         <i class="fa-solid fa-users"></i> Daftar Nama Penumpang (<span x-text="passengers.length"></span> Orang)
                     </h3>
                     @if(!$isDataLocked)
-                        <button type="button" @click="passengers.push('')" class="text-xs font-semibold text-sky-400 hover:text-sky-300 px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 transition-all flex items-center gap-1.5">
+                        <button type="button" @click="passengers.push('')" class="text-xs font-semibold text-sky-400 hover:text-sky-300 px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 transition-all flex items-center gap-1.5 self-start sm:self-auto">
                             <i class="fa-solid fa-user-plus"></i> Tambah Penumpang
                         </button>
                     @endif
@@ -142,12 +142,12 @@
                 <div class="space-y-3">
                     <template x-for="(passenger, index) in passengers" :key="index">
                         <div class="flex items-center gap-2">
-                            <div class="relative flex-1">
+                            <div class="relative flex-1 min-w-0">
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-bold" x-text="(index + 1) + '.'"></div>
                                 <input type="text" :name="'passenger_names[' + index + ']'" x-model="passengers[index]" placeholder="Nama Penumpang (Lengkap)" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl pl-9 pr-4 py-2.5 text-sm placeholder-slate-600">
                             </div>
                             @if(!$isDataLocked)
-                                <button type="button" @click="passengers.splice(index, 1)" x-show="passengers.length > 1" class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm" title="Hapus Penumpang Ini">
+                                <button type="button" @click="passengers.splice(index, 1)" x-show="passengers.length > 1" class="w-10 h-10 shrink-0 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm" title="Hapus Penumpang Ini">
                                     <i class="fa-solid fa-trash-can text-sm"></i>
                                 </button>
                             @endif
@@ -316,11 +316,11 @@
             </div>
 
             <!-- Tombol Batal & Perbarui Tiket -->
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800/80">
-                <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
+            <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4">
+                <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-center text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
                     Batal
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-lg shadow-amber-500/25 transition-all">
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-center text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-lg shadow-amber-500/25 transition-all">
                     <i class="fa-solid fa-pen-to-square mr-2"></i> Perbarui Tiket
                 </button>
             </div>
