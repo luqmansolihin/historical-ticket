@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Tiket - ' . $ticket->ticket_code)
+@section('title', 'Detail Tiket' . ($ticket->ticket_code ? ' - ' . $ticket->ticket_code : ''))
 
 @section('content')
 <div class="max-w-2xl mx-auto">
@@ -26,7 +26,7 @@
                     </div>
                     <div>
                         <p class="text-xs text-sky-200 uppercase font-mono tracking-wider">E-TICKET BOARDING PASS</p>
-                        <h3 class="font-mono font-bold text-xl">{{ $ticket->ticket_code }}</h3>
+                        <h3 class="font-mono font-bold text-xl">{{ $ticket->ticket_code ?: '-' }}</h3>
                     </div>
                 </div>
                 <span class="px-3 py-1 text-xs font-semibold rounded-full border {{ $ticket->status_badge_class }}">
@@ -185,7 +185,7 @@
             <div class="font-mono text-3xl tracking-[0.4em] text-slate-600 select-none">
                 ||||| ||| ||||||| ||| ||||| ||||
             </div>
-            <span class="text-xs text-slate-500 block font-mono mt-2">VERIFIED HISTORICAL TICKET RECORD &bull; {{ $ticket->ticket_code }}</span>
+            <span class="text-xs text-slate-500 block font-mono mt-2">VERIFIED HISTORICAL TICKET RECORD &bull; {{ $ticket->ticket_code ?: '-' }}</span>
         </div>
     </div>
 </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Tiket - ' . $ticket->ticket_code)
+@section('title', 'Edit Tiket' . ($ticket->ticket_code ? ' - ' . $ticket->ticket_code : ''))
 
 @section('content')
 @php
@@ -21,7 +21,7 @@
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
             </a>
             <h1 class="font-display text-2xl sm:text-3xl font-bold text-white leading-tight">Edit Histori Tiket</h1>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1">Perbarui data tiket <span class="font-mono text-sky-400 font-semibold">{{ $ticket->ticket_code }}</span></p>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Perbarui data tiket <span class="font-mono text-sky-400 font-semibold">{{ $ticket->ticket_code ?: '-' }}</span></p>
         </div>
 
         <!-- 1 Tombol Cetak / Preview di Atas Header -->
@@ -80,9 +80,9 @@
 
                     <div>
                         <label for="ticket_code" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Kode Tiket / Ref Booking <span class="text-rose-400">*</span>
+                            Kode Tiket / Ref Booking <span class="text-slate-500">(Opsional)</span>
                         </label>
-                        <input type="text" id="ticket_code" name="ticket_code" value="{{ old('ticket_code', $ticket->ticket_code) }}" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl px-4 py-2.5 text-sm font-mono @error('ticket_code') border-rose-500 @enderror">
+                        <input type="text" id="ticket_code" name="ticket_code" value="{{ old('ticket_code', $ticket->ticket_code) }}" {{ $isDataLocked ? 'disabled' : '' }} class="w-full glass-input rounded-xl px-4 py-2.5 text-sm font-mono @error('ticket_code') border-rose-500 @enderror">
                         @error('ticket_code')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -350,7 +350,7 @@
                                 </div>
                                 <div>
                                     <p class="text-xs text-sky-200 uppercase font-mono tracking-wider">E-TICKET BOARDING PASS</p>
-                                    <h3 class="font-mono font-bold text-lg">{{ $ticket->ticket_code }}</h3>
+                                    <h3 class="font-mono font-bold text-lg">{{ $ticket->ticket_code ?: '-' }}</h3>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 no-print">

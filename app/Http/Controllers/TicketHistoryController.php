@@ -311,12 +311,9 @@ class TicketHistoryController extends Controller
         $validated['passenger_name'] = implode(', ', $names);
         unset($validated['passenger_names']);
 
-        // Auto-generate ticket code if not specified (looping to guarantee uniqueness)
+        // Keep ticket_code null if left empty
         if (empty($validated['ticket_code'])) {
-            do {
-                $code = 'TCK-' . strtoupper(Str::random(6));
-            } while (TicketHistory::where('ticket_code', $code)->exists());
-            $validated['ticket_code'] = $code;
+            $validated['ticket_code'] = null;
         }
 
         // Use custom booked_by text if entered (fallback to Auth::user()->name) while strictly linking booked_by_user_id to logged in user
@@ -420,7 +417,7 @@ class TicketHistoryController extends Controller
         }
 
         $validated = $request->validate([
-            'ticket_code' => 'required|string|max:50|unique:ticket_histories,ticket_code,' . $ticket->id,
+            'ticket_code' => 'nullable|string|max:50|unique:ticket_histories,ticket_code,' . $ticket->id,
             'ticket_date' => 'required|date',
             'origin' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
@@ -437,6 +434,10 @@ class TicketHistoryController extends Controller
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
+
+        if (empty($validated['ticket_code'])) {
+            $validated['ticket_code'] = null;
+        }
 
         $names = array_values(array_filter(array_map('trim', $validated['passenger_names'])));
         $validated['passenger_name'] = implode(', ', $names);

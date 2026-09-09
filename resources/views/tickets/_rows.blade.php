@@ -2,10 +2,10 @@
     @can('update', $ticket)
         <tr @dblclick="window.location.href = '{{ route('tickets.edit', $ticket->id) }}'"
             class="hover:bg-sky-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
-            title="Double klik untuk mengedit data tiket {{ $ticket->ticket_code }}">
+            title="Double klik untuk mengedit data tiket {{ $ticket->ticket_code ?: '-' }}">
     @else
         <tr @dblclick="selectedTicket = {{ json_encode([
-                'ticket_code' => $ticket->ticket_code,
+                'ticket_code' => $ticket->ticket_code ?: '-',
                 'ticket_date' => $ticket->ticket_date->format('d M Y'),
                 'origin' => $ticket->origin,
                 'destination' => $ticket->destination,
@@ -33,11 +33,11 @@
                 ])
             ]) }}; showModal = true"
             class="hover:bg-sky-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
-            title="Double klik untuk melihat Boarding Pass {{ $ticket->ticket_code }}">
+            title="Double klik untuk melihat Boarding Pass {{ $ticket->ticket_code ?: '-' }}">
     @endcan
         <!-- 1. Kode Tiket -->
         <td class="py-0.5 px-2 font-mono font-semibold text-sky-400 whitespace-nowrap border-r border-slate-800/40">
-            {{ $ticket->ticket_code }}
+            {{ $ticket->ticket_code ?: '-' }}
         </td>
 
         <!-- 2. Tgl Tiket -->

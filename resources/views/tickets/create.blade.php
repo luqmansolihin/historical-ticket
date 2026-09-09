@@ -35,7 +35,7 @@
 
                     <div>
                         <label for="ticket_code" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Kode Tiket / Ref Booking <span class="text-slate-500">(Opsional, otomatis jika kosong)</span>
+                            Kode Tiket / Ref Booking <span class="text-slate-500">(Opsional)</span>
                         </label>
                         <input type="text" id="ticket_code" name="ticket_code" value="{{ old('ticket_code') }}" placeholder="Contoh: GA-89102, TCK-2026-001" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('ticket_code') border-rose-500 @enderror">
                         @error('ticket_code')

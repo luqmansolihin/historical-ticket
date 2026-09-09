@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>E-Ticket Boarding Pass - {{ $ticket->ticket_code }}</title>
+    <title>E-Ticket Boarding Pass - {{ $ticket->ticket_code ?: '-' }}</title>
     <style>
         @page {
             margin: 15px;
@@ -216,7 +216,7 @@
                     </div>
                     <span class="brand-subtitle">E-TICKET BOARDING PASS</span>
                     <div class="ticket-code">
-                        <span class="transport-badge">{{ strtoupper($ticket->transport_type) }}</span> {{ $ticket->ticket_code }}
+                        <span class="transport-badge">{{ strtoupper($ticket->transport_type) }}</span> {{ $ticket->ticket_code ?: '-' }}
                     </div>
 
                     <!-- Route Table -->
@@ -325,7 +325,7 @@
         <!-- Barcode & Verification Footer -->
         <div class="barcode-section">
             <div class="barcode-lines">||||| ||| ||||||| ||| ||||| ||||</div>
-            <div class="footer-text">VERIFIED HISTORICAL TICKET RECORD • {{ $ticket->ticket_code }} • TICKETTRACE SYSTEM</div>
+            <div class="footer-text">VERIFIED HISTORICAL TICKET RECORD • {{ $ticket->ticket_code ?: '-' }} • TICKETTRACE SYSTEM</div>
         </div>
     </div>
 
