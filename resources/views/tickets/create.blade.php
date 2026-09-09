@@ -83,7 +83,7 @@
             <hr class="border-slate-800/80">
 
             <!-- Dynamic Multiple Passengers Input -->
-            <div x-data="{ passengers: {{ json_encode(old('passenger_names', [Auth::user()->name])) }} }">
+            <div x-data="{ passengers: {{ json_encode(old('passenger_names', [''])) }} }">
                 <h3 class="text-xs sm:text-sm font-semibold text-sky-400 uppercase tracking-wider mb-1 flex items-center gap-2">
                     <i class="fa-solid fa-users"></i> Daftar Nama Penumpang (<span x-text="passengers.length"></span> Orang)
                 </h3>
@@ -128,7 +128,7 @@
                         <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Nama Pemesan <span class="text-rose-400">*</span>
                         </label>
-                        <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by', Auth::user()->name) }}" required placeholder="Contoh: Luqman" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('booked_by') border-rose-500 @enderror">
+                        <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by') }}" required placeholder="Contoh: Luqman" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('booked_by') border-rose-500 @enderror">
                         @error('booked_by')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror

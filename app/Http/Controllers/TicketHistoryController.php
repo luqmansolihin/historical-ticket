@@ -295,7 +295,7 @@ class TicketHistoryController extends Controller
             'transport_type' => 'required|string|max:100',
             'passenger_names' => 'required|array|min:1',
             'passenger_names.*' => 'required|string|max:255',
-            'booked_by' => 'nullable|string|max:255',
+            'booked_by' => 'required|string|max:255',
             'booked_by_user_id' => 'nullable|exists:users,id',
             'paid_by' => 'nullable|string|max:255',
             'paid_by_user_id' => 'nullable|exists:users,id',
@@ -304,6 +304,10 @@ class TicketHistoryController extends Controller
             'status' => 'required|string|max:50',
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ], [
+            'passenger_names.required' => 'Nama penumpang wajib diisi minimal 1 orang.',
+            'passenger_names.*.required' => 'Nama penumpang tidak boleh kosong.',
+            'booked_by.required' => 'Nama pemesan wajib diisi.',
         ]);
 
         // Process array of passenger names into clean comma-separated string
