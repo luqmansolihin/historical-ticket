@@ -254,6 +254,24 @@
                                 </div>
                             </th>
 
+                            <!-- 1b. Kode Invoice -->
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors">
+                                <div class="flex items-center gap-1.5 justify-between">
+                                    <button type="button" @click="toggleSort('invoice_code')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('invoice_code') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Kode Invoice">
+                                        <span>Kode Invoice</span>
+                                        <template x-if="getSortIndex('invoice_code') === -1">
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        </template>
+                                        <template x-if="getSortIndex('invoice_code') !== -1">
+                                            <span class="inline-flex items-center gap-0.5 text-sky-400 font-bold text-[10px]">
+                                                <i class="fa-solid" :class="getSortDir('invoice_code') === 'asc' ? 'fa-arrow-up-wide-short' : 'fa-arrow-down-wide-short'"></i>
+                                                <span x-show="sorts.length > 1" class="text-[8px] bg-sky-500/20 px-1 py-0.2 rounded-full border border-sky-500/40 font-mono" x-text="getSortIndex('invoice_code') + 1"></span>
+                                            </span>
+                                        </template>
+                                    </button>
+                                </div>
+                            </th>
+
                             <!-- 2. Tgl SPK / Tiket -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.date ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'date') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">

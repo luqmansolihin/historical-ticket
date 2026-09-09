@@ -12,6 +12,7 @@ class TicketHistory extends Model
 
     protected $fillable = [
         'ticket_code',
+        'invoice_code',
         'ticket_date',
         'origin',
         'destination',
@@ -152,6 +153,7 @@ class TicketHistory extends Model
 
         return $query->where(function ($q) use ($search) {
             $q->where('ticket_code', 'like', "%{$search}%")
+                ->orWhere('invoice_code', 'like', "%{$search}%")
                 ->orWhere('origin', 'like', "%{$search}%")
                 ->orWhere('destination', 'like', "%{$search}%")
                 ->orWhere('passenger_name', 'like', "%{$search}%")

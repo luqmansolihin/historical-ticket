@@ -6,6 +6,7 @@
     @else
         <tr @dblclick="selectedTicket = {{ json_encode([
                 'ticket_code' => $ticket->ticket_code ?: '-',
+                'invoice_code' => $ticket->invoice_code ?: '-',
                 'ticket_date' => $ticket->ticket_date->format('d M Y'),
                 'origin' => $ticket->origin,
                 'destination' => $ticket->destination,
@@ -38,6 +39,11 @@
         <!-- 1. Kode Tiket -->
         <td class="py-0.5 px-2 font-mono font-semibold text-sky-400 whitespace-nowrap border-r border-slate-800/40">
             {{ $ticket->ticket_code ?: '-' }}
+        </td>
+
+        <!-- 1b. Kode Invoice -->
+        <td class="py-0.5 px-2 font-mono font-semibold text-indigo-300 whitespace-nowrap border-r border-slate-800/40">
+            {{ $ticket->invoice_code ?: '-' }}
         </td>
 
         <!-- 2. Tgl Tiket -->

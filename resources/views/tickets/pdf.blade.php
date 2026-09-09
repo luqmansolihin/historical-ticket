@@ -217,6 +217,7 @@
                     <span class="brand-subtitle">E-TICKET BOARDING PASS</span>
                     <div class="ticket-code">
                         <span class="transport-badge">{{ strtoupper($ticket->transport_type) }}</span> {{ $ticket->ticket_code ?: '-' }}
+                        <span style="font-size: 11px; margin-left: 8px; color: #bae6fd;">(INV: {{ $ticket->invoice_code }})</span>
                     </div>
 
                     <!-- Route Table -->
@@ -280,16 +281,20 @@
                 <table class="grid-table">
                     <tr>
                         <td class="grid-cell">
+                            <span class="info-label">KODE INVOICE</span>
+                            <span class="info-value info-value-sky" style="font-family: monospace;">{{ $ticket->invoice_code }}</span>
+                        </td>
+                        <td class="grid-cell">
                             <span class="info-label">PEMESAN TIKET</span>
                             <span class="info-value info-value-indigo">{{ $ticket->booked_by }}</span>
                         </td>
-                        <td class="grid-cell">
+                    </tr>
+                    <tr>
+                        <td class="grid-cell" style="padding-top: 8px;">
                             <span class="info-label">PEMBAYARAN OLEH</span>
                             <span class="info-value info-value-emerald">{{ $ticket->paid_by }}</span>
                         </td>
-                    </tr>
-                    <tr>
-                        <td class="grid-cell" style="padding-top: 8px;" colspan="2">
+                        <td class="grid-cell" style="padding-top: 8px;">
                             <span class="info-label">TANGGAL PEMBAYARAN</span>
                             <span class="info-value">{{ $ticket->payment_date ? $ticket->payment_date->format('d M Y') : '-' }}</span>
                         </td>

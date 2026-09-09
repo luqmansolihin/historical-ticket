@@ -289,6 +289,7 @@ class TicketHistoryController extends Controller
 
         $validated = $request->validate([
             'ticket_code' => 'nullable|string|max:50|unique:ticket_histories,ticket_code',
+            'invoice_code' => 'required|string|max:100',
             'ticket_date' => 'required|date',
             'origin' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
@@ -305,6 +306,7 @@ class TicketHistoryController extends Controller
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ], [
+            'invoice_code.required' => 'Kode invoice wajib diisi.',
             'passenger_names.required' => 'Nama penumpang wajib diisi minimal 1 orang.',
             'passenger_names.*.required' => 'Nama penumpang tidak boleh kosong.',
             'booked_by.required' => 'Nama pemesan wajib diisi.',
@@ -407,6 +409,7 @@ class TicketHistoryController extends Controller
         if (!Auth::user()->isAdmin() && $ticket->status === 'Lunas') {
             $request->merge([
                 'ticket_code' => $request->input('ticket_code', $ticket->ticket_code),
+                'invoice_code' => $request->input('invoice_code', $ticket->invoice_code),
                 'ticket_date' => $request->input('ticket_date', $ticket->ticket_date->format('Y-m-d')),
                 'origin' => $request->input('origin', $ticket->origin),
                 'destination' => $request->input('destination', $ticket->destination),
@@ -422,6 +425,7 @@ class TicketHistoryController extends Controller
 
         $validated = $request->validate([
             'ticket_code' => 'nullable|string|max:50|unique:ticket_histories,ticket_code,' . $ticket->id,
+            'invoice_code' => 'required|string|max:100',
             'ticket_date' => 'required|date',
             'origin' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
@@ -437,6 +441,11 @@ class TicketHistoryController extends Controller
             'status' => 'required|string|max:50',
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ], [
+            'invoice_code.required' => 'Kode invoice wajib diisi.',
+            'passenger_names.required' => 'Nama penumpang wajib diisi minimal 1 orang.',
+            'passenger_names.*.required' => 'Nama penumpang tidak boleh kosong.',
+            'booked_by.required' => 'Nama pemesan wajib diisi.',
         ]);
 
         if (empty($validated['ticket_code'])) {
@@ -585,6 +594,7 @@ class TicketHistoryController extends Controller
 
             fputcsv($file, [
                 'Kode Tiket',
+                'Kode Invoice',
                 'Tanggal Tiket',
                 'Dari (Origin)',
                 'Ke (Destination)',
@@ -601,6 +611,7 @@ class TicketHistoryController extends Controller
             foreach ($tickets as $t) {
                 fputcsv($file, [
                     $t->ticket_code,
+                    $t->invoice_code,
                     $t->ticket_date ? $t->ticket_date->format('Y-m-d') : '',
                     $t->origin,
                     $t->destination,

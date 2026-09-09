@@ -44,6 +44,16 @@
                     </div>
 
                     <div>
+                        <label for="invoice_code" class="block text-xs font-medium text-slate-300 mb-1.5">
+                            Kode Invoice / No. Invoice <span class="text-rose-400">*</span>
+                        </label>
+                        <input type="text" id="invoice_code" name="invoice_code" value="{{ old('invoice_code') }}" required placeholder="Contoh: INV-2026-001" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('invoice_code') border-rose-500 @enderror">
+                        @error('invoice_code')
+                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
                         <label for="origin" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Dari (Lokasi Keberangkatan) <span class="text-rose-400">*</span>
                         </label>

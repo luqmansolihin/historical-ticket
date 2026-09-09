@@ -27,6 +27,7 @@
                     <div>
                         <p class="text-xs text-sky-200 uppercase font-mono tracking-wider">E-TICKET BOARDING PASS</p>
                         <h3 class="font-mono font-bold text-xl">{{ $ticket->ticket_code ?: '-' }}</h3>
+                        <p class="text-xs text-sky-200 font-mono mt-0.5">Invoice: <span class="font-bold text-white">{{ $ticket->invoice_code }}</span></p>
                     </div>
                 </div>
                 <span class="px-3 py-1 text-xs font-semibold rounded-full border {{ $ticket->status_badge_class }}">
