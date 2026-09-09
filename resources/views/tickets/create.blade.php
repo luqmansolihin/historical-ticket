@@ -27,7 +27,7 @@
                         <label for="ticket_date" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Tanggal Tiket / Keberangkatan <span class="text-rose-400">*</span>
                         </label>
-                        <input type="date" id="ticket_date" name="ticket_date" value="{{ old('ticket_date', date('Y-m-d')) }}" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('ticket_date') border-rose-500 @enderror">
+                        <input type="date" id="ticket_date" name="ticket_date" value="{{ old('ticket_date', date('Y-m-d')) }}" required onclick="this.showPicker?.()" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 cursor-pointer @error('ticket_date') border-rose-500 @enderror">
                         @error('ticket_date')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror

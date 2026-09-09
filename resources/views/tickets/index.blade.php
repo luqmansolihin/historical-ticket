@@ -301,21 +301,21 @@
                                             <label class="block text-[11px] font-medium text-slate-400 mb-1">
                                                 <span class="text-sky-400 font-semibold">After</span> (Dari / Setelah):
                                             </label>
-                                            <input type="date" name="date_after" x-model="dateAfter" @change="onAfterBeforeChange()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none font-mono">
+                                             <input type="date" name="date_after" x-model="dateAfter" @change="onAfterBeforeChange()" onclick="this.showPicker?.()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none font-mono cursor-pointer">
                                         </div>
 
                                         <div>
                                             <label class="block text-[11px] font-medium text-slate-400 mb-1">
                                                 <span class="text-sky-400 font-semibold">Before</span> (Sampai / Sebelum):
                                             </label>
-                                            <input type="date" name="date_before" x-model="dateBefore" @change="onAfterBeforeChange()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none font-mono">
+                                             <input type="date" name="date_before" x-model="dateBefore" @change="onAfterBeforeChange()" onclick="this.showPicker?.()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none font-mono cursor-pointer">
                                         </div>
 
                                         <div class="pt-1 border-t border-slate-800/60">
                                             <label class="block text-[11px] font-medium text-slate-400 mb-1">
                                                 <span class="text-amber-400 font-semibold">On</span> (Tepat Pada Tanggal):
                                             </label>
-                                            <input type="date" name="date_on" x-model="dateOn" @change="onOnChange()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-amber-400 focus:outline-none font-mono">
+                                             <input type="date" name="date_on" x-model="dateOn" @change="onOnChange()" onclick="this.showPicker?.()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-amber-400 focus:outline-none font-mono cursor-pointer">
                                         </div>
                                     </div>
 
@@ -632,21 +632,21 @@
                                             <label class="block text-[11px] font-medium text-slate-400 mb-1">
                                                 <span class="text-sky-400 font-semibold">After</span> (Dari / Setelah):
                                             </label>
-                                            <input type="date" name="pay_date_after" x-model="payDateAfter" @change="onAfterBeforeChange()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none font-mono">
+                                             <input type="date" name="pay_date_after" x-model="payDateAfter" @change="onAfterBeforeChange()" onclick="this.showPicker?.()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none font-mono cursor-pointer">
                                         </div>
 
                                         <div>
                                             <label class="block text-[11px] font-medium text-slate-400 mb-1">
                                                 <span class="text-sky-400 font-semibold">Before</span> (Sampai / Sebelum):
                                             </label>
-                                            <input type="date" name="pay_date_before" x-model="payDateBefore" @change="onAfterBeforeChange()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none font-mono">
+                                             <input type="date" name="pay_date_before" x-model="payDateBefore" @change="onAfterBeforeChange()" onclick="this.showPicker?.()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-sky-400 focus:outline-none font-mono cursor-pointer">
                                         </div>
 
                                         <div class="pt-1 border-t border-slate-800/60">
                                             <label class="block text-[11px] font-medium text-slate-400 mb-1">
                                                 <span class="text-amber-400 font-semibold">On</span> (Tepat Pada Tanggal):
                                             </label>
-                                            <input type="date" name="pay_date_on" x-model="payDateOn" @change="onOnChange()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-amber-400 focus:outline-none font-mono">
+                                             <input type="date" name="pay_date_on" x-model="payDateOn" @change="onOnChange()" onclick="this.showPicker?.()" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 focus:border-amber-400 focus:outline-none font-mono cursor-pointer">
                                         </div>
                                     </div>
 

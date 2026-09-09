@@ -57,6 +57,23 @@
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
+        /* Bright & Highlighted Native Datepicker Icon */
+        input[type="date"] {
+            cursor: pointer;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.7) sepia(1) saturate(6) hue-rotate(175deg);
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 2px;
+            transition: all 0.2s ease-in-out;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            filter: invert(1) brightness(1.2);
+            transform: scale(1.2);
+            background-color: rgba(56, 189, 248, 0.25);
+        }
+
         /* Flatpickr Dark Theme Customization */
         .flatpickr-calendar.inline {
             background: #090d16 !important;

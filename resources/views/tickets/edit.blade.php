@@ -72,7 +72,7 @@
                         <label for="ticket_date" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Tanggal Tiket / Keberangkatan <span class="text-rose-400">*</span>
                         </label>
-                        <input type="date" id="ticket_date" name="ticket_date" value="{{ old('ticket_date', $ticket->ticket_date ? $ticket->ticket_date->format('Y-m-d') : '') }}" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('ticket_date') border-rose-500 @enderror">
+                        <input type="date" id="ticket_date" name="ticket_date" value="{{ old('ticket_date', $ticket->ticket_date ? $ticket->ticket_date->format('Y-m-d') : '') }}" {{ $isDataLocked ? 'disabled' : 'required' }} onclick="this.showPicker?.()" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 cursor-pointer @error('ticket_date') border-rose-500 @enderror">
                         @error('ticket_date')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -208,7 +208,7 @@
                             <label for="payment_date" class="block text-xs font-medium text-slate-300 mb-1.5">
                                 Tanggal Pembayaran <span class="text-slate-400">(Wajib diisi jika status Lunas)</span>
                             </label>
-                            <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date', $ticket->payment_date ? $ticket->payment_date->format('Y-m-d') : '') }}" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('payment_date') border-rose-500 @enderror">
+                            <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date', $ticket->payment_date ? $ticket->payment_date->format('Y-m-d') : '') }}" onclick="this.showPicker?.()" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 cursor-pointer @error('payment_date') border-rose-500 @enderror">
                             @error('payment_date')
                                 <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -242,7 +242,7 @@
                             <label for="payment_date" class="block text-xs font-medium text-slate-300 mb-1.5">
                                 Tanggal Pembayaran
                             </label>
-                            <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date', $ticket->payment_date ? $ticket->payment_date->format('Y-m-d') : '') }}" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('payment_date') border-rose-500 @enderror">
+                            <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date', $ticket->payment_date ? $ticket->payment_date->format('Y-m-d') : '') }}" onclick="this.showPicker?.()" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 cursor-pointer @error('payment_date') border-rose-500 @enderror">
                             @error('payment_date')
                                 <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                             @enderror
