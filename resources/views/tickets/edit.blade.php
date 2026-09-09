@@ -137,7 +137,7 @@
                         <div class="flex items-center gap-2">
                             <div class="relative flex-1 min-w-0">
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-bold" x-text="(index + 1) + '.'"></div>
-                                <input type="text" :name="'passenger_names[' + index + ']'" x-model="passengers[index]" placeholder="Nama Penumpang (Lengkap)" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl pl-9 pr-4 py-2.5 text-sm placeholder-slate-600">
+                                <input type="text" :name="'passenger_names[' + index + ']'" x-model="passengers[index]" placeholder="Contoh: Adley" {{ $isDataLocked ? 'disabled' : 'required' }} class="w-full glass-input rounded-xl pl-9 pr-4 py-2.5 text-sm placeholder-slate-600">
                             </div>
                             @if(!$isDataLocked)
                                 <button type="button" @click="passengers.splice(index, 1)" x-show="passengers.length > 1" class="w-10 h-10 shrink-0 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm" title="Hapus Penumpang Ini">
