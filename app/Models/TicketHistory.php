@@ -176,6 +176,18 @@ class TicketHistory extends Model
     }
 
     /**
+     * Scope for filtering specifically by Invoice Code
+     */
+    public function scopeFilterInvoiceCode($query, ?string $invoice)
+    {
+        if (empty($invoice)) {
+            return $query;
+        }
+
+        return $query->where('invoice_code', 'like', "%{$invoice}%");
+    }
+
+    /**
      * Scope for filtering Origin
      */
     public function scopeFilterOrigin($query, ?string $origin)

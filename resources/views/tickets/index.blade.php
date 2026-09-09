@@ -11,9 +11,10 @@
         loading: false,
         hasMore: {{ $tickets->hasMorePages() ? 'true' : 'false' }},
         sorts: {{ json_encode($sorts ?? []) }},
-        hasFilters: {{ ($search || $searchCode || $searchOrigin || $searchDestination || $searchPassenger || $searchBooker || $searchPayer || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateAfter || $dateBefore || $dateOn || $payDateAfter || $payDateBefore || $payDateOn || $amountMin || $amountMax || $amountEq || $passengerCountMin || $passengerCountMax || $passengerCountEq) ? 'true' : 'false' }},
+        hasFilters: {{ ($search || $searchCode || $searchInvoice || $searchOrigin || $searchDestination || $searchPassenger || $searchBooker || $searchPayer || $searchRoute || $searchPerson || !empty($transportType) || !empty($status) || $dateAfter || $dateBefore || $dateOn || $payDateAfter || $payDateBefore || $payDateOn || $amountMin || $amountMax || $amountEq || $passengerCountMin || $passengerCountMax || $passengerCountEq) ? 'true' : 'false' }},
         activeFilters: {
             code: {{ !empty($searchCode) ? 'true' : 'false' }},
+            invoice: {{ !empty($searchInvoice) ? 'true' : 'false' }},
             date: {{ ($dateAfter || $dateBefore || $dateOn) ? 'true' : 'false' }},
             origin: {{ !empty($searchOrigin) ? 'true' : 'false' }},
             destination: {{ !empty($searchDestination) ? 'true' : 'false' }},
@@ -38,6 +39,7 @@
             const formData = new FormData(form);
             
             this.activeFilters.code = !!(formData.get('search_code') && formData.get('search_code').trim());
+            this.activeFilters.invoice = !!(formData.get('search_invoice') && formData.get('search_invoice').trim());
             this.activeFilters.date = !!((formData.get('date_after') && formData.get('date_after').trim()) || (formData.get('date_before') && formData.get('date_before').trim()) || (formData.get('date_on') && formData.get('date_on').trim()));
             this.activeFilters.origin = !!(formData.get('search_origin') && formData.get('search_origin').trim());
             this.activeFilters.destination = !!(formData.get('search_destination') && formData.get('search_destination').trim());
@@ -255,7 +257,7 @@
                             </th>
 
                             <!-- 1b. Kode Invoice -->
-                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors">
+                            <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.invoice ? 'bg-sky-950/80 border-b-2 border-b-sky-400 text-sky-200' : ''" @click.outside="if (openPop === 'invoice') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
                                     <button type="button" @click="toggleSort('invoice_code')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('invoice_code') !== -1 ? 'text-sky-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Kode Invoice">
                                         <span>Kode Invoice</span>
@@ -269,6 +271,19 @@
                                             </span>
                                         </template>
                                     </button>
+                                    <button type="button" @click="openPop = (openPop === 'invoice' ? null : 'invoice')" class="p-1 rounded transition-colors" :class="activeFilters.invoice ? 'text-sky-300 bg-sky-500/30 ring-1 ring-sky-400/50 font-bold shadow-sm shadow-sky-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'" title="Filter Kode Invoice">
+                                        <i class="fa-solid" :class="activeFilters.invoice ? 'fa-filter text-sky-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
+                                    </button>
+                                </div>
+                                <div x-show="openPop === 'invoice'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[220px]">
+                                    <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
+                                        <span>Filter Kode Invoice</span>
+                                        <i class="fa-solid fa-file-invoice text-sky-400"></i>
+                                    </div>
+                                    <input type="text" name="search_invoice" value="{{ $searchInvoice }}" placeholder="Cari kode invoice..." class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:outline-none">
+                                    <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/80">
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow transition-colors">Terapkan</button>
+                                    </div>
                                 </div>
                             </th>
 

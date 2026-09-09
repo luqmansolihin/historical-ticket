@@ -40,6 +40,7 @@ class TicketHistoryController extends Controller
     {
         $search = $request->input('search');
         $searchCode = $request->input('search_code');
+        $searchInvoice = $request->input('search_invoice');
         $searchOrigin = $request->input('search_origin');
         $searchDestination = $request->input('search_destination');
         $searchPassenger = $request->input('search_passenger');
@@ -94,6 +95,7 @@ class TicketHistoryController extends Controller
             ->with(['bookerUser', 'payerUser', 'statusLogs'])
             ->search($search)
             ->filterCode($searchCode)
+            ->filterInvoiceCode($searchInvoice)
             ->filterOrigin($searchOrigin)
             ->filterDestination($searchDestination)
             ->filterPassenger($searchPassenger)
@@ -136,6 +138,7 @@ class TicketHistoryController extends Controller
 
         $allowedSorts = [
             'ticket_code' => 'ticket_code',
+            'invoice_code' => 'invoice_code',
             'ticket_date' => 'ticket_date',
             'origin' => 'origin',
             'destination' => 'destination',
@@ -190,6 +193,7 @@ class TicketHistoryController extends Controller
             'params' => [
                 'search' => $search,
                 'searchCode' => $searchCode,
+                'searchInvoice' => $searchInvoice,
                 'searchOrigin' => $searchOrigin,
                 'searchDestination' => $searchDestination,
                 'searchPassenger' => $searchPassenger,
@@ -289,7 +293,7 @@ class TicketHistoryController extends Controller
 
         $validated = $request->validate([
             'ticket_code' => 'nullable|string|max:50|unique:ticket_histories,ticket_code',
-            'invoice_code' => 'required|string|max:100',
+            'invoice_code' => 'required|string|max:100|unique:ticket_histories,invoice_code',
             'ticket_date' => 'required|date',
             'origin' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
@@ -307,6 +311,7 @@ class TicketHistoryController extends Controller
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ], [
             'invoice_code.required' => 'Kode invoice wajib diisi.',
+            'invoice_code.unique' => 'Kode invoice sudah digunakan.',
             'passenger_names.required' => 'Nama penumpang wajib diisi minimal 1 orang.',
             'passenger_names.*.required' => 'Nama penumpang tidak boleh kosong.',
             'booked_by.required' => 'Nama pemesan wajib diisi.',
@@ -425,7 +430,7 @@ class TicketHistoryController extends Controller
 
         $validated = $request->validate([
             'ticket_code' => 'nullable|string|max:50|unique:ticket_histories,ticket_code,' . $ticket->id,
-            'invoice_code' => 'required|string|max:100',
+            'invoice_code' => 'required|string|max:100|unique:ticket_histories,invoice_code,' . $ticket->id,
             'ticket_date' => 'required|date',
             'origin' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
@@ -443,6 +448,7 @@ class TicketHistoryController extends Controller
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ], [
             'invoice_code.required' => 'Kode invoice wajib diisi.',
+            'invoice_code.unique' => 'Kode invoice sudah digunakan.',
             'passenger_names.required' => 'Nama penumpang wajib diisi minimal 1 orang.',
             'passenger_names.*.required' => 'Nama penumpang tidak boleh kosong.',
             'booked_by.required' => 'Nama pemesan wajib diisi.',
