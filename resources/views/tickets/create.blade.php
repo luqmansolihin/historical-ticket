@@ -128,7 +128,7 @@
                         <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
                             Nama Pemesan <span class="text-rose-400">*</span>
                         </label>
-                        <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by') }}" required placeholder="Contoh: Luqman" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('booked_by') border-rose-500 @enderror">
+                        <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by') }}" required placeholder="Contoh: Martha" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('booked_by') border-rose-500 @enderror">
                         @error('booked_by')
                             <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
