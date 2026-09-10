@@ -57,7 +57,7 @@
 
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Tanggal Booking <span class="text-rose-400">*</span></label>
-                        <input type="date" name="booking_date" value="{{ old('booking_date', date('Y-m-d')) }}" required class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono">
+                        <input type="date" name="booking_date" value="{{ old('booking_date', date('Y-m-d')) }}" required onclick="this.showPicker?.()" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono cursor-pointer">
                     </div>
                 </div>
 
@@ -76,12 +76,12 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Tanggal Check In <span class="text-rose-400">*</span></label>
-                        <input type="date" name="check_in_date" value="{{ old('check_in_date') }}" required class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono">
+                        <input type="date" name="check_in_date" value="{{ old('check_in_date') }}" required onclick="this.showPicker?.()" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono cursor-pointer">
                     </div>
 
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Tanggal Check Out <span class="text-rose-400">*</span></label>
-                        <input type="date" name="check_out_date" value="{{ old('check_out_date') }}" required class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono">
+                        <input type="date" name="check_out_date" value="{{ old('check_out_date') }}" required onclick="this.showPicker?.()" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono cursor-pointer">
                     </div>
                 </div>
             </div>
@@ -90,25 +90,26 @@
 
             <!-- Section 2: Daftar Tamu Menginap -->
             <div>
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-users"></i> Tamu yang Menginap <span class="text-rose-400">*</span>
-                    </h3>
-                    <button type="button" @click="addGuest()" class="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 text-xs font-semibold transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-plus text-xs"></i> Tambah Tamu
-                    </button>
-                </div>
+                <h3 class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-users"></i> Tamu yang Menginap <span class="text-rose-400">*</span>
+                </h3>
 
                 <div class="space-y-2.5">
                     <template x-for="(guest, index) in guests" :key="index">
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-mono text-xs font-bold text-slate-400 shrink-0" x-text="index + 1"></div>
-                            <input type="text" :name="'guest_names[' + index + ']'" x-model="guests[index]" required placeholder="Nama lengkap tamu..." class="glass-input flex-1 px-3.5 py-2.5 rounded-xl text-xs">
+                            <input type="text" :name="'guest_names[' + index + ']'" x-model="guests[index]" required placeholder="contoh: Adley" class="glass-input flex-1 px-3.5 py-2.5 rounded-xl text-xs">
                             <button type="button" @click="removeGuest(index)" x-show="guests.length > 1" class="p-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/30 transition-all shrink-0">
                                 <i class="fa-solid fa-trash-can text-xs"></i>
                             </button>
                         </div>
                     </template>
+                </div>
+
+                <div class="mt-3">
+                    <button type="button" @click="addGuest()" class="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 text-xs font-semibold transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus text-xs"></i> Tambah Tamu
+                    </button>
                 </div>
             </div>
 
@@ -120,19 +121,17 @@
                     <i class="fa-solid fa-wallet"></i> Detail Pemesan & Pembayaran
                 </h3>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Nama Pemesan (Booked By) <span class="text-rose-400">*</span></label>
-                        <input type="text" name="booked_by" value="{{ old('booked_by', Auth::user()->name) }}" required class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs">
+                        <input type="text" name="booked_by" value="{{ old('booked_by', '') }}" required placeholder="contoh: Martha" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs">
                     </div>
 
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Biaya Hotel (IDR) <span class="text-rose-400">*</span></label>
                         <input type="number" step="0.01" min="0" name="amount" value="{{ old('amount') }}" required placeholder="Ex: 1500000" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono">
                     </div>
-                </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Status Pembayaran <span class="text-rose-400">*</span></label>
                         @if(!Auth::user()->isAdmin())
@@ -150,31 +149,21 @@
                             </select>
                         @endif
                     </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Penanggung Jawab Biaya (Paid By)</label>
-                        <input type="text" name="paid_by" value="{{ old('paid_by') }}" placeholder="Ex: PT Corporate Finance" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Tanggal Bayar</label>
-                        <input type="date" name="payment_date" value="{{ old('payment_date') }}" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono">
-                    </div>
                 </div>
             </div>
 
             <hr class="border-slate-800">
 
             <!-- Section 4: Catatan & Lampiran -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Catatan Tambahan</label>
-                    <textarea name="notes" rows="3" placeholder="Catatan seperti instruksi khusus, include sarapan, dsb..." class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs">{{ old('notes') }}</textarea>
-                </div>
-
+            <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">File Lampiran Bukti / Invoice (PDF / JPG / PNG)</label>
                     <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs text-slate-400 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500 hover:file:text-slate-950">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Catatan Tambahan</label>
+                    <textarea name="notes" rows="3" placeholder="Catatan seperti instruksi khusus, include sarapan, dsb..." class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs">{{ old('notes') }}</textarea>
                 </div>
             </div>
 
