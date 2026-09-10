@@ -60,6 +60,11 @@ class HotelHistory extends BookingHistory
         return $this->hotelDetail?->night_count ?? 0;
     }
 
+    public function getRoomCountAttribute(): int
+    {
+        return $this->hotelDetail?->room_count ?? 1;
+    }
+
     /**
      * Scope for searching keyword
      */

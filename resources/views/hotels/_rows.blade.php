@@ -13,6 +13,7 @@
                 'check_in_date' => $hotel->check_in_date ? $hotel->check_in_date->format('d M Y') : '-',
                 'check_out_date' => $hotel->check_out_date ? $hotel->check_out_date->format('d M Y') : '-',
                 'night_count' => $hotel->night_count,
+                'room_count' => $hotel->room_count,
                 'guest_display' => implode(', ', $hotel->guests_list) ?: $hotel->guest_name,
                 'guests_list' => $hotel->guests_list,
                 'guest_count' => $hotel->guest_count,
@@ -72,6 +73,11 @@
         <!-- 7. Jml Malam -->
         <td class="py-0.5 px-2 text-center whitespace-nowrap font-mono text-amber-300 font-bold border-r border-slate-800/40">
             {{ $hotel->night_count }}
+        </td>
+
+        <!-- 7b. Jml Kamar -->
+        <td class="py-0.5 px-2 text-center whitespace-nowrap font-mono text-sky-300 font-bold border-r border-slate-800/40">
+            {{ $hotel->room_count }}
         </td>
 
         <!-- 8. Tamu -->

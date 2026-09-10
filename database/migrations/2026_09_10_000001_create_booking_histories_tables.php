@@ -49,6 +49,7 @@ return new class extends Migration
             $table->string('hotel_name');
             $table->date('check_in_date');
             $table->date('check_out_date');
+            $table->integer('room_count')->default(1);
             $table->text('guest_name');
             $table->timestamps();
         });

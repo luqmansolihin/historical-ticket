@@ -16,12 +16,14 @@ class HotelDetail extends Model
         'hotel_name',
         'check_in_date',
         'check_out_date',
+        'room_count',
         'guest_name',
     ];
 
     protected $casts = [
         'check_in_date' => 'date',
         'check_out_date' => 'date',
+        'room_count' => 'integer',
     ];
 
     public function bookingHistory(): BelongsTo

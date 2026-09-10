@@ -156,6 +156,7 @@ class HotelHistoryController extends Controller
             'hotel_name' => 'hotel_name',
             'check_in_date' => 'check_in_date',
             'check_out_date' => 'check_out_date',
+            'room_count' => 'room_count',
             'guest_name' => 'guest_name',
             'guest_count' => 'guest_count',
             'booked_by' => 'booked_by',
@@ -189,7 +190,7 @@ class HotelHistoryController extends Controller
             foreach ($sorts as $s) {
                 $c = $s['col'];
                 $d = $s['dir'];
-                if (in_array($c, ['hotel_name', 'check_in_date', 'check_out_date', 'guest_name', 'guest_count'])) {
+                if (in_array($c, ['hotel_name', 'check_in_date', 'check_out_date', 'room_count', 'guest_name', 'guest_count'])) {
                     $query->join('hotel_details', 'booking_histories.id', '=', 'hotel_details.booking_history_id')
                           ->select('booking_histories.*');
                     if ($c === 'guest_count') {
@@ -299,6 +300,7 @@ class HotelHistoryController extends Controller
             'hotel_name' => 'required|string|max:255',
             'check_in_date' => 'required|date',
             'check_out_date' => 'required|date|after_or_equal:check_in_date',
+            'room_count' => 'required|integer|min:1',
             'guest_names' => 'required|array|min:1',
             'guest_names.*' => 'required|string|max:255',
             'booked_by' => 'required|string|max:255',
@@ -317,6 +319,8 @@ class HotelHistoryController extends Controller
             'check_in_date.required' => 'Tanggal Check In wajib diisi.',
             'check_out_date.required' => 'Tanggal Check Out wajib diisi.',
             'check_out_date.after_or_equal' => 'Tanggal Check Out harus sama atau setelah Check In.',
+            'room_count.required' => 'Jumlah kamar wajib diisi.',
+            'room_count.min' => 'Jumlah kamar minimal 1.',
             'guest_names.required' => 'Nama tamu yang menginap wajib diisi minimal 1 orang.',
             'guest_names.*.required' => 'Nama tamu tidak boleh kosong.',
             'booked_by.required' => 'Nama pemesan wajib diisi.',
@@ -370,6 +374,7 @@ class HotelHistoryController extends Controller
             'hotel_name' => $validated['hotel_name'],
             'check_in_date' => $validated['check_in_date'],
             'check_out_date' => $validated['check_out_date'],
+            'room_count' => $validated['room_count'],
             'guest_name' => $guestName,
         ]);
 
@@ -435,6 +440,7 @@ class HotelHistoryController extends Controller
                 'hotel_name' => $request->input('hotel_name', $hotel->hotel_name),
                 'check_in_date' => $request->input('check_in_date', $hotel->check_in_date ? $hotel->check_in_date->format('Y-m-d') : null),
                 'check_out_date' => $request->input('check_out_date', $hotel->check_out_date ? $hotel->check_out_date->format('Y-m-d') : null),
+                'room_count' => $request->input('room_count', $hotel->room_count),
                 'guest_names' => $request->input('guest_names', $hotel->guests_list ?: [$hotel->guest_name]),
                 'booked_by' => $request->input('booked_by', $hotel->booked_by),
                 'booked_by_user_id' => $request->input('booked_by_user_id', $hotel->booked_by_user_id),
@@ -451,6 +457,7 @@ class HotelHistoryController extends Controller
             'hotel_name' => 'required|string|max:255',
             'check_in_date' => 'required|date',
             'check_out_date' => 'required|date|after_or_equal:check_in_date',
+            'room_count' => 'required|integer|min:1',
             'guest_names' => 'required|array|min:1',
             'guest_names.*' => 'required|string|max:255',
             'booked_by' => 'required|string|max:255',
@@ -468,6 +475,8 @@ class HotelHistoryController extends Controller
             'hotel_name.required' => 'Nama hotel wajib diisi.',
             'check_in_date.required' => 'Tanggal Check In wajib diisi.',
             'check_out_date.required' => 'Tanggal Check Out wajib diisi.',
+            'room_count.required' => 'Jumlah kamar wajib diisi.',
+            'room_count.min' => 'Jumlah kamar minimal 1.',
             'guest_names.required' => 'Nama tamu yang menginap wajib diisi minimal 1 orang.',
             'booked_by.required' => 'Nama pemesan wajib diisi.',
         ]);
@@ -491,6 +500,7 @@ class HotelHistoryController extends Controller
                 $validated['hotel_name'] = $hotel->hotel_name;
                 $validated['check_in_date'] = $hotel->check_in_date ? $hotel->check_in_date->format('Y-m-d') : null;
                 $validated['check_out_date'] = $hotel->check_out_date ? $hotel->check_out_date->format('Y-m-d') : null;
+                $validated['room_count'] = $hotel->room_count;
                 $validated['guest_name'] = $hotel->guest_name;
                 $validated['booked_by'] = $hotel->booked_by;
                 $validated['booked_by_user_id'] = $hotel->booked_by_user_id;
@@ -565,6 +575,7 @@ class HotelHistoryController extends Controller
                 'hotel_name' => $validated['hotel_name'],
                 'check_in_date' => $validated['check_in_date'],
                 'check_out_date' => $validated['check_out_date'],
+                'room_count' => $validated['room_count'],
                 'guest_name' => $guestName,
             ]
         );
@@ -640,6 +651,7 @@ class HotelHistoryController extends Controller
                 'Check In',
                 'Check Out',
                 'Malam',
+                'Jumlah Kamar',
                 'Nama Tamu (Menginap)',
                 'Pemesan (Booked By)',
                 'Penanggung Jawab Biaya (Paid By)',
@@ -658,6 +670,7 @@ class HotelHistoryController extends Controller
                     $h->check_in_date ? $h->check_in_date->format('Y-m-d') : '-',
                     $h->check_out_date ? $h->check_out_date->format('Y-m-d') : '-',
                     $h->night_count . ' Malam',
+                    $h->room_count . ' Kamar',
                     $h->guest_name,
                     $h->booked_by,
                     $h->paid_by,

@@ -224,8 +224,9 @@
                                 <span class="date-label">TANGGAL CHECK-IN</span>
                                 <span class="date-value">{{ $hotel->check_in_date ? $hotel->check_in_date->format('d M Y') : '-' }}</span>
                             </td>
-                            <td style="width: 24%; text-align: center; vertical-align: middle; font-size: 14px; color: #fef3c7; font-weight: bold;">
-                                {{ $hotel->night_count }} MALAM
+                            <td style="width: 24%; text-align: center; vertical-align: middle; font-size: 13px; color: #fef3c7; font-weight: bold;">
+                                {{ $hotel->night_count }} MALAM<br>
+                                <span style="font-size: 10px; color: #fbbf24;">({{ $hotel->room_count }} KAMAR)</span>
                             </td>
                             <td style="width: 38%; text-align: right; vertical-align: middle;">
                                 <span class="date-label">TANGGAL CHECK-OUT</span>
@@ -241,7 +242,7 @@
         <div class="body-content">
             <!-- Guests List -->
             <div class="section-box">
-                <div class="section-title">DAFTAR TAMU MENGINAP ({{ $hotel->guest_count }} ORANG)</div>
+                <div class="section-title">DAFTAR TAMU MENGINAP ({{ $hotel->guest_count }} ORANG • {{ $hotel->room_count }} KAMAR)</div>
                 @foreach($hotel->guests_list as $index => $guest)
                     <div class="guest-item">{{ $index + 1 }}. {{ strtoupper($guest) }}</div>
                 @endforeach
@@ -278,7 +279,7 @@
                     </tr>
                     <tr>
                         <td class="grid-cell" style="padding-top: 8px;">
-                            <span class="info-label">TANGGAL PESAN</span>
+                            <span class="info-label">TANGGAL BOOKING</span>
                             <span class="info-value">{{ $hotel->booking_date ? $hotel->booking_date->format('d M Y') : '-' }}</span>
                         </td>
                         <td class="grid-cell" style="padding-top: 8px;">

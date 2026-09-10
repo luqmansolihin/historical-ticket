@@ -190,8 +190,8 @@
                                 <span class="font-display text-lg font-bold text-white block mt-0.5">{{ $hotel->check_in_date ? $hotel->check_in_date->format('d M Y') : '-' }}</span>
                             </div>
                             <div class="text-center">
-                                <span class="text-xs text-amber-200 block uppercase">Durasi</span>
-                                <span class="font-display text-lg font-bold text-amber-300 block mt-0.5">{{ $hotel->night_count }} Malam</span>
+                                <span class="text-xs text-amber-200 block uppercase">Durasi & Kamar</span>
+                                <span class="font-display text-lg font-bold text-amber-300 block mt-0.5">{{ $hotel->night_count }} Malam • {{ $hotel->room_count }} Kamar</span>
                             </div>
                             <div class="text-right">
                                 <span class="text-xs text-amber-200 block uppercase">Check Out</span>
@@ -208,7 +208,7 @@
                                 <span class="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
                                     <i class="fa-solid fa-users text-amber-400"></i> Daftar Tamu Menginap
                                 </span>
-                                <span class="text-xs font-mono font-semibold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30">{{ $hotel->guest_count }} Tamu</span>
+                                <span class="text-xs font-mono font-semibold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30">{{ $hotel->guest_count }} Tamu ({{ $hotel->room_count }} Kamar)</span>
                             </div>
                             <div class="space-y-1">
                                 @foreach($hotel->guests_list as $idx => $gName)
@@ -250,7 +250,7 @@
                                 <span class="text-xs font-semibold text-emerald-300 mt-0.5 block">{{ $hotel->paid_by }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-slate-400 block">Tanggal Pesan</span>
+                                <span class="text-xs text-slate-400 block">Tanggal Booking</span>
                                 <span class="text-xs font-semibold font-mono text-slate-200 mt-0.5 block">{{ $hotel->booking_date ? $hotel->booking_date->format('d M Y') : '-' }}</span>
                             </div>
                             <div>

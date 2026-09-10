@@ -62,11 +62,18 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                    <div>
+                    <div class="sm:col-span-2">
                         <label class="block text-xs font-medium text-slate-300 mb-1">Nama Hotel <span class="text-rose-400">*</span></label>
                         <input type="text" name="hotel_name" value="{{ old('hotel_name') }}" required placeholder="Ex: Hotel Grand Indonesia, Jakarta" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs">
                     </div>
 
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Jumlah Kamar <span class="text-rose-400">*</span></label>
+                        <input type="number" name="room_count" value="{{ old('room_count', 1) }}" min="1" required placeholder="Jumlah kamar..." class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Tanggal Check In <span class="text-rose-400">*</span></label>
                         <input type="date" name="check_in_date" value="{{ old('check_in_date') }}" required class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono">

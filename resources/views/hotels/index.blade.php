@@ -466,6 +466,21 @@
                             <!-- 7. Jml Malam -->
                             <th class="py-1 px-2 text-center whitespace-nowrap border-r border-slate-800/60 font-bold">Malam</th>
 
+                            <!-- 7b. Jml Kamar -->
+                            <th class="py-1 px-2 text-center whitespace-nowrap border-r border-slate-800/60 transition-colors">
+                                <button type="button" @click="toggleSort('room_count')" class="flex items-center justify-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort w-full" :class="getSortIndex('room_count') !== -1 ? 'text-amber-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Jumlah Kamar">
+                                    <span>Kamar</span>
+                                    <template x-if="getSortIndex('room_count') === -1">
+                                        <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                    </template>
+                                    <template x-if="getSortIndex('room_count') !== -1">
+                                        <span class="inline-flex items-center gap-0.5 text-amber-400 font-bold text-[10px]">
+                                            <i class="fa-solid" :class="getSortDir('room_count') === 'asc' ? 'fa-arrow-up-wide-short' : 'fa-arrow-down-wide-short'"></i>
+                                        </span>
+                                    </template>
+                                </button>
+                            </th>
+
                             <!-- 8. Tamu -->
                             <th class="py-1 px-2 whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.guest ? 'bg-amber-950/80 border-b-2 border-b-amber-400 text-amber-200' : ''" @click.outside="if (openPop === 'guest') openPop = null">
                                 <div class="flex items-center gap-1.5 justify-between">
@@ -820,8 +835,8 @@
                                     <span class="font-display text-lg font-bold text-white block mt-0.5" x-text="selectedHotel.check_in_date"></span>
                                 </div>
                                 <div class="text-center">
-                                    <span class="text-xs text-amber-200 block uppercase">Durasi</span>
-                                    <span class="font-display text-lg font-bold text-amber-300 block mt-0.5" x-text="selectedHotel.night_count + ' Malam'"></span>
+                                    <span class="text-xs text-amber-200 block uppercase">Durasi & Kamar</span>
+                                    <span class="font-display text-lg font-bold text-amber-300 block mt-0.5" x-text="selectedHotel.night_count + ' Malam • ' + selectedHotel.room_count + ' Kamar'"></span>
                                 </div>
                                 <div class="text-right">
                                     <span class="text-xs text-amber-200 block uppercase">Check Out</span>
@@ -838,7 +853,7 @@
                                     <span class="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
                                         <i class="fa-solid fa-users text-amber-400"></i> Daftar Tamu Menginap
                                     </span>
-                                    <span class="text-xs font-mono font-semibold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30" x-text="selectedHotel.guest_count + ' Tamu'"></span>
+                                    <span class="text-xs font-mono font-semibold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30" x-text="selectedHotel.guest_count + ' Tamu (' + selectedHotel.room_count + ' Kamar)'"></span>
                                 </div>
                                 <div class="space-y-1">
                                     <template x-for="(name, idx) in selectedHotel.guests_list" :key="idx">
@@ -880,7 +895,7 @@
                                     <span class="text-xs font-semibold text-emerald-300 mt-0.5 block" x-text="selectedHotel.paid_by"></span>
                                 </div>
                                 <div>
-                                    <span class="text-xs text-slate-400 block">Tanggal Pesan</span>
+                                    <span class="text-xs text-slate-400 block">Tanggal Booking</span>
                                     <span class="text-xs font-semibold font-mono text-slate-200 mt-0.5 block" x-text="selectedHotel.booking_date"></span>
                                 </div>
                                 <div>
