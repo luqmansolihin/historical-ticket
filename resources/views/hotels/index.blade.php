@@ -870,18 +870,24 @@
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-3 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                            <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                                 <div>
                                     <span class="text-xs text-slate-400 block">Pemesan Hotel</span>
                                     <span class="text-xs font-semibold text-indigo-300 mt-0.5 block" x-text="selectedHotel.booked_by"></span>
+                                    <span class="text-[11px] text-slate-400 font-mono mt-1 block flex items-center gap-1">
+                                        <i class="fa-regular fa-calendar text-slate-500"></i>
+                                        <span>Tgl Booking:</span>
+                                        <span class="text-slate-300 font-semibold" x-text="selectedHotel.booking_date"></span>
+                                    </span>
                                 </div>
                                 <div>
                                     <span class="text-xs text-slate-400 block">Pembayaran Oleh</span>
                                     <span class="text-xs font-semibold text-emerald-300 mt-0.5 block" x-text="selectedHotel.paid_by"></span>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-slate-400 block">Tanggal Bayar</span>
-                                    <span class="text-xs font-semibold text-slate-300 mt-0.5 font-mono block" x-text="selectedHotel.payment_date"></span>
+                                    <span class="text-[11px] text-slate-400 font-mono mt-1 block flex items-center gap-1">
+                                        <i class="fa-regular fa-calendar-check text-slate-500"></i>
+                                        <span>Tgl Bayar:</span>
+                                        <span class="text-slate-300 font-semibold" x-text="selectedHotel.payment_date"></span>
+                                    </span>
                                 </div>
                             </div>
 
