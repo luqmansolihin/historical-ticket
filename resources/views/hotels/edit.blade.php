@@ -93,67 +93,65 @@
 
             <!-- Section 1: Informasi Reservasi & Hotel -->
             <div>
-                <h3 class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-hotel"></i> Data Reservasi & Hotel
                 </h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Kode Booking Hotel</label>
-                        <input type="text" name="booking_code" value="{{ old('booking_code', $hotel->booking_code) }}" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono disabled:opacity-60 disabled:cursor-not-allowed">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-5">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Booking <span class="text-rose-400">*</span></label>
+                        <input type="date" name="booking_date" value="{{ old('booking_date', $hotel->booking_date ? $hotel->booking_date->format('Y-m-d') : '') }}" required {{ $isDataLocked ? 'disabled' : '' }} onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Kode Invoice <span class="text-rose-400">*</span></label>
-                        <input type="text" name="invoice_code" value="{{ old('invoice_code', $hotel->invoice_code) }}" required {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono disabled:opacity-60 disabled:cursor-not-allowed">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Kode Booking Hotel <span class="text-slate-500">(Opsional)</span></label>
+                        <input type="text" name="booking_code" value="{{ old('booking_code', $hotel->booking_code) }}" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Tanggal Booking <span class="text-rose-400">*</span></label>
-                        <input type="date" name="booking_date" value="{{ old('booking_date', $hotel->booking_date ? $hotel->booking_date->format('Y-m-d') : '') }}" required {{ $isDataLocked ? 'disabled' : '' }} onclick="this.showPicker?.()" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                    <div class="sm:col-span-2">
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Nama Hotel <span class="text-rose-400">*</span></label>
-                        <input type="text" name="hotel_name" value="{{ old('hotel_name', $hotel->hotel_name) }}" required {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs disabled:opacity-60 disabled:cursor-not-allowed">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Kode Invoice <span class="text-rose-400">*</span></label>
+                        <input type="text" name="invoice_code" value="{{ old('invoice_code', $hotel->invoice_code) }}" required {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Jumlah Kamar <span class="text-rose-400">*</span></label>
-                        <input type="number" name="room_count" value="{{ old('room_count', $hotel->room_count) }}" min="1" required {{ $isDataLocked ? 'disabled' : '' }} placeholder="Jumlah kamar..." class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono disabled:opacity-60 disabled:cursor-not-allowed">
-                    </div>
-                </div>
+                    <div class="md:col-span-2"></div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Tanggal Check In <span class="text-rose-400">*</span></label>
-                        <input type="date" name="check_in_date" value="{{ old('check_in_date', $hotel->check_in_date ? $hotel->check_in_date->format('Y-m-d') : '') }}" required {{ $isDataLocked ? 'disabled' : '' }} onclick="this.showPicker?.()" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama Hotel <span class="text-rose-400">*</span></label>
+                        <input type="text" name="hotel_name" value="{{ old('hotel_name', $hotel->hotel_name) }}" required {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Tanggal Check Out <span class="text-rose-400">*</span></label>
-                        <input type="date" name="check_out_date" value="{{ old('check_out_date', $hotel->check_out_date ? $hotel->check_out_date->format('Y-m-d') : '') }}" required {{ $isDataLocked ? 'disabled' : '' }} onclick="this.showPicker?.()" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+                    <div class="md:col-span-1">
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Jumlah Kamar <span class="text-rose-400">*</span></label>
+                        <input type="number" name="room_count" value="{{ old('room_count', $hotel->room_count) }}" min="1" required {{ $isDataLocked ? 'disabled' : '' }} placeholder="Jumlah kamar..." class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono disabled:opacity-60 disabled:cursor-not-allowed">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Check In <span class="text-rose-400">*</span></label>
+                        <input type="date" name="check_in_date" value="{{ old('check_in_date', $hotel->check_in_date ? $hotel->check_in_date->format('Y-m-d') : '') }}" required {{ $isDataLocked ? 'disabled' : '' }} onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Check Out <span class="text-rose-400">*</span></label>
+                        <input type="date" name="check_out_date" value="{{ old('check_out_date', $hotel->check_out_date ? $hotel->check_out_date->format('Y-m-d') : '') }}" required {{ $isDataLocked ? 'disabled' : '' }} onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
                 </div>
             </div>
 
-            <hr class="border-slate-800">
+            <hr class="border-slate-800/80">
 
             <!-- Section 2: Daftar Tamu Menginap -->
             <div>
-                <h3 class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-users"></i> Tamu yang Menginap <span class="text-rose-400">*</span>
                 </h3>
 
-                <div class="space-y-2.5">
+                <div class="space-y-3">
                     <template x-for="(guest, index) in guests" :key="index">
                         <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-mono text-xs font-bold text-slate-400 shrink-0" x-text="index + 1"></div>
-                            <input type="text" :name="'guest_names[' + index + ']'" x-model="guests[index]" required placeholder="contoh: Adley" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input flex-1 px-3.5 py-2.5 rounded-xl text-xs disabled:opacity-60 disabled:cursor-not-allowed">
+                            <div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-mono text-xs font-bold text-slate-400 shrink-0" x-text="index + 1"></div>
+                            <input type="text" :name="'guest_names[' + index + ']'" x-model="guests[index]" required placeholder="contoh: Adley" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input flex-1 px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
                             @if(!$isDataLocked)
-                                <button type="button" @click="removeGuest(index)" x-show="guests.length > 1" class="p-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/30 transition-all shrink-0">
-                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                <button type="button" @click="removeGuest(index)" x-show="guests.length > 1" class="w-10 h-10 shrink-0 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/30 transition-all flex items-center justify-center">
+                                    <i class="fa-solid fa-trash-can text-sm"></i>
                                 </button>
                             @endif
                         </div>
@@ -162,37 +160,30 @@
 
                 @if(!$isDataLocked)
                     <div class="mt-3">
-                        <button type="button" @click="addGuest()" class="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 text-xs font-semibold transition-all flex items-center gap-1.5">
+                        <button type="button" @click="addGuest()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-all shadow-sm">
                             <i class="fa-solid fa-plus text-xs"></i> Tambah Tamu
                         </button>
                     </div>
                 @endif
             </div>
 
-            <hr class="border-slate-800">
+            <hr class="border-slate-800/80">
 
             <!-- Section 3: Pemesan & Pembayaran -->
             <div>
-                <h3 class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-wallet"></i> Detail Pemesan & Pembayaran
                 </h3>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Nama Pemesan (Booked By) <span class="text-rose-400">*</span></label>
-                        <input type="text" name="booked_by" value="{{ old('booked_by', $hotel->booked_by) }}" required placeholder="contoh: Martha" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs disabled:opacity-60 disabled:cursor-not-allowed">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama Pemesan (Booked By) <span class="text-rose-400">*</span></label>
+                        <input type="text" name="booked_by" value="{{ old('booked_by', $hotel->booked_by) }}" required placeholder="contoh: Martha" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
                         <input type="hidden" name="booked_by_user_id" value="{{ old('booked_by_user_id', $hotel->booked_by_user_id ?: Auth::id()) }}">
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Biaya Hotel (IDR) <span class="text-rose-400">*</span></label>
-                        <input type="number" step="0.01" min="0" name="amount" value="{{ old('amount', $hotel->amount) }}" required {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono disabled:opacity-60 disabled:cursor-not-allowed">
-                    </div>
-                </div>
-
-                @if($isFinance)
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                        <div class="sm:col-span-1 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex items-center gap-2.5 shadow-inner">
+                    @if($isFinance)
+                        <div class="md:col-span-2 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex items-center gap-2.5 shadow-inner">
                             <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0">
                                 <i class="fa-solid fa-credit-card"></i>
                             </div>
@@ -209,14 +200,43 @@
                             <input type="hidden" name="paid_by_user_id" value="{{ $hotel->paid_by_user_id ?: Auth::id() }}">
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Tanggal Bayar <span class="text-slate-400">(Wajib jika Lunas)</span></label>
-                            <input type="date" name="payment_date" value="{{ old('payment_date', $hotel->payment_date ? $hotel->payment_date->format('Y-m-d') : '') }}" onclick="this.showPicker?.()" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono cursor-pointer">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Pembayaran <span class="text-slate-400">(Wajib jika status Lunas)</span></label>
+                            <input type="date" name="payment_date" value="{{ old('payment_date', $hotel->payment_date ? $hotel->payment_date->format('Y-m-d') : '') }}" onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer">
+                        </div>
+                    @else
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Pembayaran Oleh</label>
+                            <input type="text" name="paid_by" value="{{ old('paid_by', $hotel->paid_by) }}" placeholder="Ex: PT Corporate Finance" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Status Pembayaran <span class="text-rose-400">*</span></label>
-                            <select name="status" x-model="status" required class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Bayar</label>
+                            <input type="date" name="payment_date" value="{{ old('payment_date', $hotel->payment_date ? $hotel->payment_date->format('Y-m-d') : '') }}" onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Linkkan dengan User Pembayar (Sistem)</label>
+                            <select name="paid_by_user_id" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm bg-slate-900">
+                                <option value="">-- Pilih User Pembayar --</option>
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}" {{ old('paid_by_user_id', $hotel->paid_by_user_id) == $user->id ? 'selected' : '' }} class="bg-slate-900 text-white">
+                                        {{ $user->name }} ({{ ucfirst($user->role) }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Biaya Hotel (IDR) <span class="text-rose-400">*</span></label>
+                        <input type="number" step="0.01" min="0" name="amount" value="{{ old('amount', $hotel->amount) }}" required {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono disabled:opacity-60 disabled:cursor-not-allowed">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Status Pembayaran <span class="text-rose-400">*</span></label>
+                        @if($isFinance)
+                            <select name="status" x-model="status" required class="glass-input w-full px-4 py-2.5 rounded-xl text-sm bg-slate-900">
                                 @if($hotel->status === 'Lunas')
                                     <option value="Lunas" {{ old('status', $hotel->status) == 'Lunas' ? 'selected' : '' }} class="bg-slate-900 text-white">Lunas (Status Saat Ini)</option>
                                     <option value="Dibatalkan" {{ old('status', $hotel->status) == 'Dibatalkan' ? 'selected' : '' }} class="bg-slate-900 text-white">Dibatalkan</option>
@@ -226,50 +246,23 @@
                                     <option value="Dibatalkan" {{ old('status', $hotel->status) == 'Dibatalkan' ? 'selected' : '' }} class="bg-slate-900 text-white">Dibatalkan</option>
                                 @endif
                             </select>
-                        </div>
-                    </div>
-                @else
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Pembayaran Oleh</label>
-                            <input type="text" name="paid_by" value="{{ old('paid_by', $hotel->paid_by) }}" placeholder="Ex: PT Corporate Finance" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Tanggal Bayar</label>
-                            <input type="date" name="payment_date" value="{{ old('payment_date', $hotel->payment_date ? $hotel->payment_date->format('Y-m-d') : '') }}" onclick="this.showPicker?.()" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono cursor-pointer">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Status Pembayaran <span class="text-rose-400">*</span></label>
-                            <select name="status" x-model="status" required class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs">
+                        @else
+                            <select name="status" x-model="status" required class="glass-input w-full px-4 py-2.5 rounded-xl text-sm bg-slate-900">
                                 @foreach($statusOptions as $opt)
                                     <option value="{{ $opt }}" class="bg-slate-900 text-white" {{ old('status', $hotel->status) === $opt ? 'selected' : '' }}>{{ $opt }}</option>
                                 @endforeach
                             </select>
-                        </div>
+                        @endif
                     </div>
-
-                    <div class="mt-4">
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Linkkan dengan User Pembayar (Sistem)</label>
-                        <select name="paid_by_user_id" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-900">
-                            <option value="">-- Pilih User Pembayar --</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}" {{ old('paid_by_user_id', $hotel->paid_by_user_id) == $user->id ? 'selected' : '' }} class="bg-slate-900 text-white">
-                                    {{ $user->name }} ({{ ucfirst($user->role) }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                @endif
+                </div>
             </div>
 
-            <hr class="border-slate-800">
+            <hr class="border-slate-800/80">
 
             <!-- Section 4: Catatan & Lampiran -->
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">File Lampiran Bukti / Invoice (Kosongkan jika tidak diubah)</label>
+                    <label class="block text-xs font-medium text-slate-300 mb-1.5">File Lampiran Bukti / Invoice (Kosongkan jika tidak diubah)</label>
                     <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs text-slate-400 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500 hover:file:text-slate-950">
                     @if($hotel->attachment_path)
                         <div class="mt-2 text-xs">
@@ -281,8 +274,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Catatan Tambahan</label>
-                    <textarea name="notes" rows="3" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs disabled:opacity-60 disabled:cursor-not-allowed">{{ old('notes', $hotel->notes) }}</textarea>
+                    <label class="block text-xs font-medium text-slate-300 mb-1.5">Catatan Tambahan</label>
+                    <textarea name="notes" rows="3" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">{{ old('notes', $hotel->notes) }}</textarea>
                 </div>
             </div>
 
