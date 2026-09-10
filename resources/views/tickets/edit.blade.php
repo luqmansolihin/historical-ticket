@@ -24,11 +24,20 @@
             <p class="text-slate-400 text-xs sm:text-sm mt-1">Perbarui data tiket <span class="font-mono text-sky-400 font-semibold">{{ $ticket->ticket_code ?: '-' }}</span></p>
         </div>
 
-        <!-- 1 Tombol Cetak / Preview di Atas Header -->
+        <!-- 1 Tombol Cetak / Preview & Hapus di Atas Header -->
         <div class="flex items-center gap-2">
             <button type="button" @click="showModal = true" class="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 shadow-lg shadow-sky-500/20 transition-all flex items-center justify-center gap-2">
                 <i class="fa-solid fa-file-pdf text-sm"></i> Preview & Cetak Boarding Pass
             </button>
+            @can('delete', $ticket)
+                <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data tiket ini? Data yang dihapus tidak dapat dikembalikan.');" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-rose-300 bg-rose-500/20 hover:bg-rose-600 hover:text-white border border-rose-500/30 shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-trash-can text-sm"></i> Hapus Tiket
+                    </button>
+                </form>
+            @endcan
         </div>
     </div>
 

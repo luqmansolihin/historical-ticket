@@ -23,6 +23,8 @@
                 'notes' => $ticket->notes ?? '-',
                 'attachment_url' => $ticket->attachment_path ? asset('storage/' . $ticket->attachment_path) : null,
                 'pdf_url' => route('tickets.pdf', $ticket->id),
+                'delete_url' => route('tickets.destroy', $ticket->id),
+                'can_delete' => Auth::user()->can('delete', $ticket),
                 'status_logs' => $ticket->statusLogs->map(fn($log) => [
                     'to_status' => $log->to_status,
                     'from_status' => $log->from_status,

@@ -569,6 +569,7 @@ class TicketHistoryController extends Controller
             Storage::disk('public')->delete($ticket->attachment_path);
         }
 
+        $ticket->statusLogs()->delete();
         $ticket->delete();
 
         return redirect()->route('tickets.index')

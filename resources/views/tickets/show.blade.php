@@ -169,12 +169,24 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex items-center justify-between pt-2 no-print">
-                @can('update', $ticket)
-                    <a href="{{ route('tickets.edit', $ticket->id) }}" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500 hover:text-white transition-all">
-                        <i class="fa-solid fa-pen-to-square mr-1.5"></i> Edit Tiket Ini
-                    </a>
-                @endcan
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 no-print">
+                <div class="flex items-center gap-2">
+                    @can('update', $ticket)
+                        <a href="{{ route('tickets.edit', $ticket->id) }}" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500 hover:text-white transition-all">
+                            <i class="fa-solid fa-pen-to-square mr-1.5"></i> Edit Tiket Ini
+                        </a>
+                    @endcan
+
+                    @can('delete', $ticket)
+                        <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data tiket ini? Data yang dihapus tidak dapat dikembalikan.');" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-rose-400 bg-rose-500/10 border border-rose-500/30 hover:bg-rose-600 hover:text-white transition-all">
+                                <i class="fa-solid fa-trash-can mr-1.5"></i> Hapus Tiket
+                            </button>
+                        </form>
+                    @endcan
+                </div>
 
                 <a href="{{ route('tickets.pdf', $ticket->id) }}" target="_blank" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-500/20 transition-all flex items-center gap-2">
                     <i class="fa-solid fa-file-pdf text-sm"></i> Download / Cetak PDF Boarding Pass

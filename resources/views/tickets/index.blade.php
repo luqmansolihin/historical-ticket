@@ -829,6 +829,15 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2 no-print">
+                                    <template x-if="selectedTicket.can_delete">
+                                        <form :action="selectedTicket.delete_url" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data tiket ini? Data yang dihapus tidak dapat dikembalikan.');" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-3.5 py-1.5 rounded-lg bg-rose-600/80 hover:bg-rose-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm" title="Hapus Tiket Ini">
+                                                <i class="fa-solid fa-trash-can"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </template>
                                     <a :href="selectedTicket.pdf_url" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm" title="Download / Cetak Boarding Pass Versi PDF">
                                         <i class="fa-solid fa-file-pdf"></i> Download PDF
                                     </a>
