@@ -335,20 +335,18 @@
                             <div>
                                 <span class="text-xs text-slate-400 block">Pemesan Hotel</span>
                                 <span class="text-xs font-semibold text-indigo-300 mt-0.5 block">{{ $hotel->booked_by }}</span>
-                                <span class="text-[11px] text-slate-400 font-mono mt-1 block flex items-center gap-1">
-                                    <i class="fa-regular fa-calendar text-slate-500"></i>
-                                    <span>Tgl Booking:</span>
-                                    <span class="text-slate-300 font-semibold">{{ $hotel->booking_date ? $hotel->booking_date->format('d M Y') : '-' }}</span>
-                                </span>
                             </div>
                             <div>
                                 <span class="text-xs text-slate-400 block">Pembayaran Oleh</span>
                                 <span class="text-xs font-semibold text-emerald-300 mt-0.5 block">{{ $hotel->paid_by }}</span>
-                                <span class="text-[11px] text-slate-400 font-mono mt-1 block flex items-center gap-1">
-                                    <i class="fa-regular fa-calendar-check text-slate-500"></i>
-                                    <span>Tgl Bayar:</span>
-                                    <span class="text-slate-300 font-semibold">{{ $hotel->payment_date ? $hotel->payment_date->format('d M Y') : '-' }}</span>
-                                </span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400 block">Tanggal Pesan</span>
+                                <span class="text-xs font-semibold font-mono text-slate-200 mt-0.5 block">{{ $hotel->booking_date ? $hotel->booking_date->format('d M Y') : '-' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400 block">Tanggal Bayar</span>
+                                <span class="text-xs font-semibold font-mono text-slate-200 mt-0.5 block">{{ $hotel->payment_date ? $hotel->payment_date->format('d M Y') : '-' }}</span>
                             </div>
                         </div>
 

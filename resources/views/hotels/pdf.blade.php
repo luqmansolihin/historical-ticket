@@ -270,12 +270,20 @@
                         <td class="grid-cell">
                             <span class="info-label">PEMESAN HOTEL</span>
                             <span class="info-value info-value-indigo">{{ $hotel->booked_by }}</span>
-                            <span style="font-size: 10px; color: #94a3b8; font-family: monospace; display: block; margin-top: 2px;">Tgl Booking: {{ $hotel->booking_date ? $hotel->booking_date->format('d M Y') : '-' }}</span>
                         </td>
                         <td class="grid-cell">
                             <span class="info-label">PEMBAYARAN OLEH</span>
                             <span class="info-value info-value-emerald">{{ $hotel->paid_by }}</span>
-                            <span style="font-size: 10px; color: #94a3b8; font-family: monospace; display: block; margin-top: 2px;">Tgl Bayar: {{ $hotel->payment_date ? $hotel->payment_date->format('d M Y') : '-' }}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="grid-cell" style="padding-top: 8px;">
+                            <span class="info-label">TANGGAL PESAN</span>
+                            <span class="info-value">{{ $hotel->booking_date ? $hotel->booking_date->format('d M Y') : '-' }}</span>
+                        </td>
+                        <td class="grid-cell" style="padding-top: 8px;">
+                            <span class="info-label">TANGGAL BAYAR</span>
+                            <span class="info-value">{{ $hotel->payment_date ? $hotel->payment_date->format('d M Y') : '-' }}</span>
                         </td>
                     </tr>
                 </table>
