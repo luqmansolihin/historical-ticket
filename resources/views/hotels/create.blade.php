@@ -73,12 +73,12 @@
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Check In <span class="text-rose-400">*</span></label>
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Check-in <span class="text-rose-400">*</span></label>
                         <input type="date" name="check_in_date" value="{{ old('check_in_date') }}" required onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer">
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Check Out <span class="text-rose-400">*</span></label>
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Check-out <span class="text-rose-400">*</span></label>
                         <input type="date" name="check_out_date" value="{{ old('check_out_date') }}" required onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer">
                     </div>
                 </div>

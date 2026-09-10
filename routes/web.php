@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ExpenseHistoryController;
 use App\Http\Controllers\HotelHistoryController;
 use App\Http\Controllers\TicketHistoryController;
 use App\Http\Controllers\UserController;
@@ -37,4 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/hotels/export', [HotelHistoryController::class, 'exportCsv'])->name('hotels.export');
     Route::get('/hotels/{hotel}/pdf', [HotelHistoryController::class, 'exportPdf'])->name('hotels.pdf');
     Route::resource('hotels', HotelHistoryController::class);
+
+    // Expense History Routes
+    Route::get('/expenses/export', [ExpenseHistoryController::class, 'exportCsv'])->name('expenses.export');
+    Route::resource('expenses', ExpenseHistoryController::class);
 });

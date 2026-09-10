@@ -180,9 +180,9 @@
                     </div>
                     <form action="{{ route('logout') }}" method="POST" class="inline">
                         @csrf
-                        <button type="submit" class="px-2.5 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:text-white flex items-center gap-1.5 text-xs font-medium transition-all shadow-sm" title="Logout / Keluar">
+                        <button type="submit" class="px-2.5 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:text-white flex items-center gap-1.5 text-xs font-medium transition-all shadow-sm" title="Keluar dari Aplikasi">
                             <i class="fa-solid fa-right-from-bracket text-xs"></i>
-                            <span class="font-semibold">Logout</span>
+                            <span class="font-semibold">Keluar</span>
                         </button>
                     </form>
                 </div>
@@ -255,6 +255,15 @@
                                 <span :class="isCollapsed ? 'md:hidden' : ''">Histori Hotel</span>
                             </a>
 
+                            <!-- Histori Biaya Lain-lain -->
+                            <a href="{{ route('expenses.index') }}" 
+                               :class="isCollapsed ? 'md:justify-center md:px-0' : ''"
+                               class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all {{ request()->routeIs('expenses.*') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                               :title="isCollapsed ? 'Histori Biaya Lain-lain' : ''">
+                                <i class="fa-solid fa-receipt text-base {{ request()->routeIs('expenses.*') ? 'text-sky-400' : 'text-slate-400' }}"></i>
+                                <span :class="isCollapsed ? 'md:hidden' : ''">Histori Biaya Lain-lain</span>
+                            </a>
+
                             <!-- Kelola User (Admin Only) -->
                             @auth
                                 @if(Auth::user()->isAdmin())
@@ -297,9 +306,9 @@
                         <button type="submit" 
                                 :class="isCollapsed ? 'md:justify-center md:px-0' : 'px-3.5'"
                                 class="w-full py-2 rounded-xl text-xs font-medium text-rose-400 hover:text-white hover:bg-rose-500/20 border border-rose-500/30 flex items-center justify-center gap-2 transition-all" 
-                                :title="isCollapsed ? 'Logout / Keluar' : ''">
+                                :title="isCollapsed ? 'Keluar dari Aplikasi' : ''">
                             <i class="fa-solid fa-right-from-bracket text-sm"></i>
-                            <span :class="isCollapsed ? 'md:hidden' : ''">Logout</span>
+                            <span :class="isCollapsed ? 'md:hidden' : ''">Keluar</span>
                         </button>
                     </form>
                 </div>

@@ -69,6 +69,14 @@ class BookingHistory extends Model
     }
 
     /**
+     * Relationship to Expense Detail
+     */
+    public function expenseDetail(): HasOne
+    {
+        return $this->hasOne(ExpenseDetail::class, 'booking_history_id');
+    }
+
+    /**
      * Relationship to status activity logs
      */
     public function statusLogs(): HasMany

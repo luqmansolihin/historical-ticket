@@ -52,14 +52,14 @@
             </div>
 
             <div>
-                <div class="text-[10px] uppercase font-mono text-slate-400">Tanggal Check In</div>
+                <div class="text-[10px] uppercase font-mono text-slate-400">Tanggal Check-in</div>
                 <div class="text-xs font-bold text-emerald-400 mt-1 font-mono">
                     {{ $hotel->check_in_date ? $hotel->check_in_date->format('d M Y') : '-' }}
                 </div>
             </div>
 
             <div>
-                <div class="text-[10px] uppercase font-mono text-slate-400">Tanggal Check Out</div>
+                <div class="text-[10px] uppercase font-mono text-slate-400">Tanggal Check-out</div>
                 <div class="text-xs font-bold text-rose-400 mt-1 font-mono">
                     {{ $hotel->check_out_date ? $hotel->check_out_date->format('d M Y') : '-' }}
                 </div>

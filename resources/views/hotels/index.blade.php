@@ -206,7 +206,7 @@
                 </a>
 
                 <a id="export-csv-btn" href="{{ route('hotels.export', request()->query()) }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-sm">
-                    <i class="fa-solid fa-file-csv text-emerald-400 mr-1.5 text-xs"></i> Export CSV
+                    <i class="fa-solid fa-file-csv text-emerald-400 mr-1.5 text-xs"></i> Ekspor CSV
                 </a>
 
                 @can('create', App\Models\HotelHistory::class)
