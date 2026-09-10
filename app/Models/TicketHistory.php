@@ -2,144 +2,88 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
-class TicketHistory extends Model
+class TicketHistory extends BookingHistory
 {
-    use HasFactory;
-
-    protected $fillable = [
-        'ticket_code',
-        'invoice_code',
-        'ticket_date',
-        'origin',
-        'destination',
-        'transport_type',
-        'passenger_name',
-        'booked_by',
-        'booked_by_user_id',
-        'paid_by',
-        'paid_by_user_id',
-        'payment_date',
-        'amount',
-        'status',
-        'notes',
-        'attachment_path',
-    ];
-
-    protected $casts = [
-        'ticket_date' => 'date',
-        'payment_date' => 'date',
-        'amount' => 'decimal:2',
-    ];
-
-    /**
-     * Relationship to Booker user
-     */
-    public function bookerUser(): BelongsTo
+    protected static function booted(): void
     {
-        return $this->belongsTo(User::class, 'booked_by_user_id');
+        static::addGlobalScope('ticket', function (Builder $builder) {
+            $builder->where('booking_type', 'ticket');
+        });
+
+        static::creating(function ($model) {
+            $model->booking_type = 'ticket';
+        });
     }
 
     /**
-     * Relationship to Payer user
+     * Alias for ticket_code -> booking_code
      */
-    public function payerUser(): BelongsTo
+    public function getTicketCodeAttribute(): ?string
     {
-        return $this->belongsTo(User::class, 'paid_by_user_id');
+        return $this->booking_code;
+    }
+
+    public function setTicketCodeAttribute(?string $value): void
+    {
+        $this->attributes['booking_code'] = $value;
     }
 
     /**
-     * Relationship to status activity logs
+     * Alias for ticket_date -> booking_date
      */
-    public function statusLogs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function getTicketDateAttribute()
     {
-        return $this->hasMany(TicketStatusLog::class, 'ticket_history_id')->orderBy('id', 'asc');
+        return $this->booking_date;
+    }
+
+    public function setTicketDateAttribute($value): void
+    {
+        $this->attributes['booking_date'] = $value;
     }
 
     /**
-     * Get passenger names as an array
+     * Delegated accessors for ticket details
      */
+    public function getTransportTypeAttribute(): string
+    {
+        return $this->ticketDetail?->transport_type ?? 'Pesawat';
+    }
+
+    public function getOriginAttribute(): string
+    {
+        return $this->ticketDetail?->origin ?? '';
+    }
+
+    public function getDestinationAttribute(): string
+    {
+        return $this->ticketDetail?->destination ?? '';
+    }
+
+    public function getPassengerNameAttribute(): string
+    {
+        return $this->ticketDetail?->passenger_name ?? '';
+    }
+
     public function getPassengersListAttribute(): array
     {
-        if (empty($this->passenger_name)) {
-            return [];
-        }
-
-        // Handle JSON or comma/newline separated strings
-        if (str_starts_with(trim($this->passenger_name), '[')) {
-            $decoded = json_decode($this->passenger_name, true);
-            if (is_array($decoded)) {
-                return array_values(array_filter(array_map('trim', $decoded)));
-            }
-        }
-
-        $items = preg_split('/[,\n]+/', $this->passenger_name);
-        return array_values(array_filter(array_map('trim', $items)));
+        return $this->ticketDetail?->passengers_list ?? [];
     }
 
-    /**
-     * Get count of passengers
-     */
     public function getPassengerCountAttribute(): int
     {
-        return count($this->passengers_list);
+        return $this->ticketDetail?->passenger_count ?? 0;
     }
 
-    /**
-     * Get formatted display string for passengers
-     */
     public function getPassengerDisplayAttribute(): string
     {
-        $list = $this->passengers_list;
-        if (empty($list)) {
-            return '-';
-        }
-
-        if (count($list) === 1) {
-            return $list[0];
-        }
-
-        return implode(', ', $list) . ' (' . count($list) . ' Penumpang)';
+        return $this->ticketDetail?->passenger_display ?? '-';
     }
 
-    /**
-     * Format amount in IDR (Rp 1.500.000)
-     */
-    public function getFormattedAmountAttribute(): string
-    {
-        return 'Rp ' . number_format($this->amount, 0, ',', '.');
-    }
-
-    /**
-     * Get icon representation for transport type
-     */
     public function getTransportIconAttribute(): string
     {
-        return match ($this->transport_type) {
-            'Pesawat' => '✈️',
-            'Kereta Api' => '🚆',
-            'Bus' => '🚌',
-            'Travel' => '🚐',
-            'Kapal Laut' => '🚢',
-            'Mobil / Rental' => '🚗',
-            default => '🎫',
-        };
-    }
-
-    /**
-     * Get CSS classes for status badge
-     */
-    public function getStatusBadgeClassAttribute(): string
-    {
-        return match ($this->status) {
-            'Lunas' => 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-700',
-            'Belum Bayar' => 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-900/40 dark:text-rose-300 dark:border-rose-700',
-            'Dibatalkan' => 'bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700',
-            default => 'bg-gray-100 text-gray-800 border-gray-300',
-        };
+        return $this->ticketDetail?->transport_icon ?? '🎫';
     }
 
     /**
@@ -152,120 +96,67 @@ class TicketHistory extends Model
         }
 
         return $query->where(function ($q) use ($search) {
-            $q->where('ticket_code', 'like', "%{$search}%")
+            $q->where('booking_code', 'like', "%{$search}%")
                 ->orWhere('invoice_code', 'like', "%{$search}%")
-                ->orWhere('origin', 'like', "%{$search}%")
-                ->orWhere('destination', 'like', "%{$search}%")
-                ->orWhere('passenger_name', 'like', "%{$search}%")
                 ->orWhere('booked_by', 'like', "%{$search}%")
                 ->orWhere('paid_by', 'like', "%{$search}%")
-                ->orWhere('transport_type', 'like', "%{$search}%");
+                ->orWhereHas('ticketDetail', function ($t) use ($search) {
+                    $t->where('origin', 'like', "%{$search}%")
+                        ->orWhere('destination', 'like', "%{$search}%")
+                        ->orWhere('passenger_name', 'like', "%{$search}%")
+                        ->orWhere('transport_type', 'like', "%{$search}%");
+                });
         });
     }
 
-    /**
-     * Scope for filtering specifically by Ticket Code
-     */
     public function scopeFilterCode($query, ?string $code)
     {
-        if (empty($code)) {
-            return $query;
-        }
-
-        return $query->where('ticket_code', 'like', "%{$code}%");
+        return empty($code) ? $query : $query->where('booking_code', 'like', "%{$code}%");
     }
 
-    /**
-     * Scope for filtering specifically by Invoice Code
-     */
     public function scopeFilterInvoiceCode($query, ?string $invoice)
     {
-        if (empty($invoice)) {
-            return $query;
-        }
-
-        return $query->where('invoice_code', 'like', "%{$invoice}%");
+        return empty($invoice) ? $query : $query->where('invoice_code', 'like', "%{$invoice}%");
     }
 
-    /**
-     * Scope for filtering Origin
-     */
     public function scopeFilterOrigin($query, ?string $origin)
     {
-        if (empty($origin)) {
-            return $query;
-        }
-
-        return $query->where('origin', 'like', "%{$origin}%");
+        return empty($origin) ? $query : $query->whereHas('ticketDetail', fn($t) => $t->where('origin', 'like', "%{$origin}%"));
     }
 
-    /**
-     * Scope for filtering Destination
-     */
     public function scopeFilterDestination($query, ?string $destination)
     {
-        if (empty($destination)) {
-            return $query;
-        }
-
-        return $query->where('destination', 'like', "%{$destination}%");
+        return empty($destination) ? $query : $query->whereHas('ticketDetail', fn($t) => $t->where('destination', 'like', "%{$destination}%"));
     }
 
-    /**
-     * Scope for filtering Passenger
-     */
     public function scopeFilterPassenger($query, ?string $passenger)
     {
-        if (empty($passenger)) {
-            return $query;
-        }
-
-        return $query->where('passenger_name', 'like', "%{$passenger}%");
+        return empty($passenger) ? $query : $query->whereHas('ticketDetail', fn($t) => $t->where('passenger_name', 'like', "%{$passenger}%"));
     }
 
-    /**
-     * Scope for filtering Booker
-     */
     public function scopeFilterBooker($query, ?string $booker)
     {
-        if (empty($booker)) {
-            return $query;
-        }
-
-        return $query->where('booked_by', 'like', "%{$booker}%");
+        return empty($booker) ? $query : $query->where('booked_by', 'like', "%{$booker}%");
     }
 
-    /**
-     * Scope for filtering Payer
-     */
     public function scopeFilterPayer($query, ?string $payer)
     {
-        if (empty($payer)) {
-            return $query;
-        }
-
-        return $query->where('paid_by', 'like', "%{$payer}%");
+        return empty($payer) ? $query : $query->where('paid_by', 'like', "%{$payer}%");
     }
 
-    /**
-     * Scope for filtering specifically by Route or Passenger Name
-     */
     public function scopeFilterRoute($query, ?string $route)
     {
         if (empty($route)) {
             return $query;
         }
 
-        return $query->where(function ($q) use ($route) {
-            $q->where('origin', 'like', "%{$route}%")
+        return $query->whereHas('ticketDetail', function ($t) use ($route) {
+            $t->where('origin', 'like', "%{$route}%")
                 ->orWhere('destination', 'like', "%{$route}%")
                 ->orWhere('passenger_name', 'like', "%{$route}%");
         });
     }
 
-    /**
-     * Scope for filtering specifically by Booker or Payer Name
-     */
     public function scopeFilterPerson($query, ?string $person)
     {
         if (empty($person)) {
@@ -278,94 +169,35 @@ class TicketHistory extends Model
         });
     }
 
-    /**
-     * Scope for transport type filter (supports single string or array of strings)
-     */
     public function scopeFilterTransport($query, string|array|null $transport)
     {
         if (empty($transport)) {
             return $query;
         }
 
-        if (is_array($transport)) {
-            $filtered = array_values(array_filter($transport));
-            return empty($filtered) ? $query : $query->whereIn('transport_type', $filtered);
-        }
-
-        return $query->where('transport_type', $transport);
-    }
-
-    /**
-     * Scope for status filter (supports single string or array of strings)
-     */
-    public function scopeFilterStatus($query, string|array|null $status)
-    {
-        if (empty($status)) {
+        $filtered = array_values(array_filter((array) $transport));
+        if (empty($filtered)) {
             return $query;
         }
 
-        if (is_array($status)) {
-            $filtered = array_values(array_filter($status));
-            return empty($filtered) ? $query : $query->whereIn('status', $filtered);
-        }
-
-        return $query->where('status', $status);
+        return $query->whereHas('ticketDetail', fn($t) => $t->whereIn('transport_type', $filtered));
     }
 
-    /**
-     * Scope for amount filter (min >=, max <=, eq =)
-     */
-    public function scopeFilterAmount($query, $min = null, $max = null, $eq = null)
-    {
-        if ($eq !== null && $eq !== '') {
-            return $query->where('amount', '=', (float) $eq);
-        }
-
-        if ($min !== null && $min !== '') {
-            $query->where('amount', '>=', (float) $min);
-        }
-
-        if ($max !== null && $max !== '') {
-            $query->where('amount', '<=', (float) $max);
-        }
-
-        return $query;
-    }
-
-    /**
-     * Scope for passenger count filter (min >=, max <=, eq =)
-     */
     public function scopeFilterPassengerCount($query, $min = null, $max = null, $eq = null)
     {
-        $expr = "(LENGTH(COALESCE(passenger_name, '')) - LENGTH(REPLACE(COALESCE(passenger_name, ''), ',', '')) + CASE WHEN COALESCE(passenger_name, '') = '' THEN 0 ELSE 1 END)";
+        $expr = "(LENGTH(COALESCE(ticket_details.passenger_name, '')) - LENGTH(REPLACE(COALESCE(ticket_details.passenger_name, ''), ',', '')) + CASE WHEN COALESCE(ticket_details.passenger_name, '') = '' THEN 0 ELSE 1 END)";
 
-        if ($eq !== null && $eq !== '') {
-            return $query->whereRaw("{$expr} = ?", [(int) $eq]);
-        }
-
-        if ($min !== null && $min !== '') {
-            $query->whereRaw("{$expr} >= ?", [(int) $min]);
-        }
-
-        if ($max !== null && $max !== '') {
-            $query->whereRaw("{$expr} <= ?", [(int) $max]);
-        }
-
-        return $query;
-    }
-
-    /**
-     * Scope for filtering payment date range
-     */
-    public function scopeFilterPayDate($query, $from = null, $to = null)
-    {
-        if ($from) {
-            $query->whereDate('payment_date', '>=', $from);
-        }
-        if ($to) {
-            $query->whereDate('payment_date', '<=', $to);
-        }
-
-        return $query;
+        return $query->whereHas('ticketDetail', function ($q) use ($min, $max, $eq, $expr) {
+            if ($eq !== null && $eq !== '') {
+                $q->whereRaw("{$expr} = ?", [(int) $eq]);
+            } else {
+                if ($min !== null && $min !== '') {
+                    $q->whereRaw("{$expr} >= ?", [(int) $min]);
+                }
+                if ($max !== null && $max !== '') {
+                    $q->whereRaw("{$expr} <= ?", [(int) $max]);
+                }
+            }
+        });
     }
 }

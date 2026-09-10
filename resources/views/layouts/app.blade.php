@@ -242,8 +242,17 @@
                                :class="isCollapsed ? 'md:justify-center md:px-0' : ''"
                                class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all {{ request()->routeIs('tickets.*') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
                                :title="isCollapsed ? 'Histori Tiket' : ''">
-                                <i class="fa-solid fa-table-list text-base {{ request()->routeIs('tickets.*') ? 'text-sky-400' : 'text-slate-400' }}"></i>
+                                <i class="fa-solid fa-ticket text-base {{ request()->routeIs('tickets.*') ? 'text-sky-400' : 'text-slate-400' }}"></i>
                                 <span :class="isCollapsed ? 'md:hidden' : ''">Histori Tiket</span>
+                            </a>
+
+                            <!-- Histori Hotel -->
+                            <a href="{{ route('hotels.index') }}" 
+                               :class="isCollapsed ? 'md:justify-center md:px-0' : ''"
+                               class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all {{ request()->routeIs('hotels.*') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                               :title="isCollapsed ? 'Histori Hotel' : ''">
+                                <i class="fa-solid fa-hotel text-base {{ request()->routeIs('hotels.*') ? 'text-sky-400' : 'text-slate-400' }}"></i>
+                                <span :class="isCollapsed ? 'md:hidden' : ''">Histori Hotel</span>
                             </a>
 
                             <!-- Kelola User (Admin Only) -->

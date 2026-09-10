@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookingStatusLog;
-use App\Models\TicketDetail;
-use App\Models\TicketHistory;
+use App\Models\HotelDetail;
+use App\Models\HotelHistory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,17 +12,17 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class TicketHistoryController extends Controller
+class HotelHistoryController extends Controller
 {
     /**
-     * Export specified ticket as PDF.
+     * Export specified hotel booking as PDF.
      */
-    public function exportPdf(TicketHistory $ticket)
+    public function exportPdf(HotelHistory $hotel)
     {
-        $ticket->load(['bookerUser', 'payerUser', 'ticketDetail', 'statusLogs']);
+        $hotel->load(['bookerUser', 'payerUser', 'hotelDetail', 'statusLogs']);
 
         $pdf = app('dompdf.wrapper');
-        $pdf->loadView('tickets.pdf', compact('ticket'))
+        $pdf->loadView('hotels.pdf', compact('hotel'))
             ->setPaper('a4', 'portrait')
             ->setOption([
                 'isRemoteEnabled' => true,
@@ -30,7 +30,7 @@ class TicketHistoryController extends Controller
                 'defaultFont' => 'DejaVu Sans',
             ]);
 
-        return $pdf->stream('Boarding-Pass-' . ($ticket->ticket_code ?: 'TICKET') . '.pdf');
+        return $pdf->stream('Hotel-Voucher-' . ($hotel->booking_code ?: 'HOTEL') . '.pdf');
     }
 
     /**
@@ -41,74 +41,44 @@ class TicketHistoryController extends Controller
         $search = $request->input('search');
         $searchCode = $request->input('search_code');
         $searchInvoice = $request->input('search_invoice');
-        $searchOrigin = $request->input('search_origin');
-        $searchDestination = $request->input('search_destination');
-        $searchPassenger = $request->input('search_passenger');
+        $searchHotel = $request->input('search_hotel');
+        $searchGuest = $request->input('search_guest');
         $searchBooker = $request->input('search_booker');
         $searchPayer = $request->input('search_payer');
-        $searchRoute = $request->input('search_route');
-        $searchPerson = $request->input('search_person');
-        $transportType = array_values(array_filter((array) $request->input('transport_type', [])));
         $status = array_values(array_filter((array) $request->input('status', [])));
         $amountMin = $request->input('amount_min');
         $amountMax = $request->input('amount_max');
         $amountEq = $request->input('amount_eq');
-        $passengerCountMin = $request->input('passenger_count_min');
-        $passengerCountMax = $request->input('passenger_count_max');
-        $passengerCountEq = $request->input('passenger_count_eq');
 
-        // Date filters for Ticket Date
+        // Date filters for Booking Date
         $dateAfter = $request->input('date_after', $request->input('date_from'));
         $dateBefore = $request->input('date_before', $request->input('date_to'));
         $dateOn = $request->input('date_on');
-        $dateVal = $request->input('date_val');
-        $dateMode = $request->input('date_mode');
 
-        if ($dateVal && !$dateAfter && !$dateBefore && !$dateOn) {
-            if ($dateMode === 'before') {
-                $dateBefore = $dateVal;
-            } elseif ($dateMode === 'after') {
-                $dateAfter = $dateVal;
-            } else {
-                $dateOn = $dateVal;
-            }
-        }
+        // Check-in & Check-out date filters
+        $checkInFrom = $request->input('check_in_from');
+        $checkInTo = $request->input('check_in_to');
+        $checkOutFrom = $request->input('check_out_from');
+        $checkOutTo = $request->input('check_out_to');
 
         // Date filters for Payment Date
         $payDateAfter = $request->input('pay_date_after', $request->input('pay_date_from'));
         $payDateBefore = $request->input('pay_date_before', $request->input('pay_date_to'));
         $payDateOn = $request->input('pay_date_on');
-        $payDateVal = $request->input('pay_date_val');
-        $payDateMode = $request->input('pay_date_mode');
 
-        if ($payDateVal && !$payDateAfter && !$payDateBefore && !$payDateOn) {
-            if ($payDateMode === 'before') {
-                $payDateBefore = $payDateVal;
-            } elseif ($payDateMode === 'after') {
-                $payDateAfter = $payDateVal;
-            } else {
-                $payDateOn = $payDateVal;
-            }
-        }
-
-        $query = TicketHistory::query()
-            ->with(['bookerUser', 'payerUser', 'ticketDetail', 'statusLogs'])
+        $query = HotelHistory::query()
+            ->with(['bookerUser', 'payerUser', 'hotelDetail', 'statusLogs'])
             ->search($search)
             ->filterCode($searchCode)
             ->filterInvoiceCode($searchInvoice)
-            ->filterOrigin($searchOrigin)
-            ->filterDestination($searchDestination)
-            ->filterPassenger($searchPassenger)
+            ->filterHotelName($searchHotel)
+            ->filterGuest($searchGuest)
             ->filterBooker($searchBooker)
             ->filterPayer($searchPayer)
-            ->filterRoute($searchRoute)
-            ->filterPerson($searchPerson)
-            ->filterTransport($transportType)
             ->filterStatus($status)
-            ->filterAmount($amountMin, $amountMax, $amountEq)
-            ->filterPassengerCount($passengerCountMin, $passengerCountMax, $passengerCountEq);
+            ->filterAmount($amountMin, $amountMax, $amountEq);
 
-        // Apply Ticket Date Filters
+        // Apply Booking Date Filters
         if ($dateOn) {
             $query->whereDate('booking_date', '=', $dateOn);
         } else {
@@ -118,6 +88,22 @@ class TicketHistoryController extends Controller
             if ($dateBefore) {
                 $query->whereDate('booking_date', '<=', $dateBefore);
             }
+        }
+
+        // Apply Check-In Date Filters
+        if ($checkInFrom || $checkInTo) {
+            $query->whereHas('hotelDetail', function ($h) use ($checkInFrom, $checkInTo) {
+                if ($checkInFrom) $h->whereDate('check_in_date', '>=', $checkInFrom);
+                if ($checkInTo) $h->whereDate('check_in_date', '<=', $checkInTo);
+            });
+        }
+
+        // Apply Check-Out Date Filters
+        if ($checkOutFrom || $checkOutTo) {
+            $query->whereHas('hotelDetail', function ($h) use ($checkOutFrom, $checkOutTo) {
+                if ($checkOutFrom) $h->whereDate('check_out_date', '>=', $checkOutFrom);
+                if ($checkOutTo) $h->whereDate('check_out_date', '<=', $checkOutTo);
+            });
         }
 
         // Apply Payment Date Filters
@@ -132,14 +118,14 @@ class TicketHistoryController extends Controller
             }
         }
 
-        // Multi-column sorting logic
+        // Sorting
         $sortParam = $request->input('sort');
         $sorts = [];
 
         $allowedSorts = [
-            'ticket_code' => 'booking_code',
+            'booking_code' => 'booking_code',
             'invoice_code' => 'invoice_code',
-            'ticket_date' => 'booking_date',
+            'booking_date' => 'booking_date',
             'booked_by' => 'booked_by',
             'paid_by' => 'paid_by',
             'amount' => 'amount',
@@ -182,27 +168,24 @@ class TicketHistoryController extends Controller
                 'search' => $search,
                 'searchCode' => $searchCode,
                 'searchInvoice' => $searchInvoice,
-                'searchOrigin' => $searchOrigin,
-                'searchDestination' => $searchDestination,
-                'searchPassenger' => $searchPassenger,
+                'searchHotel' => $searchHotel,
+                'searchGuest' => $searchGuest,
                 'searchBooker' => $searchBooker,
                 'searchPayer' => $searchPayer,
-                'searchRoute' => $searchRoute,
-                'searchPerson' => $searchPerson,
-                'transportType' => $transportType,
                 'status' => $status,
                 'dateAfter' => $dateAfter,
                 'dateBefore' => $dateBefore,
                 'dateOn' => $dateOn,
+                'checkInFrom' => $checkInFrom,
+                'checkInTo' => $checkInTo,
+                'checkOutFrom' => $checkOutFrom,
+                'checkOutTo' => $checkOutTo,
                 'payDateAfter' => $payDateAfter,
                 'payDateBefore' => $payDateBefore,
                 'payDateOn' => $payDateOn,
                 'amountMin' => $amountMin,
                 'amountMax' => $amountMax,
                 'amountEq' => $amountEq,
-                'passengerCountMin' => $passengerCountMin,
-                'passengerCountMax' => $passengerCountMax,
-                'passengerCountEq' => $passengerCountEq,
                 'sorts' => $sorts,
                 'sortParam' => $sortParam,
                 'sortBy' => !empty($sorts) ? $sorts[0]['col'] : null,
@@ -212,7 +195,7 @@ class TicketHistoryController extends Controller
     }
 
     /**
-     * Display a listing of historical tickets with search, filtering, and summary stats.
+     * Display a listing of historical hotel bookings.
      */
     public function index(Request $request)
     {
@@ -222,71 +205,68 @@ class TicketHistoryController extends Controller
 
         // Summary statistics
         $statsQuery = clone $query;
-        $totalTickets = $statsQuery->count();
+        $totalHotels = $statsQuery->count();
         $totalAmount = (float) $statsQuery->sum('amount');
         $totalLunas = (clone $statsQuery)->where('status', 'Lunas')->count();
         $totalBelumBayar = (clone $statsQuery)->where('status', 'Belum Bayar')->count();
         $totalDibatalkan = (clone $statsQuery)->where('status', 'Dibatalkan')->count();
 
-        $tickets = $query->paginate(25)->withQueryString();
+        $hotels = $query->paginate(25)->withQueryString();
 
-        $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
         $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
 
         if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
             return response()->json([
-                'html' => view('tickets._rows', compact('tickets'))->render(),
-                'next_page_url' => $tickets->nextPageUrl(),
-                'has_more' => $tickets->hasMorePages(),
-                'total' => $tickets->total(),
+                'html' => view('hotels._rows', compact('hotels'))->render(),
+                'next_page_url' => $hotels->nextPageUrl(),
+                'has_more' => $hotels->hasMorePages(),
+                'total' => $hotels->total(),
             ]);
         }
 
-        return view('tickets.index', array_merge(
+        return view('hotels.index', array_merge(
             $params,
             compact(
-                'tickets',
-                'totalTickets',
+                'hotels',
+                'totalHotels',
                 'totalAmount',
                 'totalLunas',
                 'totalBelumBayar',
                 'totalDibatalkan',
-                'transportOptions',
                 'statusOptions'
             )
         ));
     }
 
     /**
-     * Show the form for creating a new ticket history record.
+     * Show the form for creating a new hotel history record.
      */
     public function create()
     {
-        Gate::authorize('create', TicketHistory::class);
+        Gate::authorize('create', HotelHistory::class);
 
-        $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
         $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
         $users = User::orderBy('name')->get();
 
-        return view('tickets.create', compact('transportOptions', 'statusOptions', 'users'));
+        return view('hotels.create', compact('statusOptions', 'users'));
     }
 
     /**
-     * Store a newly created ticket history record in storage.
+     * Store a newly created hotel history record in storage.
      */
     public function store(Request $request)
     {
-        Gate::authorize('create', TicketHistory::class);
+        Gate::authorize('create', HotelHistory::class);
 
         $validated = $request->validate([
-            'ticket_code' => 'nullable|string|max:50|unique:booking_histories,booking_code',
+            'booking_code' => 'nullable|string|max:50|unique:booking_histories,booking_code',
             'invoice_code' => 'required|string|max:100|unique:booking_histories,invoice_code',
-            'ticket_date' => 'required|date',
-            'origin' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
-            'transport_type' => 'required|string|max:100',
-            'passenger_names' => 'required|array|min:1',
-            'passenger_names.*' => 'required|string|max:255',
+            'booking_date' => 'required|date',
+            'hotel_name' => 'required|string|max:255',
+            'check_in_date' => 'required|date',
+            'check_out_date' => 'required|date|after_or_equal:check_in_date',
+            'guest_names' => 'required|array|min:1',
+            'guest_names.*' => 'required|string|max:255',
             'booked_by' => 'required|string|max:255',
             'booked_by_user_id' => 'nullable|exists:users,id',
             'paid_by' => 'nullable|string|max:255',
@@ -299,13 +279,17 @@ class TicketHistoryController extends Controller
         ], [
             'invoice_code.required' => 'Kode invoice wajib diisi.',
             'invoice_code.unique' => 'Kode invoice sudah digunakan.',
-            'passenger_names.required' => 'Nama penumpang wajib diisi minimal 1 orang.',
-            'passenger_names.*.required' => 'Nama penumpang tidak boleh kosong.',
+            'hotel_name.required' => 'Nama hotel wajib diisi.',
+            'check_in_date.required' => 'Tanggal Check In wajib diisi.',
+            'check_out_date.required' => 'Tanggal Check Out wajib diisi.',
+            'check_out_date.after_or_equal' => 'Tanggal Check Out harus sama atau setelah Check In.',
+            'guest_names.required' => 'Nama tamu yang menginap wajib diisi minimal 1 orang.',
+            'guest_names.*.required' => 'Nama tamu tidak boleh kosong.',
             'booked_by.required' => 'Nama pemesan wajib diisi.',
         ]);
 
-        $names = array_values(array_filter(array_map('trim', $validated['passenger_names'])));
-        $passengerName = implode(', ', $names);
+        $names = array_values(array_filter(array_map('trim', $validated['guest_names'])));
+        $guestName = implode(', ', $names);
 
         if (empty($validated['booked_by'])) {
             $validated['booked_by'] = Auth::user()->name;
@@ -326,14 +310,14 @@ class TicketHistoryController extends Controller
 
         $attachmentPath = null;
         if ($request->hasFile('attachment')) {
-            $attachmentPath = $request->file('attachment')->store('tickets', 'public');
+            $attachmentPath = $request->file('attachment')->store('hotels', 'public');
         }
 
         $headerData = [
-            'booking_type' => 'ticket',
-            'booking_code' => $validated['ticket_code'] ?? null,
+            'booking_type' => 'hotel',
+            'booking_code' => $validated['booking_code'] ?? null,
             'invoice_code' => $validated['invoice_code'],
-            'booking_date' => $validated['ticket_date'],
+            'booking_date' => $validated['booking_date'],
             'booked_by' => $validated['booked_by'],
             'booked_by_user_id' => $validated['booked_by_user_id'],
             'paid_by' => $validated['paid_by'],
@@ -345,14 +329,14 @@ class TicketHistoryController extends Controller
             'attachment_path' => $attachmentPath,
         ];
 
-        $newTicket = TicketHistory::create($headerData);
+        $newHotel = HotelHistory::create($headerData);
 
-        TicketDetail::create([
-            'booking_history_id' => $newTicket->id,
-            'transport_type' => $validated['transport_type'],
-            'origin' => $validated['origin'],
-            'destination' => $validated['destination'],
-            'passenger_name' => $passengerName,
+        HotelDetail::create([
+            'booking_history_id' => $newHotel->id,
+            'hotel_name' => $validated['hotel_name'],
+            'check_in_date' => $validated['check_in_date'],
+            'check_out_date' => $validated['check_out_date'],
+            'guest_name' => $guestName,
         ]);
 
         $creatorName = Auth::user()->name ?? 'System';
@@ -360,82 +344,81 @@ class TicketHistoryController extends Controller
         $creatorId = Auth::id();
 
         BookingStatusLog::create([
-            'booking_history_id' => $newTicket->id,
+            'booking_history_id' => $newHotel->id,
             'user_id' => $creatorId,
             'user_name' => $creatorName,
             'user_role' => Auth::user()->role ?? 'user',
             'from_status' => null,
-            'to_status' => $newTicket->status,
-            'notes' => 'Tiket baru dibuat oleh ' . $creatorName . ' (ID: #' . $creatorId . ' • ' . $creatorRole . ') atas nama ' . $newTicket->booked_by . ' dengan status ' . $newTicket->status . '.',
+            'to_status' => $newHotel->status,
+            'notes' => 'Histori hotel baru dibuat oleh ' . $creatorName . ' (ID: #' . $creatorId . ' • ' . $creatorRole . ') atas nama ' . $newHotel->booked_by . ' dengan status ' . $newHotel->status . '.',
         ]);
 
-        return redirect()->route('tickets.edit', $newTicket->id)
-            ->with('success', 'Tiket histori dengan ' . count($names) . ' penumpang berhasil ditambahkan!');
+        return redirect()->route('hotels.edit', $newHotel->id)
+            ->with('success', 'Histori hotel dengan ' . count($names) . ' tamu berhasil ditambahkan!');
     }
 
     /**
-     * Display the specified ticket details.
+     * Display the specified hotel booking details.
      */
-    public function show(TicketHistory $ticket)
+    public function show(HotelHistory $hotel)
     {
-        $ticket->load(['bookerUser', 'payerUser', 'ticketDetail', 'statusLogs']);
+        $hotel->load(['bookerUser', 'payerUser', 'hotelDetail', 'statusLogs']);
 
         if (request()->wantsJson()) {
-            return response()->json($ticket);
+            return response()->json($hotel);
         }
 
-        return view('tickets.show', compact('ticket'));
+        return view('hotels.show', compact('hotel'));
     }
 
     /**
-     * Show the form for editing the specified ticket record.
+     * Show the form for editing the specified hotel record.
      */
-    public function edit(TicketHistory $ticket)
+    public function edit(HotelHistory $hotel)
     {
-        Gate::authorize('update', $ticket);
+        Gate::authorize('update', $hotel);
 
-        $ticket->load(['bookerUser', 'payerUser', 'ticketDetail', 'statusLogs']);
+        $hotel->load(['bookerUser', 'payerUser', 'hotelDetail', 'statusLogs']);
 
-        $transportOptions = ['Pesawat', 'Kereta Api', 'Bus', 'Travel', 'Kapal Laut', 'Mobil / Rental'];
         $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
         $users = User::orderBy('name')->get();
 
-        return view('tickets.edit', compact('ticket', 'transportOptions', 'statusOptions', 'users'));
+        return view('hotels.edit', compact('hotel', 'statusOptions', 'users'));
     }
 
     /**
-     * Update the specified ticket record in storage.
+     * Update the specified hotel record in storage.
      */
-    public function update(Request $request, TicketHistory $ticket)
+    public function update(Request $request, HotelHistory $hotel)
     {
-        Gate::authorize('update', $ticket);
+        Gate::authorize('update', $hotel);
 
-        if (!Auth::user()->isAdmin() && $ticket->status === 'Lunas') {
+        if (!Auth::user()->isAdmin() && $hotel->status === 'Lunas') {
             $request->merge([
-                'ticket_code' => $request->input('ticket_code', $ticket->ticket_code),
-                'invoice_code' => $request->input('invoice_code', $ticket->invoice_code),
-                'ticket_date' => $request->input('ticket_date', $ticket->ticket_date ? $ticket->ticket_date->format('Y-m-d') : null),
-                'origin' => $request->input('origin', $ticket->origin),
-                'destination' => $request->input('destination', $ticket->destination),
-                'transport_type' => $request->input('transport_type', $ticket->transport_type),
-                'passenger_names' => $request->input('passenger_names', $ticket->passengers_list ?: [$ticket->passenger_name]),
-                'booked_by' => $request->input('booked_by', $ticket->booked_by),
-                'booked_by_user_id' => $request->input('booked_by_user_id', $ticket->booked_by_user_id),
-                'amount' => $request->input('amount', $ticket->amount),
-                'paid_by' => $request->input('paid_by', $ticket->paid_by ?: Auth::user()->name),
-                'paid_by_user_id' => $request->input('paid_by_user_id', $ticket->paid_by_user_id ?: Auth::id()),
+                'booking_code' => $request->input('booking_code', $hotel->booking_code),
+                'invoice_code' => $request->input('invoice_code', $hotel->invoice_code),
+                'booking_date' => $request->input('booking_date', $hotel->booking_date ? $hotel->booking_date->format('Y-m-d') : null),
+                'hotel_name' => $request->input('hotel_name', $hotel->hotel_name),
+                'check_in_date' => $request->input('check_in_date', $hotel->check_in_date ? $hotel->check_in_date->format('Y-m-d') : null),
+                'check_out_date' => $request->input('check_out_date', $hotel->check_out_date ? $hotel->check_out_date->format('Y-m-d') : null),
+                'guest_names' => $request->input('guest_names', $hotel->guests_list ?: [$hotel->guest_name]),
+                'booked_by' => $request->input('booked_by', $hotel->booked_by),
+                'booked_by_user_id' => $request->input('booked_by_user_id', $hotel->booked_by_user_id),
+                'amount' => $request->input('amount', $hotel->amount),
+                'paid_by' => $request->input('paid_by', $hotel->paid_by ?: Auth::user()->name),
+                'paid_by_user_id' => $request->input('paid_by_user_id', $hotel->paid_by_user_id ?: Auth::id()),
             ]);
         }
 
         $validated = $request->validate([
-            'ticket_code' => 'nullable|string|max:50|unique:booking_histories,booking_code,' . $ticket->id,
-            'invoice_code' => 'required|string|max:100|unique:booking_histories,invoice_code,' . $ticket->id,
-            'ticket_date' => 'required|date',
-            'origin' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
-            'transport_type' => 'required|string|max:100',
-            'passenger_names' => 'required|array|min:1',
-            'passenger_names.*' => 'required|string|max:255',
+            'booking_code' => 'nullable|string|max:50|unique:booking_histories,booking_code,' . $hotel->id,
+            'invoice_code' => 'required|string|max:100|unique:booking_histories,invoice_code,' . $hotel->id,
+            'booking_date' => 'required|date',
+            'hotel_name' => 'required|string|max:255',
+            'check_in_date' => 'required|date',
+            'check_out_date' => 'required|date|after_or_equal:check_in_date',
+            'guest_names' => 'required|array|min:1',
+            'guest_names.*' => 'required|string|max:255',
             'booked_by' => 'required|string|max:255',
             'booked_by_user_id' => 'nullable|exists:users,id',
             'paid_by' => 'required|string|max:255',
@@ -448,37 +431,39 @@ class TicketHistoryController extends Controller
         ], [
             'invoice_code.required' => 'Kode invoice wajib diisi.',
             'invoice_code.unique' => 'Kode invoice sudah digunakan.',
-            'passenger_names.required' => 'Nama penumpang wajib diisi minimal 1 orang.',
-            'passenger_names.*.required' => 'Nama penumpang tidak boleh kosong.',
+            'hotel_name.required' => 'Nama hotel wajib diisi.',
+            'check_in_date.required' => 'Tanggal Check In wajib diisi.',
+            'check_out_date.required' => 'Tanggal Check Out wajib diisi.',
+            'guest_names.required' => 'Nama tamu yang menginap wajib diisi minimal 1 orang.',
             'booked_by.required' => 'Nama pemesan wajib diisi.',
         ]);
 
-        $names = array_values(array_filter(array_map('trim', $validated['passenger_names'])));
-        $passengerName = implode(', ', $names);
+        $names = array_values(array_filter(array_map('trim', $validated['guest_names'])));
+        $guestName = implode(', ', $names);
 
         if (!Auth::user()->isAdmin()) {
-            $validated['booked_by_user_id'] = $ticket->booked_by_user_id ?: Auth::id();
+            $validated['booked_by_user_id'] = $hotel->booked_by_user_id ?: Auth::id();
         }
 
         if (!Auth::user()->isAdmin() && ($AuthUser = Auth::user()) && ($AuthUser->isBooker() || $AuthUser->isPayer())) {
-            if ($ticket->status === 'Dibatalkan') {
-                return redirect()->route('tickets.show', $ticket->id)
-                    ->with('error', 'Tiket yang berstatus Dibatalkan telah dikunci dan tidak dapat diubah kembali.');
+            if ($hotel->status === 'Dibatalkan') {
+                return redirect()->route('hotels.show', $hotel->id)
+                    ->with('error', 'Histori hotel yang berstatus Dibatalkan telah dikunci dan tidak dapat diubah kembali.');
             }
 
-            if ($ticket->status === 'Lunas') {
-                $validated['ticket_code'] = $ticket->ticket_code;
-                $validated['ticket_date'] = $ticket->ticket_date->format('Y-m-d');
-                $validated['origin'] = $ticket->origin;
-                $validated['destination'] = $ticket->destination;
-                $validated['transport_type'] = $ticket->transport_type;
-                $validated['passenger_name'] = $ticket->passenger_name;
-                $validated['booked_by'] = $ticket->booked_by;
-                $validated['booked_by_user_id'] = $ticket->booked_by_user_id;
-                $validated['amount'] = $ticket->amount;
-                $validated['notes'] = $ticket->notes;
-                $validated['paid_by'] = $ticket->paid_by ?: Auth::user()->name;
-                $validated['paid_by_user_id'] = $ticket->paid_by_user_id ?: Auth::id();
+            if ($hotel->status === 'Lunas') {
+                $validated['booking_code'] = $hotel->booking_code;
+                $validated['booking_date'] = $hotel->booking_date ? $hotel->booking_date->format('Y-m-d') : null;
+                $validated['hotel_name'] = $hotel->hotel_name;
+                $validated['check_in_date'] = $hotel->check_in_date ? $hotel->check_in_date->format('Y-m-d') : null;
+                $validated['check_out_date'] = $hotel->check_out_date ? $hotel->check_out_date->format('Y-m-d') : null;
+                $validated['guest_name'] = $hotel->guest_name;
+                $validated['booked_by'] = $hotel->booked_by;
+                $validated['booked_by_user_id'] = $hotel->booked_by_user_id;
+                $validated['amount'] = $hotel->amount;
+                $validated['notes'] = $hotel->notes;
+                $validated['paid_by'] = $hotel->paid_by ?: Auth::user()->name;
+                $validated['paid_by_user_id'] = $hotel->paid_by_user_id ?: Auth::id();
 
                 if ($request->input('status') === 'Dibatalkan') {
                     $validated['status'] = 'Dibatalkan';
@@ -496,8 +481,8 @@ class TicketHistoryController extends Controller
                     $validated['status'] = 'Dibatalkan';
                 } else {
                     $validated['status'] = 'Belum Bayar';
-                    $validated['paid_by'] = $ticket->paid_by ?: '-';
-                    $validated['paid_by_user_id'] = $ticket->paid_by_user_id;
+                    $validated['paid_by'] = $hotel->paid_by ?: '-';
+                    $validated['paid_by_user_id'] = $hotel->paid_by_user_id;
                     $validated['payment_date'] = null;
                 }
             }
@@ -510,21 +495,21 @@ class TicketHistoryController extends Controller
             }
         }
 
-        $oldStatus = $ticket->status;
+        $oldStatus = $hotel->status;
         $newStatus = $validated['status'];
 
         if ($request->hasFile('attachment')) {
-            if ($ticket->attachment_path && Storage::disk('public')->exists($ticket->attachment_path)) {
-                Storage::disk('public')->delete($ticket->attachment_path);
+            if ($hotel->attachment_path && Storage::disk('public')->exists($hotel->attachment_path)) {
+                Storage::disk('public')->delete($hotel->attachment_path);
             }
-            $path = $request->file('attachment')->store('tickets', 'public');
+            $path = $request->file('attachment')->store('hotels', 'public');
             $validated['attachment_path'] = $path;
         }
 
         $headerUpdate = [
-            'booking_code' => $validated['ticket_code'] ?? null,
+            'booking_code' => $validated['booking_code'] ?? null,
             'invoice_code' => $validated['invoice_code'],
-            'booking_date' => $validated['ticket_date'],
+            'booking_date' => $validated['booking_date'],
             'booked_by' => $validated['booked_by'],
             'booked_by_user_id' => $validated['booked_by_user_id'] ?? null,
             'paid_by' => $validated['paid_by'],
@@ -538,27 +523,27 @@ class TicketHistoryController extends Controller
             $headerUpdate['attachment_path'] = $validated['attachment_path'];
         }
 
-        $ticket->update($headerUpdate);
+        $hotel->update($headerUpdate);
 
-        $ticket->ticketDetail()->updateOrCreate(
-            ['booking_history_id' => $ticket->id],
+        $hotel->hotelDetail()->updateOrCreate(
+            ['booking_history_id' => $hotel->id],
             [
-                'transport_type' => $validated['transport_type'],
-                'origin' => $validated['origin'],
-                'destination' => $validated['destination'],
-                'passenger_name' => $passengerName,
+                'hotel_name' => $validated['hotel_name'],
+                'check_in_date' => $validated['check_in_date'],
+                'check_out_date' => $validated['check_out_date'],
+                'guest_name' => $guestName,
             ]
         );
 
         if ($oldStatus !== $newStatus) {
             $logNotes = match ($newStatus) {
                 'Lunas' => 'Status pembayaran diperbarui menjadi Lunas.',
-                'Dibatalkan' => 'Tiket dibatalkan oleh ' . (Auth::user()->name ?? 'User') . ' (' . ucfirst(Auth::user()->role ?? 'user') . ').',
-                default => 'Status tiket diubah dari ' . $oldStatus . ' menjadi ' . $newStatus . '.',
+                'Dibatalkan' => 'Histori hotel dibatalkan oleh ' . (Auth::user()->name ?? 'User') . ' (' . ucfirst(Auth::user()->role ?? 'user') . ').',
+                default => 'Status histori hotel diubah dari ' . $oldStatus . ' menjadi ' . $newStatus . '.',
             };
 
             BookingStatusLog::create([
-                'booking_history_id' => $ticket->id,
+                'booking_history_id' => $hotel->id,
                 'user_id' => Auth::id(),
                 'user_name' => Auth::user()->name ?? 'System',
                 'user_role' => Auth::user()->role ?? 'user',
@@ -568,38 +553,38 @@ class TicketHistoryController extends Controller
             ]);
         }
 
-        return redirect()->route('tickets.index')
-            ->with('success', 'Tiket histori berhasil diperbarui!');
+        return redirect()->route('hotels.index')
+            ->with('success', 'Histori hotel berhasil diperbarui!');
     }
 
     /**
-     * Remove the specified ticket record from storage.
+     * Remove the specified hotel history record from storage.
      */
-    public function destroy(TicketHistory $ticket)
+    public function destroy(HotelHistory $hotel)
     {
-        Gate::authorize('delete', $ticket);
+        Gate::authorize('delete', $hotel);
 
-        if ($ticket->attachment_path && Storage::disk('public')->exists($ticket->attachment_path)) {
-            Storage::disk('public')->delete($ticket->attachment_path);
+        if ($hotel->attachment_path && Storage::disk('public')->exists($hotel->attachment_path)) {
+            Storage::disk('public')->delete($hotel->attachment_path);
         }
 
-        $ticket->statusLogs()->delete();
-        $ticket->delete();
+        $hotel->statusLogs()->delete();
+        $hotel->delete();
 
-        return redirect()->route('tickets.index')
-            ->with('success', 'Tiket histori berhasil dihapus.');
+        return redirect()->route('hotels.index')
+            ->with('success', 'Histori hotel berhasil dihapus.');
     }
 
     /**
-     * Export filtered ticket list to CSV file.
+     * Export filtered hotel list to CSV file.
      */
     public function exportCsv(Request $request)
     {
         $filtered = $this->buildFilteredQuery($request);
         $query = $filtered['query'];
-        $tickets = $query->orderBy('booking_date', 'desc')->get();
+        $hotels = $query->orderBy('booking_date', 'desc')->get();
 
-        $filename = "histori_tiket_" . date('Ymd_His') . ".csv";
+        $filename = "histori_hotel_" . date('Ymd_His') . ".csv";
 
         $headers = [
             "Content-type" => "text/csv; charset=UTF-8",
@@ -609,41 +594,43 @@ class TicketHistoryController extends Controller
             "Expires" => "0"
         ];
 
-        $callback = function () use ($tickets) {
+        $callback = function () use ($hotels) {
             $file = fopen('php://output', 'w');
             fputs($file, "\xEF\xBB\xBF");
 
             fputcsv($file, [
-                'Kode Tiket',
+                'Kode Booking Hotel',
                 'Kode Invoice',
-                'Tanggal Tiket',
-                'Dari (Origin)',
-                'Ke (Destination)',
-                'Jenis Transportasi',
-                'Nama Penumpang',
-                'Pemesan Tiket (Booked By)',
+                'Tanggal Booking',
+                'Nama Hotel',
+                'Check In',
+                'Check Out',
+                'Malam',
+                'Nama Tamu (Menginap)',
+                'Pemesan (Booked By)',
                 'Penanggung Jawab Biaya (Paid By)',
                 'Tanggal Bayar',
-                'Harga Tiket (IDR)',
+                'Biaya Hotel (IDR)',
                 'Status Pembayaran',
                 'Catatan'
             ]);
 
-            foreach ($tickets as $t) {
+            foreach ($hotels as $h) {
                 fputcsv($file, [
-                    $t->ticket_code,
-                    $t->invoice_code,
-                    $t->ticket_date ? $t->ticket_date->format('Y-m-d') : '',
-                    $t->origin,
-                    $t->destination,
-                    $t->transport_type,
-                    $t->passenger_name,
-                    $t->booked_by,
-                    $t->paid_by,
-                    $t->payment_date ? $t->payment_date->format('Y-m-d') : '-',
-                    $t->amount,
-                    $t->status,
-                    $t->notes ?? '-'
+                    $h->booking_code ?? '-',
+                    $h->invoice_code,
+                    $h->booking_date ? $h->booking_date->format('Y-m-d') : '',
+                    $h->hotel_name,
+                    $h->check_in_date ? $h->check_in_date->format('Y-m-d') : '-',
+                    $h->check_out_date ? $h->check_out_date->format('Y-m-d') : '-',
+                    $h->night_count . ' Malam',
+                    $h->guest_name,
+                    $h->booked_by,
+                    $h->paid_by,
+                    $h->payment_date ? $h->payment_date->format('Y-m-d') : '-',
+                    $h->amount,
+                    $h->status,
+                    $h->notes ?? '-'
                 ]);
             }
 

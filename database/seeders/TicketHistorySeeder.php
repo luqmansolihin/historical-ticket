@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\BookingStatusLog;
+use App\Models\TicketDetail;
 use App\Models\TicketHistory;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -13,14 +15,15 @@ class TicketHistorySeeder extends Seeder
      */
     public function run(): void
     {
+        $adminUser = User::where('email', 'admin@ticket.com')->first();
         $financeUser = User::where('email', 'finance@ticket.com')->first() ?? $adminUser;
         $bookerUser = $financeUser;
         $payerUser = $financeUser;
-        $regularUser = User::where('email', 'user@ticket.com')->first();
 
         $tickets = [
             [
                 'ticket_code' => 'GA-89102',
+                'invoice_code' => 'INV-TCK-2026-001',
                 'ticket_date' => '2026-08-15',
                 'origin' => 'Jakarta (CGK)',
                 'destination' => 'Surabaya (SUB)',
@@ -37,6 +40,7 @@ class TicketHistorySeeder extends Seeder
             ],
             [
                 'ticket_code' => 'KA-EX-4481',
+                'invoice_code' => 'INV-TCK-2026-002',
                 'ticket_date' => '2026-08-20',
                 'origin' => 'Bandung (BD)',
                 'destination' => 'Yogyakarta (YK)',
@@ -53,6 +57,7 @@ class TicketHistorySeeder extends Seeder
             ],
             [
                 'ticket_code' => 'QZ-39210',
+                'invoice_code' => 'INV-TCK-2026-003',
                 'ticket_date' => '2026-09-10',
                 'origin' => 'Jakarta (CGK)',
                 'destination' => 'Denpasar Bali (DPS)',
@@ -69,6 +74,7 @@ class TicketHistorySeeder extends Seeder
             ],
             [
                 'ticket_code' => 'TRV-DAYA-102',
+                'invoice_code' => 'INV-TCK-2026-004',
                 'ticket_date' => '2026-08-25',
                 'origin' => 'Bandung (Dipatiukur)',
                 'destination' => 'Jakarta (Fatmawati)',
@@ -85,6 +91,7 @@ class TicketHistorySeeder extends Seeder
             ],
             [
                 'ticket_code' => 'SJ-BUS-902',
+                'invoice_code' => 'INV-TCK-2026-005',
                 'ticket_date' => '2026-07-28',
                 'origin' => 'Jakarta (Pulo Gebang)',
                 'destination' => 'Semarang (Terboyo)',
@@ -101,6 +108,7 @@ class TicketHistorySeeder extends Seeder
             ],
             [
                 'ticket_code' => 'RNT-AVZ-003',
+                'invoice_code' => 'INV-TCK-2026-006',
                 'ticket_date' => '2026-08-01',
                 'origin' => 'Yogyakarta (Adisutjipto)',
                 'destination' => 'Magelang (Borobudur)',
@@ -117,6 +125,7 @@ class TicketHistorySeeder extends Seeder
             ],
             [
                 'ticket_code' => 'QG-6821',
+                'invoice_code' => 'INV-TCK-2026-007',
                 'ticket_date' => '2026-09-02',
                 'origin' => 'Jakarta (HLP)',
                 'destination' => 'Medan (KNO)',
@@ -133,6 +142,7 @@ class TicketHistorySeeder extends Seeder
             ],
             [
                 'ticket_code' => 'KPL-Dharma-08',
+                'invoice_code' => 'INV-TCK-2026-008',
                 'ticket_date' => '2026-06-12',
                 'origin' => 'Surabaya (Tanjung Perak)',
                 'destination' => 'Makassar (Soekarno-Hatta)',
@@ -149,6 +159,7 @@ class TicketHistorySeeder extends Seeder
             ],
             [
                 'ticket_code' => 'JT-61209',
+                'invoice_code' => 'INV-TCK-2026-009',
                 'ticket_date' => '2026-05-04',
                 'origin' => 'Surabaya (SUB)',
                 'destination' => 'Balikpapan (BPN)',
@@ -165,17 +176,38 @@ class TicketHistorySeeder extends Seeder
             ]
         ];
 
-        foreach ($tickets as $ticketData) {
+        foreach ($tickets as $tData) {
             $ticket = TicketHistory::updateOrCreate(
-                ['ticket_code' => $ticketData['ticket_code']],
-                $ticketData
+                ['invoice_code' => $tData['invoice_code']],
+                [
+                    'booking_type' => 'ticket',
+                    'booking_code' => $tData['ticket_code'],
+                    'invoice_code' => $tData['invoice_code'],
+                    'booking_date' => $tData['ticket_date'],
+                    'booked_by' => $tData['booked_by'],
+                    'booked_by_user_id' => $tData['booked_by_user_id'],
+                    'paid_by' => $tData['paid_by'],
+                    'paid_by_user_id' => $tData['paid_by_user_id'],
+                    'payment_date' => $tData['payment_date'],
+                    'amount' => $tData['amount'],
+                    'status' => $tData['status'],
+                    'notes' => $tData['notes'],
+                ]
             );
 
-            // Populate sample activity logs if log doesn't exist
+            TicketDetail::updateOrCreate(
+                ['booking_history_id' => $ticket->id],
+                [
+                    'transport_type' => $tData['transport_type'],
+                    'origin' => $tData['origin'],
+                    'destination' => $tData['destination'],
+                    'passenger_name' => $tData['passenger_name'],
+                ]
+            );
+
             if ($ticket->statusLogs()->count() === 0) {
-                // Step 1: Initial creation (Belum Bayar)
-                \App\Models\TicketStatusLog::create([
-                    'ticket_history_id' => $ticket->id,
+                BookingStatusLog::create([
+                    'booking_history_id' => $ticket->id,
                     'user_id' => $ticket->booked_by_user_id ?: $bookerUser?->id,
                     'user_name' => $ticket->booked_by,
                     'user_role' => 'finance',
@@ -185,9 +217,8 @@ class TicketHistorySeeder extends Seeder
                 ]);
 
                 if ($ticket->status === 'Lunas') {
-                    // Step 2: Payment completed
-                    \App\Models\TicketStatusLog::create([
-                        'ticket_history_id' => $ticket->id,
+                    BookingStatusLog::create([
+                        'booking_history_id' => $ticket->id,
                         'user_id' => $ticket->paid_by_user_id ?: $payerUser?->id,
                         'user_name' => $ticket->paid_by,
                         'user_role' => 'finance',
@@ -196,9 +227,8 @@ class TicketHistorySeeder extends Seeder
                         'notes' => 'Pembayaran dikonfirmasi Lunas.',
                     ]);
                 } elseif ($ticket->status === 'Dibatalkan') {
-                    // Step 2: Payment (if applicable) & Cancellation
-                    \App\Models\TicketStatusLog::create([
-                        'ticket_history_id' => $ticket->id,
+                    BookingStatusLog::create([
+                        'booking_history_id' => $ticket->id,
                         'user_id' => $ticket->booked_by_user_id ?: $bookerUser?->id,
                         'user_name' => $ticket->booked_by,
                         'user_role' => 'finance',

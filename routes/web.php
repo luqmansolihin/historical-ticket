@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HotelHistoryController;
 use App\Http\Controllers\TicketHistoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -27,7 +28,13 @@ Route::middleware('auth')->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
+    // Ticket History Routes
     Route::get('/tickets/export', [TicketHistoryController::class, 'exportCsv'])->name('tickets.export');
     Route::get('/tickets/{ticket}/pdf', [TicketHistoryController::class, 'exportPdf'])->name('tickets.pdf');
     Route::resource('tickets', TicketHistoryController::class);
+
+    // Hotel History Routes
+    Route::get('/hotels/export', [HotelHistoryController::class, 'exportCsv'])->name('hotels.export');
+    Route::get('/hotels/{hotel}/pdf', [HotelHistoryController::class, 'exportPdf'])->name('hotels.pdf');
+    Route::resource('hotels', HotelHistoryController::class);
 });
