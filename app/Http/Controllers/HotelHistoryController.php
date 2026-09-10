@@ -53,6 +53,11 @@ class HotelHistoryController extends Controller
         $amountMax = $request->input('amount_max');
         $amountEq = $request->input('amount_eq');
 
+        // Night Count filters
+        $nightCountMin = $request->input('night_count_min');
+        $nightCountMax = $request->input('night_count_max');
+        $nightCountEq = $request->input('night_count_eq');
+
         // Date filters for Booking Date
         $dateAfter = $request->input('date_after', $request->input('date_from'));
         $dateBefore = $request->input('date_before', $request->input('date_to'));
@@ -116,6 +121,23 @@ class HotelHistoryController extends Controller
             });
         }
 
+        // Apply Night Count Filters
+        if ($nightCountMin || $nightCountMax || $nightCountEq) {
+            $expr = "DATEDIFF(hotel_details.check_out_date, hotel_details.check_in_date)";
+            $query->whereHas('hotelDetail', function ($h) use ($nightCountMin, $nightCountMax, $nightCountEq, $expr) {
+                if ($nightCountEq !== null && $nightCountEq !== '') {
+                    $h->whereRaw("{$expr} = ?", [(int) $nightCountEq]);
+                } else {
+                    if ($nightCountMin !== null && $nightCountMin !== '') {
+                        $h->whereRaw("{$expr} >= ?", [(int) $nightCountMin]);
+                    }
+                    if ($nightCountMax !== null && $nightCountMax !== '') {
+                        $h->whereRaw("{$expr} <= ?", [(int) $nightCountMax]);
+                    }
+                }
+            });
+        }
+
         // Apply Guest Count Filters
         if ($guestCountMin || $guestCountMax || $guestCountEq) {
             $expr = "(LENGTH(COALESCE(hotel_details.guest_name, '')) - LENGTH(REPLACE(COALESCE(hotel_details.guest_name, ''), ',', '')) + CASE WHEN COALESCE(hotel_details.guest_name, '') = '' THEN 0 ELSE 1 END)";
@@ -156,6 +178,7 @@ class HotelHistoryController extends Controller
             'hotel_name' => 'hotel_name',
             'check_in_date' => 'check_in_date',
             'check_out_date' => 'check_out_date',
+            'night_count' => 'night_count',
             'room_count' => 'room_count',
             'guest_name' => 'guest_name',
             'guest_count' => 'guest_count',
@@ -190,12 +213,14 @@ class HotelHistoryController extends Controller
             foreach ($sorts as $s) {
                 $c = $s['col'];
                 $d = $s['dir'];
-                if (in_array($c, ['hotel_name', 'check_in_date', 'check_out_date', 'room_count', 'guest_name', 'guest_count'])) {
+                if (in_array($c, ['hotel_name', 'check_in_date', 'check_out_date', 'night_count', 'room_count', 'guest_name', 'guest_count'])) {
                     $query->join('hotel_details', 'booking_histories.id', '=', 'hotel_details.booking_history_id')
                           ->select('booking_histories.*');
                     if ($c === 'guest_count') {
                         $expr = "(LENGTH(COALESCE(hotel_details.guest_name, '')) - LENGTH(REPLACE(COALESCE(hotel_details.guest_name, ''), ',', '')) + CASE WHEN COALESCE(hotel_details.guest_name, '') = '' THEN 0 ELSE 1 END)";
                         $query->orderByRaw("{$expr} {$d}");
+                    } elseif ($c === 'night_count') {
+                        $query->orderByRaw("DATEDIFF(hotel_details.check_out_date, hotel_details.check_in_date) {$d}");
                     } else {
                         $query->orderBy("hotel_details.{$c}", $d);
                     }
@@ -216,6 +241,9 @@ class HotelHistoryController extends Controller
                 'searchInvoice' => $searchInvoice,
                 'searchHotel' => $searchHotel,
                 'searchGuest' => $searchGuest,
+                'nightCountMin' => $nightCountMin,
+                'nightCountMax' => $nightCountMax,
+                'nightCountEq' => $nightCountEq,
                 'guestCountMin' => $guestCountMin,
                 'guestCountMax' => $guestCountMax,
                 'guestCountEq' => $guestCountEq,

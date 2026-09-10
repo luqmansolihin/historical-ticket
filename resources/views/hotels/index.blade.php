@@ -11,7 +11,7 @@
         loading: false,
         hasMore: {{ $hotels->hasMorePages() ? 'true' : 'false' }},
         sorts: {{ json_encode($sorts ?? []) }},
-        hasFilters: {{ ($search || $searchCode || $searchInvoice || $searchHotel || $searchGuest || $searchBooker || $searchPayer || !empty($status) || $dateAfter || $dateBefore || $dateOn || $checkInFrom || $checkInTo || $checkInOn || $checkOutFrom || $checkOutTo || $checkOutOn || $payDateAfter || $payDateBefore || $payDateOn || $amountMin || $amountMax || $amountEq || $guestCountMin || $guestCountMax || $guestCountEq) ? 'true' : 'false' }},
+        hasFilters: {{ ($search || $searchCode || $searchInvoice || $searchHotel || $searchGuest || $searchBooker || $searchPayer || !empty($status) || $dateAfter || $dateBefore || $dateOn || $checkInFrom || $checkInTo || $checkInOn || $checkOutFrom || $checkOutTo || $checkOutOn || $nightCountMin || $nightCountMax || $nightCountEq || $payDateAfter || $payDateBefore || $payDateOn || $amountMin || $amountMax || $amountEq || $guestCountMin || $guestCountMax || $guestCountEq) ? 'true' : 'false' }},
         activeFilters: {
             code: {{ !empty($searchCode) ? 'true' : 'false' }},
             invoice: {{ !empty($searchInvoice) ? 'true' : 'false' }},
@@ -19,6 +19,7 @@
             hotel: {{ !empty($searchHotel) ? 'true' : 'false' }},
             check_in: {{ ($checkInFrom || $checkInTo || $checkInOn) ? 'true' : 'false' }},
             check_out: {{ ($checkOutFrom || $checkOutTo || $checkOutOn) ? 'true' : 'false' }},
+            night_count: {{ ($nightCountMin || $nightCountMax || $nightCountEq) ? 'true' : 'false' }},
             guest: {{ !empty($searchGuest) ? 'true' : 'false' }},
             guest_count: {{ ($guestCountMin || $guestCountMax || $guestCountEq) ? 'true' : 'false' }},
             booker: {{ !empty($searchBooker) ? 'true' : 'false' }},
@@ -44,6 +45,7 @@
             this.activeFilters.hotel = !!(formData.get('search_hotel') && formData.get('search_hotel').trim());
             this.activeFilters.check_in = !!((formData.get('check_in_from') && formData.get('check_in_from').trim()) || (formData.get('check_in_to') && formData.get('check_in_to').trim()) || (formData.get('check_in_on') && formData.get('check_in_on').trim()));
             this.activeFilters.check_out = !!((formData.get('check_out_from') && formData.get('check_out_from').trim()) || (formData.get('check_out_to') && formData.get('check_out_to').trim()) || (formData.get('check_out_on') && formData.get('check_out_on').trim()));
+            this.activeFilters.night_count = !!((formData.get('night_count_min') && formData.get('night_count_min').trim()) || (formData.get('night_count_max') && formData.get('night_count_max').trim()) || (formData.get('night_count_eq') && formData.get('night_count_eq').trim()));
             this.activeFilters.guest = !!(formData.get('search_guest') && formData.get('search_guest').trim());
             this.activeFilters.guest_count = !!((formData.get('guest_count_min') && formData.get('guest_count_min').trim()) || (formData.get('guest_count_max') && formData.get('guest_count_max').trim()) || (formData.get('guest_count_eq') && formData.get('guest_count_eq').trim()));
             this.activeFilters.booker = !!(formData.get('search_booker') && formData.get('search_booker').trim());
@@ -464,7 +466,56 @@
                             </th>
 
                             <!-- 7. Jml Malam -->
-                            <th class="py-1 px-2 text-center whitespace-nowrap border-r border-slate-800/60 font-bold">Malam</th>
+                            <th class="py-1 px-2 text-center whitespace-nowrap relative border-r border-slate-800/60 transition-colors" :class="activeFilters.night_count ? 'bg-amber-950/80 border-b-2 border-b-amber-400 text-amber-200' : ''" @click.outside="if (openPop === 'night_count') openPop = null">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button type="button" @click="toggleSort('night_count')" class="flex items-center gap-1 font-bold transition-colors cursor-pointer select-none group/sort" :class="getSortIndex('night_count') !== -1 ? 'text-amber-400 font-extrabold' : 'text-slate-300 hover:text-white'" title="Urutkan Jumlah Malam">
+                                        <span>Malam</span>
+                                        <template x-if="getSortIndex('night_count') === -1">
+                                            <i class="fa-solid fa-sort text-slate-600 text-[10px] group-hover/sort:text-slate-400 transition-colors"></i>
+                                        </template>
+                                        <template x-if="getSortIndex('night_count') !== -1">
+                                            <span class="inline-flex items-center gap-0.5 text-amber-400 font-bold text-[10px]">
+                                                <i class="fa-solid" :class="getSortDir('night_count') === 'asc' ? 'fa-arrow-up-wide-short' : 'fa-arrow-down-wide-short'"></i>
+                                                <span x-show="sorts.length > 1" class="text-[8px] bg-amber-500/20 px-1 py-0.2 rounded-full border border-amber-500/40 font-mono" x-text="getSortIndex('night_count') + 1"></span>
+                                            </span>
+                                        </template>
+                                    </button>
+                                    <button type="button" @click="openPop = (openPop === 'night_count' ? null : 'night_count')" class="p-1 rounded transition-colors" :class="activeFilters.night_count ? 'text-amber-300 bg-amber-500/30' : 'text-slate-500 hover:text-slate-300'" title="Filter Jumlah Malam">
+                                        <i class="fa-solid" :class="activeFilters.night_count ? 'fa-filter text-amber-400 text-[11px]' : 'fa-caret-down text-xs'"></i>
+                                    </button>
+                                </div>
+                                <div x-show="openPop === 'night_count'" x-cloak x-transition class="absolute z-50 left-0 mt-2 p-3.5 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl space-y-3 text-left font-normal normal-case min-w-[250px]"
+                                     x-data="{
+                                         min: '{{ $nightCountMin ?? '' }}',
+                                         max: '{{ $nightCountMax ?? '' }}',
+                                         eq: '{{ $nightCountEq ?? '' }}',
+                                         onMinMaxChange() { if (this.min || this.max) { this.eq = ''; } },
+                                         onEqChange() { if (this.eq) { this.min = ''; this.max = ''; } }
+                                     }">
+                                    <div class="text-xs font-semibold text-slate-300 border-b border-slate-800 pb-1.5 flex items-center justify-between">
+                                        <span>Filter Jumlah Malam</span>
+                                        <i class="fa-solid fa-moon text-amber-400"></i>
+                                    </div>
+                                    <div class="space-y-2.5">
+                                        <div>
+                                            <label class="block text-[11px] font-medium text-slate-400 mb-1">&ge; Lebih Besar Sama Dengan:</label>
+                                            <input type="number" name="night_count_min" x-model="min" @input="onMinMaxChange()" placeholder="Contoh: 1" step="1" min="1" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-medium text-slate-400 mb-1">&le; Lebih Kecil Sama Dengan:</label>
+                                            <input type="number" name="night_count_max" x-model="max" @input="onMinMaxChange()" placeholder="Contoh: 5" step="1" min="1" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono">
+                                        </div>
+                                        <div class="pt-1 border-t border-slate-800/60">
+                                            <label class="block text-[11px] font-medium text-slate-400 mb-1">= Sama Dengan:</label>
+                                            <input type="number" name="night_count_eq" x-model="eq" @input="onEqChange()" placeholder="Contoh: 2" step="1" min="1" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono">
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px]">
+                                        <button type="button" @click="min = ''; max = ''; eq = ''" class="px-2.5 py-1 rounded bg-slate-800 text-slate-300 text-xs">Clear</button>
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow">Terapkan</button>
+                                    </div>
+                                </div>
+                            </th>
 
                             <!-- 7b. Jml Kamar -->
                             <th class="py-1 px-2 text-center whitespace-nowrap border-r border-slate-800/60 transition-colors">
