@@ -135,11 +135,20 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Status Pembayaran <span class="text-rose-400">*</span></label>
-                        <select name="status" x-model="status" required class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs">
-                            @foreach($statusOptions as $opt)
-                                <option value="{{ $opt }}" class="bg-slate-900 text-white">{{ $opt }}</option>
-                            @endforeach
-                        </select>
+                        @if(!Auth::user()->isAdmin())
+                            <div class="w-full glass-input rounded-xl px-3.5 py-2.5 text-xs bg-slate-900/80 flex items-center justify-between border border-amber-500/30">
+                                <span class="inline-flex items-center gap-2 font-semibold text-amber-400">
+                                    <i class="fa-solid fa-hourglass-half text-xs"></i> Belum Bayar
+                                </span>
+                            </div>
+                            <input type="hidden" name="status" value="Belum Bayar">
+                        @else
+                            <select name="status" x-model="status" required class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs">
+                                @foreach($statusOptions as $opt)
+                                    <option value="{{ $opt }}" {{ old('status', 'Belum Bayar') == $opt ? 'selected' : '' }} class="bg-slate-900 text-white">{{ $opt }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                     </div>
 
                     <div>

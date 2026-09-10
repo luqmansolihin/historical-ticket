@@ -362,15 +362,21 @@ class HotelHistoryController extends Controller
         }
         $validated['booked_by_user_id'] = Auth::id();
 
-        if (empty($validated['paid_by'])) {
+        if (!Auth::user()->isAdmin()) {
+            $validated['status'] = 'Belum Bayar';
             $validated['paid_by'] = '-';
-        }
-
-        if ($validated['status'] === 'Lunas') {
-            $validated['paid_by'] = Auth::user()->name;
-            $validated['paid_by_user_id'] = Auth::id();
-            if (empty($validated['payment_date'])) {
-                $validated['payment_date'] = now()->format('Y-m-d');
+            $validated['paid_by_user_id'] = null;
+            $validated['payment_date'] = null;
+        } else {
+            if (empty($validated['paid_by'])) {
+                $validated['paid_by'] = '-';
+            }
+            if ($validated['status'] === 'Lunas') {
+                $validated['paid_by'] = Auth::user()->name;
+                $validated['paid_by_user_id'] = Auth::id();
+                if (empty($validated['payment_date'])) {
+                    $validated['payment_date'] = now()->format('Y-m-d');
+                }
             }
         }
 
