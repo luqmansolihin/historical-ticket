@@ -272,7 +272,7 @@
                             <span class="info-value" style="font-family: monospace; color: #bae6fd;">{{ $hotel->invoice_code }}</span>
                         </td>
                         <td class="grid-cell">
-                            <span class="info-label">PEMESAN (BOOKED BY)</span>
+                            <span class="info-label">PEMESAN HOTEL</span>
                             <span class="info-value info-value-indigo">{{ $hotel->booked_by }}</span>
                         </td>
                     </tr>

@@ -43,6 +43,9 @@ class HotelHistoryController extends Controller
         $searchInvoice = $request->input('search_invoice');
         $searchHotel = $request->input('search_hotel');
         $searchGuest = $request->input('search_guest');
+        $guestCountMin = $request->input('guest_count_min');
+        $guestCountMax = $request->input('guest_count_max');
+        $guestCountEq = $request->input('guest_count_eq');
         $searchBooker = $request->input('search_booker');
         $searchPayer = $request->input('search_payer');
         $status = array_values(array_filter((array) $request->input('status', [])));
@@ -58,8 +61,11 @@ class HotelHistoryController extends Controller
         // Check-in & Check-out date filters
         $checkInFrom = $request->input('check_in_from');
         $checkInTo = $request->input('check_in_to');
+        $checkInOn = $request->input('check_in_on');
+
         $checkOutFrom = $request->input('check_out_from');
         $checkOutTo = $request->input('check_out_to');
+        $checkOutOn = $request->input('check_out_on');
 
         // Date filters for Payment Date
         $payDateAfter = $request->input('pay_date_after', $request->input('pay_date_from'));
@@ -91,7 +97,9 @@ class HotelHistoryController extends Controller
         }
 
         // Apply Check-In Date Filters
-        if ($checkInFrom || $checkInTo) {
+        if ($checkInOn) {
+            $query->whereHas('hotelDetail', fn($h) => $h->whereDate('check_in_date', '=', $checkInOn));
+        } else if ($checkInFrom || $checkInTo) {
             $query->whereHas('hotelDetail', function ($h) use ($checkInFrom, $checkInTo) {
                 if ($checkInFrom) $h->whereDate('check_in_date', '>=', $checkInFrom);
                 if ($checkInTo) $h->whereDate('check_in_date', '<=', $checkInTo);
@@ -99,10 +107,29 @@ class HotelHistoryController extends Controller
         }
 
         // Apply Check-Out Date Filters
-        if ($checkOutFrom || $checkOutTo) {
+        if ($checkOutOn) {
+            $query->whereHas('hotelDetail', fn($h) => $h->whereDate('check_out_date', '=', $checkOutOn));
+        } else if ($checkOutFrom || $checkOutTo) {
             $query->whereHas('hotelDetail', function ($h) use ($checkOutFrom, $checkOutTo) {
                 if ($checkOutFrom) $h->whereDate('check_out_date', '>=', $checkOutFrom);
                 if ($checkOutTo) $h->whereDate('check_out_date', '<=', $checkOutTo);
+            });
+        }
+
+        // Apply Guest Count Filters
+        if ($guestCountMin || $guestCountMax || $guestCountEq) {
+            $expr = "(LENGTH(COALESCE(hotel_details.guest_name, '')) - LENGTH(REPLACE(COALESCE(hotel_details.guest_name, ''), ',', '')) + CASE WHEN COALESCE(hotel_details.guest_name, '') = '' THEN 0 ELSE 1 END)";
+            $query->whereHas('hotelDetail', function ($h) use ($guestCountMin, $guestCountMax, $guestCountEq, $expr) {
+                if ($guestCountEq !== null && $guestCountEq !== '') {
+                    $h->whereRaw("{$expr} = ?", [(int) $guestCountEq]);
+                } else {
+                    if ($guestCountMin !== null && $guestCountMin !== '') {
+                        $h->whereRaw("{$expr} >= ?", [(int) $guestCountMin]);
+                    }
+                    if ($guestCountMax !== null && $guestCountMax !== '') {
+                        $h->whereRaw("{$expr} <= ?", [(int) $guestCountMax]);
+                    }
+                }
             });
         }
 
@@ -126,6 +153,11 @@ class HotelHistoryController extends Controller
             'booking_code' => 'booking_code',
             'invoice_code' => 'invoice_code',
             'booking_date' => 'booking_date',
+            'hotel_name' => 'hotel_name',
+            'check_in_date' => 'check_in_date',
+            'check_out_date' => 'check_out_date',
+            'guest_name' => 'guest_name',
+            'guest_count' => 'guest_count',
             'booked_by' => 'booked_by',
             'paid_by' => 'paid_by',
             'amount' => 'amount',
@@ -155,11 +187,24 @@ class HotelHistoryController extends Controller
 
         if (!empty($sorts)) {
             foreach ($sorts as $s) {
-                $query->orderBy($allowedSorts[$s['col']], $s['dir']);
+                $c = $s['col'];
+                $d = $s['dir'];
+                if (in_array($c, ['hotel_name', 'check_in_date', 'check_out_date', 'guest_name', 'guest_count'])) {
+                    $query->join('hotel_details', 'booking_histories.id', '=', 'hotel_details.booking_history_id')
+                          ->select('booking_histories.*');
+                    if ($c === 'guest_count') {
+                        $expr = "(LENGTH(COALESCE(hotel_details.guest_name, '')) - LENGTH(REPLACE(COALESCE(hotel_details.guest_name, ''), ',', '')) + CASE WHEN COALESCE(hotel_details.guest_name, '') = '' THEN 0 ELSE 1 END)";
+                        $query->orderByRaw("{$expr} {$d}");
+                    } else {
+                        $query->orderBy("hotel_details.{$c}", $d);
+                    }
+                } else {
+                    $query->orderBy("booking_histories.{$allowedSorts[$c]}", $d);
+                }
             }
-            $query->orderBy('id', 'desc');
+            $query->orderBy('booking_histories.id', 'desc');
         } else {
-            $query->orderBy('id', 'desc');
+            $query->orderBy('booking_histories.id', 'desc');
         }
 
         return [
@@ -170,6 +215,9 @@ class HotelHistoryController extends Controller
                 'searchInvoice' => $searchInvoice,
                 'searchHotel' => $searchHotel,
                 'searchGuest' => $searchGuest,
+                'guestCountMin' => $guestCountMin,
+                'guestCountMax' => $guestCountMax,
+                'guestCountEq' => $guestCountEq,
                 'searchBooker' => $searchBooker,
                 'searchPayer' => $searchPayer,
                 'status' => $status,
@@ -178,8 +226,10 @@ class HotelHistoryController extends Controller
                 'dateOn' => $dateOn,
                 'checkInFrom' => $checkInFrom,
                 'checkInTo' => $checkInTo,
+                'checkInOn' => $checkInOn,
                 'checkOutFrom' => $checkOutFrom,
                 'checkOutTo' => $checkOutTo,
+                'checkOutOn' => $checkOutOn,
                 'payDateAfter' => $payDateAfter,
                 'payDateBefore' => $payDateBefore,
                 'payDateOn' => $payDateOn,
@@ -203,14 +253,6 @@ class HotelHistoryController extends Controller
         $query = $filtered['query'];
         $params = $filtered['params'];
 
-        // Summary statistics
-        $statsQuery = clone $query;
-        $totalHotels = $statsQuery->count();
-        $totalAmount = (float) $statsQuery->sum('amount');
-        $totalLunas = (clone $statsQuery)->where('status', 'Lunas')->count();
-        $totalBelumBayar = (clone $statsQuery)->where('status', 'Belum Bayar')->count();
-        $totalDibatalkan = (clone $statsQuery)->where('status', 'Dibatalkan')->count();
-
         $hotels = $query->paginate(25)->withQueryString();
 
         $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
@@ -226,15 +268,7 @@ class HotelHistoryController extends Controller
 
         return view('hotels.index', array_merge(
             $params,
-            compact(
-                'hotels',
-                'totalHotels',
-                'totalAmount',
-                'totalLunas',
-                'totalBelumBayar',
-                'totalDibatalkan',
-                'statusOptions'
-            )
+            compact('hotels', 'statusOptions')
         ));
     }
 

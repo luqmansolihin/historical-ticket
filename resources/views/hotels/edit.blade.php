@@ -265,8 +265,8 @@
                             </div>
                             <div class="flex items-center gap-2 no-print">
                                 <!-- Stream / Download PDF Button -->
-                                <a href="{{ route('hotels.pdf', $hotel->id) }}" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-colors shadow-sm" title="Stream / Download PDF Voucher Hotel">
-                                    <i class="fa-solid fa-file-pdf"></i> Stream PDF
+                                <a href="{{ route('hotels.pdf', $hotel->id) }}" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-colors shadow-sm" title="Download PDF Voucher Hotel">
+                                    <i class="fa-solid fa-file-pdf"></i> Download PDF
                                 </a>
 
                                 <button type="button" @click="showModal = false" class="w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center text-white transition-colors">
@@ -331,14 +331,18 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                        <div class="grid grid-cols-3 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                             <div>
-                                <span class="text-xs text-slate-400 block">Booked By</span>
+                                <span class="text-xs text-slate-400 block">Pemesan Hotel</span>
                                 <span class="text-xs font-semibold text-indigo-300 mt-0.5 block">{{ $hotel->booked_by }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-slate-400 block">Paid By & Tanggal</span>
-                                <span class="text-xs font-semibold text-emerald-300 mt-0.5 block">{{ $hotel->paid_by }} @if($hotel->payment_date) ({{ $hotel->payment_date->format('d M Y') }}) @endif</span>
+                                <span class="text-xs text-slate-400 block">Pembayaran Oleh</span>
+                                <span class="text-xs font-semibold text-emerald-300 mt-0.5 block">{{ $hotel->paid_by }}</span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400 block">Tanggal Bayar</span>
+                                <span class="text-xs font-semibold text-slate-300 mt-0.5 font-mono block">{{ $hotel->payment_date ? $hotel->payment_date->format('d M Y') : '-' }}</span>
                             </div>
                         </div>
 
