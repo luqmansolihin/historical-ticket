@@ -10,7 +10,7 @@
     <!-- Header -->
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <a href="{{ route('expenses.index') }}" class="text-xs font-medium text-amber-400 hover:text-amber-300 inline-flex items-center gap-1.5 mb-2">
+            <a href="{{ route('expenses.index') }}" class="text-xs font-medium text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1.5 mb-2">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Histori Biaya Lain-lain
             </a>
             <h1 class="font-display text-2xl sm:text-3xl font-bold text-white leading-tight">Tambah Histori Biaya Lain-lain</h1>
@@ -38,7 +38,7 @@
 
             <!-- Section 1: Informasi Transaksi Biaya -->
             <div>
-                <h3 class="text-xs sm:text-sm font-semibold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-receipt"></i> Data Transaksi Biaya
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
@@ -68,7 +68,7 @@
 
             <!-- Section 2: Pemesan & Pembayaran -->
             <div>
-                <h3 class="text-xs sm:text-sm font-semibold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-wallet"></i> Detail Pengaju & Pembayaran
                 </h3>
 
@@ -86,8 +86,8 @@
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Status Pembayaran <span class="text-rose-400">*</span></label>
                         @if(!Auth::user()->isAdmin())
-                            <div class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900/80 flex items-center justify-between border border-amber-500/30">
-                                <span class="inline-flex items-center gap-2 font-semibold text-amber-400">
+                            <div class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900/80 flex items-center justify-between border border-emerald-500/30">
+                                <span class="inline-flex items-center gap-2 font-semibold text-emerald-400">
                                     <i class="fa-solid fa-hourglass-half text-xs"></i> Belum Bayar
                                 </span>
                             </div>
@@ -109,7 +109,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1.5">File Lampiran Bukti / Invoice (PDF / JPG / PNG)</label>
-                    <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs text-slate-400 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500 hover:file:text-slate-950">
+                    <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs text-slate-400 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-300 hover:file:bg-emerald-500 hover:file:text-slate-950">
                 </div>
 
                 <div>
@@ -121,7 +121,7 @@
             <!-- Submit Button -->
             <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
                 <a href="{{ route('expenses.index') }}" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all">Batal</a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2">
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan Histori Biaya
                 </button>
             </div>

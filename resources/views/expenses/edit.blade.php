@@ -19,11 +19,11 @@
     <!-- Header & Action Buttons -->
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <a href="{{ route('expenses.index') }}" class="text-xs font-medium text-amber-400 hover:text-amber-300 inline-flex items-center gap-1.5 mb-2">
+            <a href="{{ route('expenses.index') }}" class="text-xs font-medium text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1.5 mb-2">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Histori Biaya Lain-lain
             </a>
             <h1 class="font-display text-2xl sm:text-3xl font-bold text-white leading-tight">Edit Histori Biaya Lain-lain</h1>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1">Perbarui data transaksi <span class="font-mono text-amber-400 font-semibold">{{ $expense->invoice_code }}</span></p>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Perbarui data transaksi <span class="font-mono text-emerald-400 font-semibold">{{ $expense->invoice_code }}</span></p>
         </div>
 
         <!-- Tombol Hapus di Header -->
@@ -43,8 +43,8 @@
     <!-- Form Container -->
     <div class="glass-card p-4 sm:p-8 rounded-2xl shadow-2xl overflow-hidden">
         @if($isBookerLunas)
-            <div class="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-3">
-                <i class="fa-solid fa-lock text-xl text-amber-400 shrink-0"></i>
+            <div class="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-3">
+                <i class="fa-solid fa-lock text-xl text-emerald-400 shrink-0"></i>
                 <div>
                     <span class="font-bold block text-sm">Transaksi Biaya Berstatus Lunas — Mode Pembatasan Akses (Finance)</span>
                     <span>Data biaya dan pengaju telah dikunci karena pembayaran sudah <strong>Lunas</strong>. Sebagai Finance, Anda diperbolehkan mengedit <strong>Tanggal Pembayaran</strong> atau mengubah status menjadi <strong>Dibatalkan</strong>.</span>
@@ -81,7 +81,7 @@
 
             <!-- Section 1: Informasi Transaksi Biaya -->
             <div>
-                <h3 class="text-xs sm:text-sm font-semibold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-receipt"></i> Data Transaksi Biaya
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
@@ -111,7 +111,7 @@
 
             <!-- Section 2: Pemesan & Pembayaran -->
             <div>
-                <h3 class="text-xs sm:text-sm font-semibold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-wallet"></i> Detail Pengaju & Pembayaran
                 </h3>
 
@@ -123,15 +123,15 @@
                     </div>
 
                     @if($isFinance)
-                        <div class="md:col-span-2 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex items-center gap-2.5 shadow-inner">
-                            <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0">
+                        <div class="md:col-span-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 flex items-center gap-2.5 shadow-inner">
+                            <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs shrink-0">
                                 <i class="fa-solid fa-credit-card"></i>
                             </div>
                             <div class="min-w-0 flex-1">
-                                <div class="text-[10px] text-amber-400 font-semibold uppercase tracking-wider truncate">Pembayaran Oleh (Finance)</div>
+                                <div class="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider truncate">Pembayaran Oleh (Finance)</div>
                                 <div class="text-xs font-bold text-white flex items-center gap-1.5 truncate">
                                     <span class="truncate">{{ $expense->paid_by && $expense->paid_by !== '-' ? $expense->paid_by : Auth::user()->name }}</span>
-                                    <span class="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 shrink-0">
+                                    <span class="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 shrink-0">
                                         Finance
                                     </span>
                                 </div>
@@ -203,10 +203,10 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1.5">File Lampiran Bukti / Invoice (Kosongkan jika tidak diubah)</label>
-                    <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs text-slate-400 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500 hover:file:text-slate-950">
+                    <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs text-slate-400 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-300 hover:file:bg-emerald-500 hover:file:text-slate-950">
                     @if($expense->attachment_path)
                         <div class="mt-2 text-xs">
-                            <a href="{{ asset('storage/' . $expense->attachment_path) }}" target="_blank" class="text-amber-400 hover:underline flex items-center gap-1">
+                            <a href="{{ asset('storage/' . $expense->attachment_path) }}" target="_blank" class="text-emerald-400 hover:underline flex items-center gap-1">
                                 <i class="fa-solid fa-paperclip"></i> Lihat File Lampiran Saat Ini
                             </a>
                         </div>
@@ -222,7 +222,7 @@
             <!-- Submit Button -->
             <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
                 <a href="{{ route('expenses.index') }}" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all">Batal</a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2">
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2">
                     <i class="fa-solid fa-floppy-disk"></i> Perbarui Data Biaya
                 </button>
             </div>
@@ -232,14 +232,14 @@
     <!-- Riwayat Log Status Activity -->
     @if($expense->statusLogs->count() > 0)
         <div class="mt-8 glass-card p-6 rounded-2xl border border-slate-800">
-            <h3 class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <h3 class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Log Status Pembayaran
             </h3>
             <div class="space-y-3">
                 @foreach($expense->statusLogs as $log)
                     <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs">
                         <div class="flex items-center justify-between">
-                            <span class="font-semibold text-amber-400">{{ $log->to_status }}</span>
+                            <span class="font-semibold text-emerald-400">{{ $log->to_status }}</span>
                             <span class="text-[10px] font-mono text-slate-400">{{ $log->created_at->format('d M Y, H:i') }}</span>
                         </div>
                         <p class="text-slate-300 text-xs mt-1">{{ $log->notes }}</p>

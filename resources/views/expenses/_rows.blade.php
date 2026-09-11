@@ -1,20 +1,20 @@
 @forelse($expenses as $expense)
     @can('update', $expense)
         <tr @dblclick="window.location.href = '{{ route('expenses.edit', $expense->id) }}'"
-            class="hover:bg-amber-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
+            class="hover:bg-emerald-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
             title="Double klik untuk mengedit data histori biaya {{ $expense->invoice_code }}">
     @else
         <tr @dblclick="window.location.href = '{{ route('expenses.show', $expense->id) }}'"
-            class="hover:bg-amber-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
+            class="hover:bg-emerald-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
             title="Double klik untuk melihat detail histori biaya {{ $expense->invoice_code }}">
     @endcan
         <!-- 1. Kode Booking / Ref -->
-        <td class="py-0.5 px-2 font-mono font-semibold text-amber-400 whitespace-nowrap border-r border-slate-800/40">
+        <td class="py-0.5 px-2 font-mono font-semibold text-emerald-400 whitespace-nowrap border-r border-slate-800/40">
             {{ $expense->booking_code ?: '-' }}
         </td>
 
         <!-- 2. Kode Invoice -->
-        <td class="py-0.5 px-2 font-mono font-semibold text-indigo-300 whitespace-nowrap border-r border-slate-800/40">
+        <td class="py-0.5 px-2 font-mono font-semibold text-teal-300 whitespace-nowrap border-r border-slate-800/40">
             {{ $expense->invoice_code ?: '-' }}
         </td>
 
@@ -30,7 +30,7 @@
 
         <!-- 5. Pemesan / Pengaju -->
         <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
-            <span class="text-indigo-300 font-medium">{{ $expense->booked_by }}</span>
+            <span class="text-emerald-300 font-medium">{{ $expense->booked_by }}</span>
         </td>
 
         <!-- 6. Pembayar -->

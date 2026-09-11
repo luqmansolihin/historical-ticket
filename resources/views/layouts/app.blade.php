@@ -258,9 +258,9 @@
                             <!-- Histori Biaya Lain-lain -->
                             <a href="{{ route('expenses.index') }}" 
                                :class="isCollapsed ? 'md:justify-center md:px-0' : ''"
-                               class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all {{ request()->routeIs('expenses.*') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                               class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all {{ request()->routeIs('expenses.*') ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-semibold shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
                                :title="isCollapsed ? 'Histori Biaya Lain-lain' : ''">
-                                <i class="fa-solid fa-receipt text-base {{ request()->routeIs('expenses.*') ? 'text-sky-400' : 'text-slate-400' }}"></i>
+                                <i class="fa-solid fa-receipt text-base {{ request()->routeIs('expenses.*') ? 'text-emerald-400' : 'text-slate-400' }}"></i>
                                 <span :class="isCollapsed ? 'md:hidden' : ''">Histori Biaya Lain-lain</span>
                             </a>
 
