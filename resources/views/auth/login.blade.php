@@ -24,6 +24,9 @@
     </script>
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
 
+    <!-- Local Alpine.js -->
+    <script defer src="{{ asset('vendor/alpinejs/alpine.min.js') }}"></script>
+
     <style>
         .glass-card {
             background: rgba(15, 23, 42, 0.85);
@@ -56,16 +59,38 @@
 
         <!-- Notification -->
         @if(session('success'))
-            <div class="mb-4 p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-xs flex items-center gap-2">
-                <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
-                <span>{{ session('success') }}</span>
+            <div x-data="{ show: true }" 
+                 x-show="show" 
+                 x-init="setTimeout(() => show = false, 4000)" 
+                 x-transition:leave="transition ease-in duration-300"
+                 x-transition:leave-start="opacity-100 transform scale-100"
+                 x-transition:leave-end="opacity-0 transform scale-95"
+                 class="mb-4 p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-xs flex items-center justify-between shadow-lg backdrop-blur-sm">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+                <button type="button" @click="show = false" class="text-emerald-400 hover:text-emerald-200 ml-2 transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
             </div>
         @endif
 
         @if(session('error'))
-            <div class="mb-4 p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 text-xs flex items-center gap-2">
-                <i class="fa-solid fa-triangle-exclamation text-rose-400 text-sm"></i>
-                <span>{{ session('error') }}</span>
+            <div x-data="{ show: true }" 
+                 x-show="show" 
+                 x-init="setTimeout(() => show = false, 5000)" 
+                 x-transition:leave="transition ease-in duration-300"
+                 x-transition:leave-start="opacity-100 transform scale-100"
+                 x-transition:leave-end="opacity-0 transform scale-95"
+                 class="mb-4 p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 text-xs flex items-center justify-between shadow-lg backdrop-blur-sm">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-rose-400 text-sm"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+                <button type="button" @click="show = false" class="text-rose-400 hover:text-rose-200 ml-2 transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
             </div>
         @endif
 

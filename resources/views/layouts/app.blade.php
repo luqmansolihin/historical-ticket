@@ -336,7 +336,7 @@
                 @endif
 
                 @if(session('error'))
-                    <div x-data="{ show: true }" x-show="show" class="mb-3 p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 flex items-center justify-between shadow-xl no-print shrink-0">
+                    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95" class="mb-3 p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 flex items-center justify-between shadow-xl no-print shrink-0">
                         <div class="flex items-center space-x-3">
                             <div class="w-7 h-7 rounded-lg bg-rose-500/20 flex items-center justify-center text-rose-400">
                                 <i class="fa-solid fa-triangle-exclamation text-sm"></i>
