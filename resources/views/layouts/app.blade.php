@@ -469,8 +469,7 @@
                         const fetchOptions = {
                             method: method,
                             headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'X-SPA': '1'
+                                'X-SPA-REQUEST': '1'
                             }
                         };
 

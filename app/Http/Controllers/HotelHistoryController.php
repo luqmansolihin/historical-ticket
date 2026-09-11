@@ -286,7 +286,7 @@ class HotelHistoryController extends Controller
 
         $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
 
-        if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+        if (!$request->header('X-SPA-REQUEST') && ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest')) {
             return response()->json([
                 'html' => view('hotels._rows', compact('hotels'))->render(),
                 'next_page_url' => $hotels->nextPageUrl(),

@@ -142,7 +142,7 @@ class ExpenseHistoryController extends Controller
 
         $statusOptions = ['Lunas', 'Belum Bayar', 'Dibatalkan'];
 
-        if ($request->ajax()) {
+        if (!$request->header('X-SPA-REQUEST') && $request->ajax()) {
             return response()->json([
                 'table_html' => view('expenses._rows', compact('expenses'))->render(),
                 'pagination_html' => $expenses->links()->render(),

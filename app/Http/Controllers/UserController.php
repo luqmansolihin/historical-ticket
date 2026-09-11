@@ -110,7 +110,7 @@ class UserController extends Controller
 
         $roleOptions = ['admin', 'finance', 'user'];
 
-        if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+        if (!$request->header('X-SPA-REQUEST') && ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest')) {
             return response()->json([
                 'html' => view('users._rows', compact('users'))->render(),
                 'next_page_url' => $users->nextPageUrl(),
