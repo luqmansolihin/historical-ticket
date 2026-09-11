@@ -1,6 +1,6 @@
 @forelse($hotels as $hotel)
     @can('update', $hotel)
-        <tr @dblclick="window.location.href = '{{ route('hotels.edit', $hotel->id) }}'"
+        <tr @dblclick="window.loadSpaPage('{{ route('hotels.edit', $hotel->id) }}')"
             class="hover:bg-amber-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
             title="Double klik untuk mengedit data hotel {{ $hotel->booking_code ?: '-' }}">
     @else

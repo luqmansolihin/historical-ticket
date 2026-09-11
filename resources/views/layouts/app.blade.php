@@ -395,7 +395,11 @@
     <script>
         (function() {
             function initSpaEngine() {
-                if (window.location.search) {
+                if (window.location.pathname !== '/main/index' && window.location.pathname !== '/login') {
+                    try {
+                        window.history.replaceState(window.history.state, '', '/main/index');
+                    } catch(e){}
+                } else if (window.location.search) {
                     try {
                         window.history.replaceState(window.history.state, '', window.location.pathname);
                     } catch(e){}
@@ -555,6 +559,8 @@
                         finishProgress();
                     }
                 }
+
+                window.loadSpaPage = loadSpaPage;
 
                 // Intercept internal link clicks
                 document.addEventListener('click', function(e) {

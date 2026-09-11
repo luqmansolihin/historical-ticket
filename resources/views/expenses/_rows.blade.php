@@ -1,10 +1,10 @@
 @forelse($expenses as $expense)
     @can('update', $expense)
-        <tr @dblclick="window.location.href = '{{ route('expenses.edit', $expense->id) }}'"
+        <tr @dblclick="window.loadSpaPage('{{ route('expenses.edit', $expense->id) }}')"
             class="hover:bg-emerald-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
             title="Double klik untuk mengedit data histori biaya {{ $expense->invoice_code }}">
     @else
-        <tr @dblclick="window.location.href = '{{ route('expenses.show', $expense->id) }}'"
+        <tr @dblclick="window.loadSpaPage('{{ route('expenses.show', $expense->id) }}')"
             class="hover:bg-emerald-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
             title="Double klik untuk melihat detail histori biaya {{ $expense->invoice_code }}">
     @endcan

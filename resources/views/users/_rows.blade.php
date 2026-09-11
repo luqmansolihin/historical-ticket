@@ -1,5 +1,5 @@
 @forelse($users as $userItem)
-    <tr @dblclick="window.location.href = '{{ route('users.edit', $userItem->id) }}'"
+    <tr @dblclick="window.loadSpaPage('{{ route('users.edit', $userItem->id) }}')"
         class="hover:bg-purple-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
         title="Double klik untuk mengedit akun {{ $userItem->name }}">
         <!-- 1. Nama Pengguna -->
