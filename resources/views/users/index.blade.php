@@ -18,9 +18,6 @@
         },
         init() {
             this.checkAutoFill();
-            window.addEventListener('popstate', () => {
-                this.applyFilters(window.location.href, false);
-            });
         },
         checkHasFilters() {
             const form = document.getElementById('users-filter-form');
