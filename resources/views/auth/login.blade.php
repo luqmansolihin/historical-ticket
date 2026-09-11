@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-950 text-slate-100">
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ExpenseTrace</title>
+    <title>Sign In - ExpenseTrace</title>
 
     <!-- Local Fonts -->
     <link rel="stylesheet" href="{{ asset('vendor/fonts/fonts.css') }}">
@@ -100,7 +100,7 @@
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-xs font-semibold text-slate-300 mb-1.5">Alamat Email</label>
+                    <label for="email" class="block text-xs font-semibold text-slate-300 mb-1.5">Email Address</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">
                             <i class="fa-solid fa-envelope"></i>
@@ -125,12 +125,12 @@
                 <div class="flex items-center justify-between text-xs pt-1">
                     <label class="flex items-center gap-2 text-slate-400 cursor-pointer">
                         <input type="checkbox" name="remember" class="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-0">
-                        <span>Ingat saya</span>
+                        <span>Remember me</span>
                     </label>
                 </div>
 
                 <button type="submit" class="w-full py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition-all">
-                    <i class="fa-solid fa-right-to-bracket mr-2"></i> Masuk / Login
+                    <i class="fa-solid fa-right-to-bracket mr-2"></i> Sign In
                 </button>
             </form>
         </div>

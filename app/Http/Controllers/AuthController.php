@@ -36,11 +36,11 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             return redirect()->intended(route('main.index'))
-                ->with('success', 'Selamat datang kembali, ' . Auth::user()->name . '!');
+                ->with('success', 'Welcome back, ' . Auth::user()->name . '!');
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password yang Anda masukkan salah.',
+            'email' => 'The provided email or password is incorrect.',
         ])->onlyInput('email');
     }
 
@@ -50,7 +50,7 @@ class AuthController extends Controller
     public function showRegister()
     {
         if (!Auth::user()->isAdmin()) {
-            abort(403, 'Akses Ditolak. Hanya Admin yang memiliki wewenang untuk membuat akun pengguna baru.');
+            abort(403, 'Access Denied. Only Administrators can create new user accounts.');
         }
 
         return view('auth.register');
@@ -62,7 +62,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         if (!Auth::user()->isAdmin()) {
-            abort(403, 'Akses Ditolak. Hanya Admin yang memiliki wewenang untuk membuat akun pengguna baru.');
+            abort(403, 'Access Denied. Only Administrators can create new user accounts.');
         }
 
         $validated = $request->validate([
@@ -80,7 +80,7 @@ class AuthController extends Controller
         ]);
 
         return redirect()->route('users.index')
-            ->with('success', 'Akun pengguna baru "' . $newUser->name . '" (' . ucfirst($newUser->role) . ') telah berhasil dibuat!');
+            ->with('success', 'New user account "' . $newUser->name . '" (' . ucfirst($newUser->role) . ') has been created successfully!');
     }
 
     /**
@@ -94,6 +94,6 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login')
-            ->with('success', 'Anda telah berhasil logout.');
+            ->with('success', 'You have been successfully logged out.');
     }
 }
