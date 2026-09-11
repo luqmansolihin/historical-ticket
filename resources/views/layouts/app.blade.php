@@ -395,6 +395,11 @@
     <script>
         (function() {
             function initSpaEngine() {
+                if (window.location.search) {
+                    try {
+                        window.history.replaceState(window.history.state, '', window.location.pathname);
+                    } catch(e){}
+                }
                 const progressBar = document.getElementById('spa-progress-bar');
                 let progressTimer = null;
 
@@ -510,8 +515,9 @@
                             }
 
                             const targetUrl = response.url || url;
-                            if (pushHistory && window.location.href !== targetUrl) {
-                                window.history.pushState({ spa: true }, '', targetUrl);
+                            if (pushHistory) {
+                                const cleanUrl = new URL(targetUrl, window.location.origin).pathname;
+                                window.history.pushState({ spa: true }, '', cleanUrl);
                             }
 
                             updateActiveSidebarLinks(new URL(targetUrl, window.location.origin).pathname);

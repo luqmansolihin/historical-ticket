@@ -153,7 +153,8 @@
                 }
 
                 if (updateHistory && customUrl === null) {
-                    history.pushState(null, '', fetchUrl);
+                    const cleanUrl = new URL(fetchUrl, window.location.origin).pathname;
+                    history.pushState(null, '', cleanUrl);
                 }
             })
             .catch(err => {

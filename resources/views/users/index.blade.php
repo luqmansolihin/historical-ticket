@@ -137,7 +137,8 @@
                 if (el) el.scrollTop = 0;
 
                 if (updateHistory && fetchUrl) {
-                    window.history.pushState(null, '', fetchUrl);
+                    const cleanUrl = new URL(fetchUrl, window.location.origin).pathname;
+                    window.history.pushState(null, '', cleanUrl);
                 }
 
                 this.checkAutoFill();
