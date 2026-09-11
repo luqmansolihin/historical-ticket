@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\Route;
 
 // Guest Routes (Login Only)
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/index', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/index', [AuthController::class, 'login']);
+    Route::get('/login', function () {
+        return redirect()->route('login');
+    });
 });
 
 // Authenticated Protected Routes

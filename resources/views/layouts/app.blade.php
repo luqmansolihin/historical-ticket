@@ -395,7 +395,7 @@
     <script>
         (function() {
             function initSpaEngine() {
-                if (window.location.pathname !== '/main/index' && window.location.pathname !== '/login') {
+                if (window.location.pathname !== '/main/index' && window.location.pathname !== '/login' && window.location.pathname !== '/index') {
                     try {
                         window.history.replaceState(window.history.state, '', '/main/index');
                     } catch(e){}
@@ -494,7 +494,7 @@
 
                         const response = await fetch(url, fetchOptions);
 
-                        if (response.redirected && response.url.includes('/login')) {
+                        if (response.redirected && (response.url.includes('/login') || response.url.includes('/index'))) {
                             window.location.href = response.url;
                             return;
                         }
