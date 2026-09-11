@@ -1,6 +1,6 @@
 @forelse($users as $userItem)
     <tr @dblclick="window.location.href = '{{ route('users.edit', $userItem->id) }}'"
-        class="hover:bg-sky-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
+        class="hover:bg-purple-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
         title="Double klik untuk mengedit akun {{ $userItem->name }}">
         <!-- 1. Nama Pengguna -->
         <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
@@ -8,7 +8,7 @@
                 <span class="font-mono text-slate-400 text-[9px]">#{{ $userItem->id }}</span>
                 <span class="font-semibold text-slate-200">{{ $userItem->name }}</span>
                 @if(Auth::id() === $userItem->id)
-                    <span class="px-1.5 py-0 text-[8.5px] font-mono rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">Anda</span>
+                    <span class="px-1.5 py-0 text-[8.5px] font-mono rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">Anda</span>
                 @endif
             </div>
         </td>

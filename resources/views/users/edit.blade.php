@@ -7,7 +7,7 @@
     <!-- Header with Back Link, Title, and Delete Account Button above Card -->
     <div class="mb-6 flex items-start justify-between gap-4">
         <div>
-            <a href="{{ route('users.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
+            <a href="{{ route('users.index') }}" class="text-xs font-medium text-purple-400 hover:text-purple-300 inline-flex items-center gap-1.5 mb-2">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Akun
             </a>
             <h1 class="font-display text-2xl sm:text-3xl font-bold text-white">Edit Akun Pengguna</h1>
@@ -88,7 +88,7 @@
                 <a href="{{ route('users.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
                     Batal
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-500/25 transition-all">
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 shadow-lg shadow-purple-500/25 transition-all">
                     <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Perubahan
                 </button>
             </div>

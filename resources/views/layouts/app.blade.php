@@ -272,9 +272,9 @@
                                 @if(Auth::user()->isAdmin())
                                     <a href="{{ route('users.index') }}" 
                                        :class="isCollapsed ? 'md:justify-center md:px-0' : ''"
-                                       class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all {{ request()->routeIs('users.*') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                                       class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all {{ request()->routeIs('users.*') ? 'bg-purple-500/10 text-purple-300 border border-purple-500/30 font-semibold shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
                                        :title="isCollapsed ? 'Kelola User' : ''">
-                                        <i class="fa-solid fa-users-gear text-base {{ request()->routeIs('users.*') ? 'text-sky-400' : 'text-slate-400' }}"></i>
+                                        <i class="fa-solid fa-users-gear text-base {{ request()->routeIs('users.*') ? 'text-purple-400' : 'text-slate-400' }}"></i>
                                         <span :class="isCollapsed ? 'md:hidden' : ''">Kelola User</span>
                                     </a>
                                 @endif
@@ -439,15 +439,18 @@
                                 } else if (linkPath.includes('hotels')) {
                                     link.className = link.className.replace(/text-slate-400|hover:bg-slate-800\/60/g, '').trim() + ' bg-amber-500/10 text-amber-300 border border-amber-500/30 font-semibold shadow-sm';
                                     if (icon) icon.className = icon.className.replace('text-slate-400', '').trim() + ' text-amber-400';
+                                } else if (linkPath.includes('users')) {
+                                    link.className = link.className.replace(/text-slate-400|hover:bg-slate-800\/60/g, '').trim() + ' bg-purple-500/10 text-purple-300 border border-purple-500/30 font-semibold shadow-sm';
+                                    if (icon) icon.className = icon.className.replace('text-slate-400', '').trim() + ' text-purple-400';
                                 } else {
                                     link.className = link.className.replace(/text-slate-400|hover:bg-slate-800\/60/g, '').trim() + ' bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm';
                                     if (icon) icon.className = icon.className.replace('text-slate-400', '').trim() + ' text-sky-400';
                                 }
                             } else {
-                                link.className = link.className.replace(/bg-sky-500\/10|text-sky-300|border-sky-500\/30|bg-emerald-500\/10|text-emerald-300|border-emerald-500\/30|bg-amber-500\/10|text-amber-300|border-amber-500\/30|font-semibold|shadow-sm/g, '').trim();
+                                link.className = link.className.replace(/bg-sky-500\/10|text-sky-300|border-sky-500\/30|bg-emerald-500\/10|text-emerald-300|border-emerald-500\/30|bg-amber-500\/10|text-amber-300|border-amber-500\/30|bg-purple-500\/10|text-purple-300|border-purple-500\/30|font-semibold|shadow-sm/g, '').trim();
                                 if (!link.className.includes('text-slate-400')) link.className += ' text-slate-400 hover:text-white hover:bg-slate-800/60';
                                 if (icon) {
-                                    icon.className = icon.className.replace(/text-sky-400|text-emerald-400|text-amber-400/g, '').trim();
+                                    icon.className = icon.className.replace(/text-sky-400|text-emerald-400|text-amber-400|text-purple-400/g, '').trim();
                                     if (!icon.className.includes('text-slate-400')) icon.className += ' text-slate-400';
                                 }
                             }
