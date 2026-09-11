@@ -432,6 +432,13 @@
 
                 function updateActiveSidebarLinks(newPathname) {
                     const sidebarLinks = document.querySelectorAll('aside nav a');
+                    const activeColorMap = {
+                        expenses: { link: ['bg-emerald-500/10', 'text-emerald-300', 'border-emerald-500/30'], icon: 'text-emerald-400' },
+                        hotels:   { link: ['bg-amber-500/10', 'text-amber-300', 'border-amber-500/30'],     icon: 'text-amber-400' },
+                        users:    { link: ['bg-purple-500/10', 'text-purple-300', 'border-purple-500/30'],   icon: 'text-purple-400' },
+                        tickets:  { link: ['bg-sky-500/10', 'text-sky-300', 'border-sky-500/30'],         icon: 'text-sky-400' }
+                    };
+
                     sidebarLinks.forEach(link => {
                         const href = link.getAttribute('href');
                         if (!href) return;
@@ -441,27 +448,32 @@
                             const icon = link.querySelector('i');
                             const isMatch = linkPath === newPathname || (linkPath !== '/' && newPathname.startsWith(linkPath));
 
+                            link.classList.remove(
+                                'bg-sky-500/10', 'text-sky-300', 'border-sky-500/30',
+                                'bg-amber-500/10', 'text-amber-300', 'border-amber-500/30',
+                                'bg-emerald-500/10', 'text-emerald-300', 'border-emerald-500/30',
+                                'bg-purple-500/10', 'text-purple-300', 'border-purple-500/30',
+                                'font-semibold', 'shadow-sm', 'text-slate-400', 'border-transparent'
+                            );
+
+                            if (icon) {
+                                icon.classList.remove('text-sky-400', 'text-amber-400', 'text-emerald-400', 'text-purple-400', 'text-slate-400');
+                            }
+
                             if (isMatch) {
-                                if (linkPath.includes('expenses')) {
-                                    link.className = link.className.replace(/text-slate-400|hover:bg-slate-800\/60/g, '').trim() + ' bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-semibold shadow-sm';
-                                    if (icon) icon.className = icon.className.replace('text-slate-400', '').trim() + ' text-emerald-400';
-                                } else if (linkPath.includes('hotels')) {
-                                    link.className = link.className.replace(/text-slate-400|hover:bg-slate-800\/60/g, '').trim() + ' bg-amber-500/10 text-amber-300 border border-amber-500/30 font-semibold shadow-sm';
-                                    if (icon) icon.className = icon.className.replace('text-slate-400', '').trim() + ' text-amber-400';
-                                } else if (linkPath.includes('users')) {
-                                    link.className = link.className.replace(/text-slate-400|hover:bg-slate-800\/60/g, '').trim() + ' bg-purple-500/10 text-purple-300 border border-purple-500/30 font-semibold shadow-sm';
-                                    if (icon) icon.className = icon.className.replace('text-slate-400', '').trim() + ' text-purple-400';
-                                } else {
-                                    link.className = link.className.replace(/text-slate-400|hover:bg-slate-800\/60/g, '').trim() + ' bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm';
-                                    if (icon) icon.className = icon.className.replace('text-slate-400', '').trim() + ' text-sky-400';
-                                }
+                                link.classList.remove('hover:bg-slate-800/60');
+                                link.classList.add('border', 'font-semibold', 'shadow-sm');
+
+                                let theme = 'tickets';
+                                if (linkPath.includes('expenses')) theme = 'expenses';
+                                else if (linkPath.includes('hotels')) theme = 'hotels';
+                                else if (linkPath.includes('users')) theme = 'users';
+
+                                link.classList.add(...activeColorMap[theme].link);
+                                if (icon) icon.classList.add(activeColorMap[theme].icon);
                             } else {
-                                link.className = link.className.replace(/bg-sky-500\/10|text-sky-300|border-sky-500\/30|bg-emerald-500\/10|text-emerald-300|border-emerald-500\/30|bg-amber-500\/10|text-amber-300|border-amber-500\/30|bg-purple-500\/10|text-purple-300|border-purple-500\/30|font-semibold|shadow-sm/g, '').trim();
-                                if (!link.className.includes('text-slate-400')) link.className += ' text-slate-400 hover:text-white hover:bg-slate-800/60';
-                                if (icon) {
-                                    icon.className = icon.className.replace(/text-sky-400|text-emerald-400|text-amber-400|text-purple-400/g, '').trim();
-                                    if (!icon.className.includes('text-slate-400')) icon.className += ' text-slate-400';
-                                }
+                                link.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800/60', 'border', 'border-transparent');
+                                if (icon) icon.classList.add('text-slate-400');
                             }
                         } catch(e) {}
                     });
@@ -566,6 +578,8 @@
                 document.addEventListener('click', function(e) {
                     const link = e.target.closest('a');
                     if (!link) return;
+
+                    try { link.blur(); } catch(err){}
 
                     const href = link.getAttribute('href');
                     if (!href || href.startsWith('#') || href.startsWith('javascript:') || link.hasAttribute('data-no-spa') || link.getAttribute('target') === '_blank' || link.hasAttribute('download')) {
