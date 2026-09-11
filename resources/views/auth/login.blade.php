@@ -54,7 +54,7 @@
                 <i class="fa-solid fa-receipt text-2xl"></i>
             </div>
             <h1 class="font-display text-3xl font-bold text-white tracking-tight">ExpenseTrace</h1>
-            <p class="text-sm text-slate-400 mt-1">Sistem Pengeluaran Biaya</p>
+            <p class="text-sm text-slate-400 mt-1">Purchase & Payment Tracking System</p>
         </div>
 
         <!-- Notification -->
