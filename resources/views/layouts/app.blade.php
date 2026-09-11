@@ -157,6 +157,9 @@
 </head>
 <body class="h-screen w-screen overflow-hidden font-sans antialiased bg-slate-950 text-slate-100 selection:bg-sky-500 selection:text-white">
 
+    <!-- SPA Top Progress Indicator -->
+    <div id="spa-progress-bar" class="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 via-emerald-400 to-indigo-500 z-50 transition-all duration-300 opacity-0 pointer-events-none" style="width: 0%;"></div>
+
     <div x-data="{ mobileSidebarOpen: false, isCollapsed: true }" class="h-screen w-screen flex flex-col md:flex-row overflow-hidden bg-slate-950">
 
         <!-- Mobile Header Bar -->
@@ -178,7 +181,7 @@
                     <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sky-400 text-xs shadow-sm" title="{{ Auth::user()->name }}">
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                     </div>
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                    <form action="{{ route('logout') }}" method="POST" class="inline" data-no-spa>
                         @csrf
                         <button type="submit" class="px-2.5 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:text-white flex items-center gap-1.5 text-xs font-medium transition-all shadow-sm" title="Keluar dari Aplikasi">
                             <i class="fa-solid fa-right-from-bracket text-xs"></i>
@@ -301,7 +304,7 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('logout') }}" method="POST">
+                    <form action="{{ route('logout') }}" method="POST" data-no-spa>
                         @csrf
                         <button type="submit" 
                                 :class="isCollapsed ? 'md:justify-center md:px-0' : 'px-3.5'"
@@ -387,5 +390,207 @@
     </script>
 
     @stack('scripts')
+
+    <!-- SPA Router Engine Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBar = document.getElementById('spa-progress-bar');
+            let progressTimer = null;
+
+            function startProgress() {
+                if (!progressBar) return;
+                progressBar.style.width = '20%';
+                progressBar.style.opacity = '1';
+                clearInterval(progressTimer);
+                progressTimer = setInterval(() => {
+                    let cur = parseFloat(progressBar.style.width) || 20;
+                    if (cur < 85) {
+                        progressBar.style.width = (cur + Math.random() * 8) + '%';
+                    }
+                }, 120);
+            }
+
+            function finishProgress() {
+                if (!progressBar) return;
+                clearInterval(progressTimer);
+                progressBar.style.width = '100%';
+                setTimeout(() => {
+                    progressBar.style.opacity = '0';
+                    setTimeout(() => { progressBar.style.width = '0%'; }, 300);
+                }, 200);
+            }
+
+            function updateActiveSidebarLinks(newPathname) {
+                const sidebarLinks = document.querySelectorAll('aside nav a');
+                sidebarLinks.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (!href) return;
+                    try {
+                        const url = new URL(href, window.location.origin);
+                        const linkPath = url.pathname;
+                        const icon = link.querySelector('i');
+                        const isMatch = linkPath === newPathname || (linkPath !== '/' && newPathname.startsWith(linkPath));
+
+                        if (isMatch) {
+                            if (linkPath.includes('expenses')) {
+                                link.className = link.className.replace(/text-slate-400|hover:bg-slate-800\/60/g, '').trim() + ' bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-semibold shadow-sm';
+                                if (icon) icon.className = icon.className.replace('text-slate-400', '').trim() + ' text-emerald-400';
+                            } else {
+                                link.className = link.className.replace(/text-slate-400|hover:bg-slate-800\/60/g, '').trim() + ' bg-sky-500/10 text-sky-300 border border-sky-500/30 font-semibold shadow-sm';
+                                if (icon) icon.className = icon.className.replace('text-slate-400', '').trim() + ' text-sky-400';
+                            }
+                        } else {
+                            link.className = link.className.replace(/bg-sky-500\/10|text-sky-300|border-sky-500\/30|bg-emerald-500\/10|text-emerald-300|border-emerald-500\/30|font-semibold|shadow-sm/g, '').trim();
+                            if (!link.className.includes('text-slate-400')) link.className += ' text-slate-400 hover:text-white hover:bg-slate-800/60';
+                            if (icon) {
+                                icon.className = icon.className.replace(/text-sky-400|text-emerald-400/g, '').trim();
+                                if (!icon.className.includes('text-slate-400')) icon.className += ' text-slate-400';
+                            }
+                        }
+                    } catch(e) {}
+                });
+            }
+
+            async function loadSpaPage(url, options = {}) {
+                const { method = 'GET', body = null, pushHistory = true } = options;
+                const mainEl = document.querySelector('main');
+
+                startProgress();
+                if (mainEl) {
+                    mainEl.style.transition = 'opacity 0.2s ease';
+                    mainEl.style.opacity = '0.5';
+                }
+
+                try {
+                    const fetchOptions = {
+                        method: method,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-SPA': '1'
+                        }
+                    };
+
+                    if (body) {
+                        fetchOptions.body = body;
+                    }
+
+                    const response = await fetch(url, fetchOptions);
+
+                    if (response.redirected && response.url.includes('/login')) {
+                        window.location.href = response.url;
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        window.location.href = url;
+                        return;
+                    }
+
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    const newMain = doc.querySelector('main');
+                    const newTitle = doc.querySelector('title');
+
+                    if (newMain && mainEl) {
+                        mainEl.innerHTML = newMain.innerHTML;
+                        if (newTitle) document.title = newTitle.innerText;
+
+                        const targetUrl = response.url || url;
+                        if (pushHistory && window.location.href !== targetUrl) {
+                            window.history.pushState({ spa: true }, '', targetUrl);
+                        }
+
+                        updateActiveSidebarLinks(new URL(targetUrl, window.location.origin).pathname);
+
+                        // Re-initialize Alpine JS components on newly swapped HTML
+                        if (window.Alpine) {
+                            if (typeof Alpine.initTree === 'function') {
+                                Alpine.initTree(mainEl);
+                            } else if (typeof Alpine.discoverUninitializedComponents === 'function') {
+                                Alpine.discoverUninitializedComponents(el => Alpine.initializeComponent(el));
+                            }
+                        }
+
+                        // Re-execute scripts inside newly loaded content
+                        const scripts = mainEl.querySelectorAll('script');
+                        scripts.forEach(script => {
+                            const newScript = document.createElement('script');
+                            Array.from(script.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                            newScript.appendChild(document.createTextNode(script.innerHTML));
+                            script.parentNode.replaceChild(newScript, script);
+                        });
+
+                        mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+                        window.dispatchEvent(new CustomEvent('spa:loaded', { detail: { url: targetUrl } }));
+                    } else {
+                        window.location.href = url;
+                    }
+                } catch (err) {
+                    console.error('SPA Navigation Error:', err);
+                    window.location.href = url;
+                } finally {
+                    if (mainEl) mainEl.style.opacity = '1';
+                    finishProgress();
+                }
+            }
+
+            // Intercept internal link clicks
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a');
+                if (!link) return;
+
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('javascript:') || link.hasAttribute('data-no-spa') || link.getAttribute('target') === '_blank' || link.hasAttribute('download')) {
+                    return;
+                }
+
+                if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+
+                try {
+                    const targetUrl = new URL(href, window.location.origin);
+                    if (targetUrl.origin !== window.location.origin) return;
+
+                    e.preventDefault();
+                    loadSpaPage(targetUrl.href);
+                } catch(err) {}
+            });
+
+            // Intercept form submissions
+            document.addEventListener('submit', function(e) {
+                const form = e.target;
+                if (!form || form.hasAttribute('data-no-spa') || form.getAttribute('target') === '_blank') return;
+
+                const action = form.getAttribute('action') || window.location.href;
+                const method = (form.getAttribute('method') || 'GET').toUpperCase();
+
+                try {
+                    const targetUrl = new URL(action, window.location.origin);
+                    if (targetUrl.origin !== window.location.origin) return;
+
+                    e.preventDefault();
+
+                    const formData = new FormData(form);
+
+                    if (method === 'GET') {
+                        const params = new URLSearchParams(formData);
+                        const fullUrl = targetUrl.pathname + (params.toString() ? '?' + params.toString() : '');
+                        loadSpaPage(fullUrl);
+                    } else {
+                        loadSpaPage(targetUrl.href, {
+                            method: method,
+                            body: formData
+                        });
+                    }
+                } catch(err) {}
+            });
+
+            // Handle browser back/forward history buttons
+            window.addEventListener('popstate', function(e) {
+                loadSpaPage(window.location.href, { pushHistory: false });
+            });
+        });
+    </script>
 </body>
 </html>
