@@ -152,10 +152,7 @@
                     exportBtn.href = '{{ route("expenses.export") }}' + currentUrl.search;
                 }
 
-                if (updateHistory && customUrl === null) {
-                    const cleanUrl = new URL(fetchUrl, window.location.origin).pathname;
-                    history.pushState(null, '', cleanUrl);
-                }
+                // URL bar remains static on table filter/refresh
             })
             .catch(err => {
                 console.error(err);

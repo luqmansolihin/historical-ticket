@@ -16,7 +16,7 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->route('tickets.index');
+            return redirect()->route('main.index');
         }
 
         return view('auth.login');
@@ -35,7 +35,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('tickets.index'))
+            return redirect()->intended(route('main.index'))
                 ->with('success', 'Selamat datang kembali, ' . Auth::user()->name . '!');
         }
 

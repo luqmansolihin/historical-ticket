@@ -160,10 +160,7 @@
                 const el = this.$refs.scrollContainer;
                 if (el) el.scrollTop = 0;
 
-                if (updateHistory && fetchUrl) {
-                    const cleanUrl = new URL(fetchUrl, window.location.origin).pathname;
-                    window.history.pushState(null, '', cleanUrl);
-                }
+                // URL bar remains static on table filter/refresh
 
                 const exportBtn = document.getElementById('export-csv-btn');
                 if (exportBtn && fetchUrl) {

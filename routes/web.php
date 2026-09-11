@@ -16,8 +16,9 @@ Route::middleware('guest')->group(function () {
 // Authenticated Protected Routes
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
-        return redirect()->route('tickets.index');
+        return redirect()->route('main.index');
     });
+    Route::get('/main/index', [TicketHistoryController::class, 'index'])->name('main.index');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 

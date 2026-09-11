@@ -515,11 +515,6 @@
                             }
 
                             const targetUrl = response.url || url;
-                            if (pushHistory) {
-                                const cleanUrl = new URL(targetUrl, window.location.origin).pathname;
-                                window.history.pushState({ spa: true }, '', cleanUrl);
-                            }
-
                             updateActiveSidebarLinks(new URL(targetUrl, window.location.origin).pathname);
 
                             // Re-execute inline scripts inside newly loaded content
