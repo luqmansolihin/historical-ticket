@@ -118,7 +118,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                     <div class="md:col-span-2">
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama Pengaju / Pemesan (Booked By) <span class="text-rose-400">*</span></label>
-                        <input type="text" name="booked_by" value="{{ old('booked_by', $expense->booked_by) }}" required placeholder="contoh: Martha" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
+                        <input type="text" name="booked_by" value="{{ old('booked_by', $expense->booked_by) }}" required placeholder="Contoh: Martha" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
                         <input type="hidden" name="booked_by_user_id" value="{{ old('booked_by_user_id', $expense->booked_by_user_id ?: Auth::id()) }}">
                     </div>
 
@@ -147,7 +147,7 @@
                     @else
                         <div class="md:col-span-2">
                             <label class="block text-xs font-medium text-slate-300 mb-1.5">Pembayaran Oleh</label>
-                            <input type="text" name="paid_by" value="{{ old('paid_by', $expense->paid_by) }}" placeholder="Ex: PT Corporate Finance" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
+                            <input type="text" name="paid_by" value="{{ old('paid_by', $expense->paid_by) }}" placeholder="Contoh: PT Corporate Finance" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
                         </div>
 
                         <div class="md:col-span-2">

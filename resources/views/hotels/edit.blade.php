@@ -148,7 +148,7 @@
                     <template x-for="(guest, index) in guests" :key="index">
                         <div class="flex items-center gap-2">
                             <div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-mono text-xs font-bold text-slate-400 shrink-0" x-text="index + 1"></div>
-                            <input type="text" :name="'guest_names[' + index + ']'" x-model="guests[index]" required placeholder="contoh: Adley" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input flex-1 px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
+                            <input type="text" :name="'guest_names[' + index + ']'" x-model="guests[index]" required placeholder="Contoh: Adley" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input flex-1 px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
                             @if(!$isDataLocked)
                                 <button type="button" @click="removeGuest(index)" x-show="guests.length > 1" class="w-10 h-10 shrink-0 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/30 transition-all flex items-center justify-center">
                                     <i class="fa-solid fa-trash-can text-sm"></i>
@@ -178,7 +178,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                     <div class="md:col-span-2">
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama Pemesan (Booked By) <span class="text-rose-400">*</span></label>
-                        <input type="text" name="booked_by" value="{{ old('booked_by', $hotel->booked_by) }}" required placeholder="contoh: Martha" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
+                        <input type="text" name="booked_by" value="{{ old('booked_by', $hotel->booked_by) }}" required placeholder="Contoh: Martha" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
                         <input type="hidden" name="booked_by_user_id" value="{{ old('booked_by_user_id', $hotel->booked_by_user_id ?: Auth::id()) }}">
                     </div>
 
@@ -207,7 +207,7 @@
                     @else
                         <div class="md:col-span-2">
                             <label class="block text-xs font-medium text-slate-300 mb-1.5">Pembayaran Oleh</label>
-                            <input type="text" name="paid_by" value="{{ old('paid_by', $hotel->paid_by) }}" placeholder="Ex: PT Corporate Finance" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
+                            <input type="text" name="paid_by" value="{{ old('paid_by', $hotel->paid_by) }}" placeholder="Contoh: PT Corporate Finance" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
                         </div>
 
                         <div class="md:col-span-2">

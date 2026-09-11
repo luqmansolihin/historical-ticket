@@ -564,17 +564,17 @@
                                         <div class="grid grid-cols-2 gap-2">
                                             <div>
                                                 <label class="block text-[10px] font-medium text-slate-400 mb-1">Min (Rp)</label>
-                                                <input type="number" name="amount_min" x-model="amountMin" @input="onMinMaxChange()" placeholder="0" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono focus:border-emerald-400 focus:outline-none">
+                                                <input type="number" name="amount_min" x-model="amountMin" @input="onMinMaxChange()" placeholder="Contoh: 500000" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono focus:border-emerald-400 focus:outline-none">
                                             </div>
                                             <div>
                                                 <label class="block text-[10px] font-medium text-slate-400 mb-1">Max (Rp)</label>
-                                                <input type="number" name="amount_max" x-model="amountMax" @input="onMinMaxChange()" placeholder="10000000" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono focus:border-emerald-400 focus:outline-none">
+                                                <input type="number" name="amount_max" x-model="amountMax" @input="onMinMaxChange()" placeholder="Contoh: 5000000" class="w-full h-8 rounded-lg px-2 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono focus:border-emerald-400 focus:outline-none">
                                             </div>
                                         </div>
 
                                         <div class="pt-1 border-t border-slate-800/60">
                                             <label class="block text-[10px] font-medium text-slate-400 mb-1">Sama Dengan (Exact Rp)</label>
-                                            <input type="number" name="amount_eq" x-model="amountEq" @input="onEqChange()" placeholder="1500000" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono focus:border-emerald-400 focus:outline-none">
+                                            <input type="number" name="amount_eq" x-model="amountEq" @input="onEqChange()" placeholder="Contoh: 1500000" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono focus:border-emerald-400 focus:outline-none">
                                         </div>
                                     </div>
 

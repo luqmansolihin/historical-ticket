@@ -52,19 +52,19 @@
 
                     <div class="md:col-span-2">
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Kode Booking Hotel <span class="text-slate-500">(Opsional)</span></label>
-                        <input type="text" name="booking_code" value="{{ old('booking_code') }}" placeholder="Ex: HTL-89102" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
+                        <input type="text" name="booking_code" value="{{ old('booking_code') }}" placeholder="Contoh: HTL-89102" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
                     </div>
 
                     <div class="md:col-span-2">
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Kode Invoice <span class="text-rose-400">*</span></label>
-                        <input type="text" name="invoice_code" value="{{ old('invoice_code') }}" required placeholder="Ex: INV-HTL-2026-001" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
+                        <input type="text" name="invoice_code" value="{{ old('invoice_code') }}" required placeholder="Contoh: INV-HTL-2026-001" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
                     </div>
 
                     <div class="md:col-span-2"></div>
 
                     <div class="md:col-span-3">
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama Hotel <span class="text-rose-400">*</span></label>
-                        <input type="text" name="hotel_name" value="{{ old('hotel_name') }}" required placeholder="Ex: Hotel Grand Indonesia, Jakarta" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
+                        <input type="text" name="hotel_name" value="{{ old('hotel_name') }}" required placeholder="Contoh: Hotel Grand Indonesia, Jakarta" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
                     </div>
 
                     <div class="md:col-span-1">
@@ -96,7 +96,7 @@
                     <template x-for="(guest, index) in guests" :key="index">
                         <div class="flex items-center gap-2">
                             <div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-mono text-xs font-bold text-slate-400 shrink-0" x-text="index + 1"></div>
-                            <input type="text" :name="'guest_names[' + index + ']'" x-model="guests[index]" required placeholder="contoh: Adley" class="glass-input flex-1 px-4 py-2.5 rounded-xl text-sm">
+                            <input type="text" :name="'guest_names[' + index + ']'" x-model="guests[index]" required placeholder="Contoh: Adley" class="glass-input flex-1 px-4 py-2.5 rounded-xl text-sm">
                             <button type="button" @click="removeGuest(index)" x-show="guests.length > 1" class="w-10 h-10 shrink-0 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/30 transition-all flex items-center justify-center">
                                 <i class="fa-solid fa-trash-can text-sm"></i>
                             </button>
@@ -122,12 +122,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                     <div class="md:col-span-2">
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama Pemesan (Booked By) <span class="text-rose-400">*</span></label>
-                        <input type="text" name="booked_by" value="{{ old('booked_by', '') }}" required placeholder="contoh: Martha" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
+                        <input type="text" name="booked_by" value="{{ old('booked_by', '') }}" required placeholder="Contoh: Martha" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
                     </div>
 
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Biaya Hotel (IDR) <span class="text-rose-400">*</span></label>
-                        <input type="number" step="0.01" min="0" name="amount" value="{{ old('amount') }}" required placeholder="Ex: 1500000" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
+                        <input type="number" step="0.01" min="0" name="amount" value="{{ old('amount') }}" required placeholder="Contoh: 1500000" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
                     </div>
 
                     <div>

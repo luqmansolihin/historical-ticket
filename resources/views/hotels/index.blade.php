@@ -763,15 +763,15 @@
                                     <div class="space-y-2.5">
                                         <div>
                                             <label class="block text-[11px] font-medium text-slate-400 mb-1">&ge; Minimum (Rp):</label>
-                                            <input type="number" name="amount_min" x-model="min" @input="onMinMaxChange()" placeholder="Ex: 500000" step="any" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono">
+                                            <input type="number" name="amount_min" x-model="min" @input="onMinMaxChange()" placeholder="Contoh: 500000" step="any" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono">
                                         </div>
                                         <div>
                                             <label class="block text-[11px] font-medium text-slate-400 mb-1">&le; Maksimum (Rp):</label>
-                                            <input type="number" name="amount_max" x-model="max" @input="onMinMaxChange()" placeholder="Ex: 5000000" step="any" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono">
+                                            <input type="number" name="amount_max" x-model="max" @input="onMinMaxChange()" placeholder="Contoh: 5000000" step="any" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono">
                                         </div>
                                         <div class="pt-1 border-t border-slate-800/60">
                                             <label class="block text-[11px] font-medium text-slate-400 mb-1">= Tepat Nominal (Rp):</label>
-                                            <input type="number" name="amount_eq" x-model="eq" @input="onEqChange()" placeholder="Ex: 1500000" step="any" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono">
+                                            <input type="number" name="amount_eq" x-model="eq" @input="onEqChange()" placeholder="Contoh: 1500000" step="any" class="w-full h-8 rounded-lg px-2.5 text-xs bg-slate-950 border border-slate-700/80 text-slate-200 font-mono">
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px]">

@@ -49,17 +49,17 @@
 
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Kode Booking / Referensi <span class="text-slate-500">(Opsional)</span></label>
-                        <input type="text" name="booking_code" value="{{ old('booking_code') }}" placeholder="Ex: EXP-89102" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
+                        <input type="text" name="booking_code" value="{{ old('booking_code') }}" placeholder="Contoh: EXP-89102" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
                     </div>
 
                     <div class="md:col-span-2">
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Kode Invoice <span class="text-rose-400">*</span></label>
-                        <input type="text" name="invoice_code" value="{{ old('invoice_code') }}" required placeholder="Ex: INV-EXP-2026-001" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
+                        <input type="text" name="invoice_code" value="{{ old('invoice_code') }}" required placeholder="Contoh: INV-EXP-2026-001" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
                     </div>
 
                     <div class="md:col-span-2">
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama / Rincian Biaya <span class="text-rose-400">*</span></label>
-                        <input type="text" name="expense_name" value="{{ old('expense_name') }}" required placeholder="Ex: Biaya Swab PCR / Transportasi Lokal / Extra Bagasi" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
+                        <input type="text" name="expense_name" value="{{ old('expense_name') }}" required placeholder="Contoh: Biaya Swab PCR / Transportasi Lokal / Extra Bagasi" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
                     </div>
                 </div>
             </div>
@@ -75,12 +75,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                     <div class="md:col-span-2">
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama Pengaju / Pemesan (Booked By) <span class="text-rose-400">*</span></label>
-                        <input type="text" name="booked_by" value="{{ old('booked_by', '') }}" required placeholder="contoh: Martha" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
+                        <input type="text" name="booked_by" value="{{ old('booked_by', '') }}" required placeholder="Contoh: Martha" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
                     </div>
 
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1.5">Nominal Biaya (IDR) <span class="text-rose-400">*</span></label>
-                        <input type="number" step="0.01" min="0" name="amount" value="{{ old('amount') }}" required placeholder="Ex: 500000" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
+                        <input type="number" step="0.01" min="0" name="amount" value="{{ old('amount') }}" required placeholder="Contoh: 500000" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono">
                     </div>
 
                     <div>
