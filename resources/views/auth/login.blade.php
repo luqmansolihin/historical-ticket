@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - TicketTrace</title>
+    <title>Login - ExpenseTrace</title>
 
     <!-- Local Fonts -->
     <link rel="stylesheet" href="{{ asset('vendor/fonts/fonts.css') }}">
@@ -53,7 +53,7 @@
             <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white shadow-xl shadow-sky-500/20 mb-3">
                 <i class="fa-solid fa-ticket text-2xl transform -rotate-12"></i>
             </div>
-            <h1 class="font-display text-3xl font-bold text-white tracking-tight">TicketTrace</h1>
+            <h1 class="font-display text-3xl font-bold text-white tracking-tight">ExpenseTrace</h1>
             <p class="text-sm text-slate-400 mt-1">Sistem Histori Tiket</p>
         </div>
 

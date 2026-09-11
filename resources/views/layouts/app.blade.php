@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Histori Tiket Perjalanan') - TicketTrace</title>
+    <title>@yield('title', 'Sistem Manajemen Perjalanan & Rekapitulasi Biaya') - ExpenseTrace</title>
 
     <!-- Local Fonts -->
     <link rel="stylesheet" href="{{ asset('vendor/fonts/fonts.css') }}">
@@ -172,7 +172,7 @@
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
                         <i class="fa-solid fa-ticket text-sm transform -rotate-12"></i>
                     </div>
-                    <span class="font-display font-bold text-lg text-white tracking-tight">TicketTrace</span>
+                    <span class="font-display font-bold text-lg text-white tracking-tight">ExpenseTrace</span>
                 </a>
             </div>
 
@@ -214,15 +214,15 @@
             <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
                 <!-- Brand / Logo Header & Toggle Button -->
                 <div class="p-4 border-b border-slate-800/80 flex items-center justify-between" :class="isCollapsed ? 'md:justify-center md:px-2' : ''">
-                    <a href="{{ route('tickets.index') }}" class="flex items-center space-x-3 group" title="TicketTrace">
+                    <a href="{{ route('tickets.index') }}" class="flex items-center space-x-3 group" title="ExpenseTrace">
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform duration-200 shrink-0">
-                            <i class="fa-solid fa-ticket text-lg transform -rotate-12"></i>
+                            <i class="fa-solid fa-receipt text-lg"></i>
                         </div>
                         <div :class="isCollapsed ? 'md:hidden' : ''" class="transition-opacity duration-200">
                             <span class="font-display font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent block leading-tight">
-                                TicketTrace
+                                ExpenseTrace
                             </span>
-                            <span class="text-[10px] block text-sky-400 font-mono tracking-wider font-semibold uppercase">HISTORICAL TICKET</span>
+                            <span class="text-[10px] block text-emerald-400 font-mono tracking-wider font-semibold uppercase">EXPENSE & TRAVEL LOG</span>
                         </div>
                     </a>
 

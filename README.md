@@ -1,6 +1,6 @@
-# TicketTrace — Historical Ticket Management System 🎫✈️🚆
+# ExpenseTrace — Perjalanan Dinas & Expense Management System 🎫✈️🏨💸
 
-> **TicketTrace** adalah sistem manajemen & rekapitulasi histori tiket perjalanan dinas perusahaan berbasis Laravel 11. Dilengkapi dengan otorisasi berbasis Role (*Admin*, *Finance*, *User*), filter multiple selection, log aktivitas perubahan status, tampilan E-Ticket Boarding Pass, serta ekspor CSV.
+> **ExpenseTrace** adalah sistem manajemen & rekapitulasi histori tiket perjalanan dinas, reservasi hotel, dan klaim biaya operasional perusahaan berbasis Laravel 11. Dilengkapi dengan otorisasi berbasis Role (*Admin*, *Finance*, *User*), SPA Single Page Application tanpa reload browser, filter multiple selection, log aktivitas, tampilan E-Ticket & Voucher Hotel, serta ekspor data.
 
 ---
 
