@@ -1,7 +1,7 @@
 @forelse($tickets as $ticket)
     @can('update', $ticket)
         <tr @dblclick="window.loadSpaPage('{{ route('tickets.edit', $ticket->id) }}')"
-            class="hover:bg-sky-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
+            class="hover:bg-sky-50/70 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-200/80 select-none"
             title="Double klik untuk mengedit data tiket {{ $ticket->ticket_code ?: '-' }}">
     @else
         <tr @dblclick="selectedTicket = {{ json_encode([
@@ -35,68 +35,68 @@
                     'badge' => $log->status_badge_class,
                 ])
             ]) }}; showModal = true"
-            class="hover:bg-sky-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
+            class="hover:bg-sky-50/70 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-200/80 select-none"
             title="Double klik untuk melihat Boarding Pass {{ $ticket->ticket_code ?: '-' }}">
     @endcan
         <!-- 1. Kode Tiket -->
-        <td class="py-0.5 px-2 font-mono font-semibold text-sky-400 whitespace-nowrap border-r border-slate-800/40">
+        <td class="py-0.5 px-2 font-mono font-semibold text-sky-700 whitespace-nowrap border-r border-slate-200/80">
             {{ $ticket->ticket_code ?: '-' }}
         </td>
 
         <!-- 1b. Kode Invoice -->
-        <td class="py-0.5 px-2 font-mono font-semibold text-indigo-300 whitespace-nowrap border-r border-slate-800/40">
+        <td class="py-0.5 px-2 font-mono font-semibold text-indigo-700 whitespace-nowrap border-r border-slate-200/80">
             {{ $ticket->invoice_code ?: '-' }}
         </td>
 
         <!-- 2. Tgl Tiket -->
-        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-300 border-r border-slate-800/40">
+        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-700 border-r border-slate-200/80">
             {{ $ticket->ticket_date->format('d/m/Y') }}
         </td>
 
         <!-- 3. Asal -->
-        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-200 border-r border-slate-800/40">
+        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-800 border-r border-slate-200/80">
             {{ $ticket->origin }}
         </td>
 
         <!-- 4. Tujuan -->
-        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-200 border-r border-slate-800/40">
+        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-800 border-r border-slate-200/80">
             {{ $ticket->destination }}
         </td>
 
         <!-- 5. Transportasi -->
-        <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
-            <span class="inline-block px-1 py-0 rounded text-[8.5px] font-medium bg-slate-800 text-slate-300 border border-slate-700/60 whitespace-nowrap">
+        <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-200/80">
+            <span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-700 border border-slate-200 whitespace-nowrap">
                 {{ $ticket->transport_type }}
             </span>
         </td>
 
         <!-- 6. Penumpang -->
-        <td class="py-0.5 px-2 whitespace-nowrap text-slate-200 font-medium border-r border-slate-800/40">
+        <td class="py-0.5 px-2 whitespace-nowrap text-slate-800 font-medium border-r border-slate-200/80">
             {{ implode(', ', $ticket->passengers_list) ?: $ticket->passenger_name }}
         </td>
 
         <!-- 7. Jml Penumpang -->
-        <td class="py-0.5 px-2 text-center whitespace-nowrap font-mono text-slate-300 font-bold border-r border-slate-800/40">
+        <td class="py-0.5 px-2 text-center whitespace-nowrap font-mono text-slate-700 font-bold border-r border-slate-200/80">
             {{ $ticket->passenger_count }}
         </td>
 
         <!-- 8. Pemesan -->
-        <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
-            <span class="text-indigo-300 font-medium">{{ $ticket->booked_by }}</span>
+        <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-200/80">
+            <span class="text-indigo-700 font-semibold">{{ $ticket->booked_by }}</span>
         </td>
 
         <!-- 9. Pembayar -->
-        <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
-            <span class="text-emerald-300 font-medium">{{ $ticket->paid_by }}</span>
+        <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-200/80">
+            <span class="text-emerald-700 font-semibold">{{ $ticket->paid_by }}</span>
         </td>
 
         <!-- 10. Tgl Bayar -->
-        <td class="py-0.5 px-2 whitespace-nowrap text-slate-400 font-mono text-[9px] border-r border-slate-800/40">
+        <td class="py-0.5 px-2 whitespace-nowrap text-slate-500 font-mono text-[9px] border-r border-slate-200/80">
             {{ $ticket->payment_date ? $ticket->payment_date->format('d/m/Y') : '-' }}
         </td>
 
         <!-- 11. Biaya (IDR) -->
-        <td class="py-0.5 px-2 text-right whitespace-nowrap font-mono font-bold text-emerald-400 border-r border-slate-800/40">
+        <td class="py-0.5 px-2 text-right whitespace-nowrap font-mono font-bold text-emerald-700 border-r border-slate-200/80">
             {{ $ticket->formatted_amount }}
         </td>
 
@@ -110,10 +110,10 @@
 @empty
     <tr>
         <td colspan="12" class="py-12 text-center text-slate-500">
-            <div class="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto mb-3 text-slate-600">
+            <div class="w-14 h-14 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center mx-auto mb-3 text-slate-400">
                 <i class="fa-solid fa-table-list text-xl"></i>
             </div>
-            <p class="text-sm font-medium text-slate-400">Tidak ada histori tiket ditemukan</p>
+            <p class="text-sm font-medium text-slate-700">Tidak ada histori tiket ditemukan</p>
             <p class="text-xs text-slate-500 mt-1">Coba sesuaikan kata kunci pencarian atau filter yang Anda pilih.</p>
         </td>
     </tr>

@@ -1,7 +1,7 @@
 @forelse($hotels as $hotel)
     @can('update', $hotel)
         <tr @dblclick="window.loadSpaPage('{{ route('hotels.edit', $hotel->id) }}')"
-            class="hover:bg-amber-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
+            class="hover:bg-amber-50/70 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-200/80 select-none"
             title="Double klik untuk mengedit data hotel {{ $hotel->booking_code ?: '-' }}">
     @else
         <tr @dblclick="selectedHotel = {{ json_encode([
@@ -37,76 +37,76 @@
                     'date' => $log->created_at->format('d M Y, H:i'),
                 ])
             ]) }}; showModal = true"
-            class="hover:bg-amber-950/40 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-800/40 select-none"
+            class="hover:bg-amber-50/70 cursor-pointer transition-colors group whitespace-nowrap border-b border-slate-200/80 select-none"
             title="Double klik untuk melihat Voucher Hotel {{ $hotel->booking_code ?: '-' }}">
     @endcan
         <!-- 1. Kode Booking -->
-        <td class="py-0.5 px-2 font-mono font-semibold text-amber-400 whitespace-nowrap border-r border-slate-800/40">
+        <td class="py-0.5 px-2 font-mono font-semibold text-amber-700 whitespace-nowrap border-r border-slate-200/80">
             {{ $hotel->booking_code ?: '-' }}
         </td>
 
         <!-- 2. Kode Invoice -->
-        <td class="py-0.5 px-2 font-mono font-semibold text-indigo-300 whitespace-nowrap border-r border-slate-800/40">
+        <td class="py-0.5 px-2 font-mono font-semibold text-indigo-700 whitespace-nowrap border-r border-slate-200/80">
             {{ $hotel->invoice_code ?: '-' }}
         </td>
 
         <!-- 3. Tgl Booking -->
-        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-300 border-r border-slate-800/40">
+        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-700 border-r border-slate-200/80">
             {{ $hotel->booking_date ? $hotel->booking_date->format('d/m/Y') : '-' }}
         </td>
 
         <!-- 4. Nama Hotel -->
-        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-200 border-r border-slate-800/40">
+        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-800 border-r border-slate-200/80">
             {{ $hotel->hotel_name }}
         </td>
 
         <!-- 5. Check In -->
-        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-300 border-r border-slate-800/40">
+        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-700 border-r border-slate-200/80">
             {{ $hotel->check_in_date ? $hotel->check_in_date->format('d/m/Y') : '-' }}
         </td>
 
         <!-- 6. Check Out -->
-        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-300 border-r border-slate-800/40">
+        <td class="py-0.5 px-2 whitespace-nowrap font-medium text-slate-700 border-r border-slate-200/80">
             {{ $hotel->check_out_date ? $hotel->check_out_date->format('d/m/Y') : '-' }}
         </td>
 
         <!-- 7. Jml Malam -->
-        <td class="py-0.5 px-2 text-center whitespace-nowrap font-mono text-amber-300 font-bold border-r border-slate-800/40">
+        <td class="py-0.5 px-2 text-center whitespace-nowrap font-mono text-amber-700 font-bold border-r border-slate-200/80">
             {{ $hotel->night_count }}
         </td>
 
         <!-- 7b. Jml Kamar -->
-        <td class="py-0.5 px-2 text-center whitespace-nowrap font-mono text-sky-300 font-bold border-r border-slate-800/40">
+        <td class="py-0.5 px-2 text-center whitespace-nowrap font-mono text-sky-700 font-bold border-r border-slate-200/80">
             {{ $hotel->room_count }}
         </td>
 
         <!-- 8. Tamu -->
-        <td class="py-0.5 px-2 whitespace-nowrap text-slate-200 font-medium border-r border-slate-800/40">
+        <td class="py-0.5 px-2 whitespace-nowrap text-slate-800 font-medium border-r border-slate-200/80">
             {{ implode(', ', $hotel->guests_list) ?: $hotel->guest_name }}
         </td>
 
         <!-- 9. Jml Tamu -->
-        <td class="py-0.5 px-2 text-center whitespace-nowrap font-mono text-slate-300 font-bold border-r border-slate-800/40">
+        <td class="py-0.5 px-2 text-center whitespace-nowrap font-mono text-slate-700 font-bold border-r border-slate-200/80">
             {{ $hotel->guest_count }}
         </td>
 
         <!-- 10. Pemesan -->
-        <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
-            <span class="text-indigo-300 font-medium">{{ $hotel->booked_by }}</span>
+        <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-200/80">
+            <span class="text-indigo-700 font-semibold">{{ $hotel->booked_by }}</span>
         </td>
 
         <!-- 11. Pembayar -->
-        <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-800/40">
-            <span class="text-emerald-300 font-medium">{{ $hotel->paid_by }}</span>
+        <td class="py-0.5 px-2 whitespace-nowrap border-r border-slate-200/80">
+            <span class="text-emerald-700 font-semibold">{{ $hotel->paid_by }}</span>
         </td>
 
         <!-- 12. Tgl Bayar -->
-        <td class="py-0.5 px-2 whitespace-nowrap text-slate-400 font-mono text-[9px] border-r border-slate-800/40">
+        <td class="py-0.5 px-2 whitespace-nowrap text-slate-500 font-mono text-[9px] border-r border-slate-200/80">
             {{ $hotel->payment_date ? $hotel->payment_date->format('d/m/Y') : '-' }}
         </td>
 
         <!-- 13. Biaya (IDR) -->
-        <td class="py-0.5 px-2 text-right whitespace-nowrap font-mono font-bold text-emerald-400 border-r border-slate-800/40">
+        <td class="py-0.5 px-2 text-right whitespace-nowrap font-mono font-bold text-emerald-700 border-r border-slate-200/80">
             {{ $hotel->formatted_amount }}
         </td>
 
@@ -120,10 +120,10 @@
 @empty
     <tr>
         <td colspan="14" class="py-12 text-center text-slate-500">
-            <div class="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto mb-3 text-slate-600">
+            <div class="w-14 h-14 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center mx-auto mb-3 text-slate-400">
                 <i class="fa-solid fa-hotel text-xl"></i>
             </div>
-            <p class="text-sm font-medium text-slate-400">Tidak ada histori hotel ditemukan</p>
+            <p class="text-sm font-medium text-slate-700">Tidak ada histori hotel ditemukan</p>
             <p class="text-xs text-slate-500 mt-1">Coba sesuaikan kata kunci pencarian atau filter yang Anda pilih.</p>
         </td>
     </tr>

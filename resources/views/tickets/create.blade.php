@@ -5,108 +5,108 @@
 @section('content')
 <div class="max-w-4xl mx-auto min-w-0 w-full pb-12">
     <div class="mb-6">
-        <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 mb-2">
+        <a href="{{ route('tickets.index') }}" class="text-xs font-medium text-sky-700 hover:text-sky-800 inline-flex items-center gap-1.5 mb-2">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Tiket
         </a>
-        <h1 class="font-display text-2xl sm:text-3xl font-bold text-white leading-tight">Tambah Histori Tiket Baru</h1>
-        <p class="text-slate-400 text-xs sm:text-sm mt-1">Masukkan rincian tiket keberangkatan, pemesan, dan daftar penumpang (bisa lebih dari 1 orang).</p>
+        <h1 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 leading-tight">Tambah Histori Tiket Baru</h1>
+        <p class="text-slate-600 text-xs sm:text-sm mt-1">Masukkan rincian tiket keberangkatan, pemesan, dan daftar penumpang (bisa lebih dari 1 orang).</p>
     </div>
 
-    <div class="glass-card p-4 sm:p-8 rounded-2xl shadow-2xl overflow-hidden">
+    <div class="glass-card p-4 sm:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white overflow-hidden">
         <form action="{{ route('tickets.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <!-- Section 1: Informasi Perjalanan -->
             <div>
-                <h3 class="text-xs sm:text-sm font-semibold text-sky-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-sky-700 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-route"></i> Informasi Perjalanan
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                     <div>
-                        <label for="ticket_date" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Tanggal Tiket / Keberangkatan <span class="text-rose-400">*</span>
+                        <label for="ticket_date" class="block text-xs font-medium text-slate-700 mb-1.5">
+                            Tanggal Tiket / Keberangkatan <span class="text-rose-600">*</span>
                         </label>
-                        <input type="date" id="ticket_date" name="ticket_date" value="{{ old('ticket_date', date('Y-m-d')) }}" required onclick="this.showPicker?.()" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 cursor-pointer @error('ticket_date') border-rose-500 @enderror">
+                        <input type="date" id="ticket_date" name="ticket_date" value="{{ old('ticket_date', date('Y-m-d')) }}" required onclick="this.showPicker?.()" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-white cursor-pointer @error('ticket_date') border-rose-500 @enderror">
                         @error('ticket_date')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="ticket_code" class="block text-xs font-medium text-slate-300 mb-1.5">
+                        <label for="ticket_code" class="block text-xs font-medium text-slate-700 mb-1.5">
                             Kode Tiket / Ref Booking <span class="text-slate-500">(Opsional)</span>
                         </label>
-                        <input type="text" id="ticket_code" name="ticket_code" value="{{ old('ticket_code') }}" placeholder="Contoh: GA-89102, TCK-2026-001" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('ticket_code') border-rose-500 @enderror">
+                        <input type="text" id="ticket_code" name="ticket_code" value="{{ old('ticket_code') }}" placeholder="Contoh: GA-89102, TCK-2026-001" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 @error('ticket_code') border-rose-500 @enderror">
                         @error('ticket_code')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="invoice_code" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Kode Invoice / No. Invoice <span class="text-rose-400">*</span>
+                        <label for="invoice_code" class="block text-xs font-medium text-slate-700 mb-1.5">
+                            Kode Invoice / No. Invoice <span class="text-rose-600">*</span>
                         </label>
-                        <input type="text" id="invoice_code" name="invoice_code" value="{{ old('invoice_code') }}" required placeholder="Contoh: INV-2026-001" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('invoice_code') border-rose-500 @enderror">
+                        <input type="text" id="invoice_code" name="invoice_code" value="{{ old('invoice_code') }}" required placeholder="Contoh: INV-2026-001" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 @error('invoice_code') border-rose-500 @enderror">
                         @error('invoice_code')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="origin" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Dari (Lokasi Keberangkatan) <span class="text-rose-400">*</span>
+                        <label for="origin" class="block text-xs font-medium text-slate-700 mb-1.5">
+                            Dari (Lokasi Keberangkatan) <span class="text-rose-600">*</span>
                         </label>
-                        <input type="text" id="origin" name="origin" value="{{ old('origin') }}" placeholder="Contoh: Jakarta (CGK), Bandung" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('origin') border-rose-500 @enderror">
+                        <input type="text" id="origin" name="origin" value="{{ old('origin') }}" placeholder="Contoh: Jakarta (CGK), Bandung" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 @error('origin') border-rose-500 @enderror">
                         @error('origin')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="destination" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Ke (Lokasi Tujuan) <span class="text-rose-400">*</span>
+                        <label for="destination" class="block text-xs font-medium text-slate-700 mb-1.5">
+                            Ke (Lokasi Tujuan) <span class="text-rose-600">*</span>
                         </label>
-                        <input type="text" id="destination" name="destination" value="{{ old('destination') }}" placeholder="Contoh: Surabaya (SUB), Bali" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 @error('destination') border-rose-500 @enderror">
+                        <input type="text" id="destination" name="destination" value="{{ old('destination') }}" placeholder="Contoh: Surabaya (SUB), Bali" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 @error('destination') border-rose-500 @enderror">
                         @error('destination')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="md:col-span-2">
-                        <label for="transport_type" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Jenis Transportasi <span class="text-rose-400">*</span>
+                        <label for="transport_type" class="block text-xs font-medium text-slate-700 mb-1.5">
+                            Jenis Transportasi <span class="text-rose-600">*</span>
                         </label>
-                        <select id="transport_type" name="transport_type" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('transport_type') border-rose-500 @enderror">
+                        <select id="transport_type" name="transport_type" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-white text-slate-900 border border-slate-300 @error('transport_type') border-rose-500 @enderror">
                             <option value="">-- Pilih Jenis Transportasi --</option>
                             @foreach($transportOptions as $option)
                                 <option value="{{ $option }}" {{ old('transport_type') == $option ? 'selected' : '' }}>{{ $option }}</option>
                             @endforeach
                         </select>
                         @error('transport_type')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
             </div>
 
-            <hr class="border-slate-800/80">
+            <hr class="border-slate-200">
 
             <!-- Dynamic Multiple Passengers Input -->
             <div x-data="{ passengers: {{ json_encode(old('passenger_names', [''])) }} }">
-                <h3 class="text-xs sm:text-sm font-semibold text-sky-400 uppercase tracking-wider mb-1 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-sky-700 uppercase tracking-wider mb-1 flex items-center gap-2">
                     <i class="fa-solid fa-users"></i> Daftar Nama Penumpang (<span x-text="passengers.length"></span> Orang)
                 </h3>
-                <p class="text-xs text-slate-400 mb-4">Anda dapat menambahkan lebih dari 1 penumpang untuk tiket yang sama.</p>
+                <p class="text-xs text-slate-600 mb-4">Anda dapat menambahkan lebih dari 1 penumpang untuk tiket yang sama.</p>
 
                 <div class="space-y-3">
                     <template x-for="(passenger, index) in passengers" :key="index">
                         <div class="flex items-center gap-2">
                             <div class="relative flex-1 min-w-0">
-                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-bold" x-text="(index + 1) + '.'"></div>
-                                <input type="text" :name="'passenger_names[' + index + ']'" x-model="passengers[index]" placeholder="Contoh: Adley" required class="w-full glass-input rounded-xl pl-9 pr-4 py-2.5 text-sm placeholder-slate-600">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 text-xs font-mono font-bold" x-text="(index + 1) + '.'"></div>
+                                <input type="text" :name="'passenger_names[' + index + ']'" x-model="passengers[index]" placeholder="Contoh: Adley" required class="w-full glass-input rounded-xl pl-9 pr-4 py-2.5 text-sm placeholder-slate-400">
                             </div>
-                            <button type="button" @click="passengers.splice(index, 1)" x-show="passengers.length > 1" class="w-10 h-10 shrink-0 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm" title="Hapus Penumpang Ini">
+                            <button type="button" @click="passengers.splice(index, 1)" x-show="passengers.length > 1" class="w-10 h-10 shrink-0 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-700 border border-rose-200 flex items-center justify-center transition-colors shadow-sm" title="Hapus Penumpang Ini">
                                 <i class="fa-solid fa-trash-can text-sm"></i>
                             </button>
                         </div>
@@ -114,101 +114,101 @@
                 </div>
 
                 <div class="mt-3">
-                    <button type="button" @click="passengers.push('')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 transition-all shadow-sm">
+                    <button type="button" @click="passengers.push('')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 transition-all shadow-sm">
                         <i class="fa-solid fa-user-plus text-xs"></i> Tambah Penumpang
                     </button>
                 </div>
 
                 @error('passenger_names')
-                    <p class="text-rose-400 text-xs mt-2">{{ $message }}</p>
+                    <p class="text-rose-600 text-xs mt-2">{{ $message }}</p>
                 @enderror
             </div>
 
-            <hr class="border-slate-800/80">
+            <hr class="border-slate-200">
 
             <!-- Section 3: Pemesanan & Pembayaran -->
             <div>
-                <h3 class="text-xs sm:text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-emerald-700 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-credit-card"></i> Detail Pemesan & Pembayaran Oleh
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                     <!-- Booker Name Input -->
                     <div class="md:col-span-2">
-                        <label for="booked_by" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Nama Pemesan <span class="text-rose-400">*</span>
+                        <label for="booked_by" class="block text-xs font-medium text-slate-700 mb-1.5">
+                            Nama Pemesan <span class="text-rose-600">*</span>
                         </label>
                         <input type="text" id="booked_by" name="booked_by" value="{{ old('booked_by') }}" required placeholder="Contoh: Martha" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm @error('booked_by') border-rose-500 @enderror">
                         @error('booked_by')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                         <input type="hidden" name="booked_by_user_id" value="{{ Auth::id() }}">
                     </div>
 
                     <div>
-                        <label for="amount" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Harga / Biaya Tiket (IDR) <span class="text-rose-400">*</span>
+                        <label for="amount" class="block text-xs font-medium text-slate-700 mb-1.5">
+                            Harga / Biaya Tiket (IDR) <span class="text-rose-600">*</span>
                         </label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-bold">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 text-xs font-mono font-bold">
                                 Rp
                             </div>
-                            <input type="number" step="any" min="0" id="amount" name="amount" value="{{ old('amount', '0') }}" placeholder="1500000" required class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm font-mono placeholder-slate-600 @error('amount') border-rose-500 @enderror">
+                            <input type="number" step="any" min="0" id="amount" name="amount" value="{{ old('amount', '0') }}" placeholder="1500000" required class="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm font-mono placeholder-slate-400 @error('amount') border-rose-500 @enderror">
                         </div>
                         @error('amount')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="status" class="block text-xs font-medium text-slate-300 mb-1.5">
-                            Status Pembayaran <span class="text-rose-400">*</span>
+                        <label for="status" class="block text-xs font-medium text-slate-700 mb-1.5">
+                            Status Pembayaran <span class="text-rose-600">*</span>
                         </label>
                         @if(!Auth::user()->isAdmin())
-                            <div class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900/80 flex items-center justify-between border border-rose-500/30">
-                                <span class="inline-flex items-center gap-2 font-semibold text-rose-400">
+                            <div class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-rose-50 flex items-center justify-between border border-rose-200">
+                                <span class="inline-flex items-center gap-2 font-semibold text-rose-700">
                                     <i class="fa-solid fa-hourglass-half text-xs"></i> Belum Bayar
                                 </span>
                             </div>
                             <input type="hidden" name="status" value="Belum Bayar">
                         @else
-                            <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-slate-900 @error('status') border-rose-500 @enderror">
+                            <select id="status" name="status" required class="w-full glass-input rounded-xl px-4 py-2.5 text-sm bg-white text-slate-900 border border-slate-300 @error('status') border-rose-500 @enderror">
                                 @foreach($statusOptions as $optStatus)
                                     <option value="{{ $optStatus }}" {{ old('status', 'Belum Bayar') == $optStatus ? 'selected' : '' }}>{{ $optStatus }}</option>
                                 @endforeach
                             </select>
                         @endif
                         @error('status')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="attachment" class="block text-xs font-medium text-slate-300 mb-1.5">
+                        <label for="attachment" class="block text-xs font-medium text-slate-700 mb-1.5">
                             Upload Bukti / Nota Tiket <span class="text-slate-500">(PDF, JPG, PNG max 5MB)</span>
                         </label>
-                        <input type="file" id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="w-full max-w-full glass-input rounded-xl px-3 py-2 text-xs bg-slate-900 file:mr-2 sm:file:mr-4 file:py-1 file:px-2.5 sm:file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-500/20 file:text-sky-300 hover:file:bg-sky-500/30 truncate">
+                        <input type="file" id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="w-full max-w-full glass-input rounded-xl px-3 py-2 text-xs bg-white text-slate-700 file:mr-2 sm:file:mr-4 file:py-1 file:px-2.5 sm:file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-100 file:text-sky-800 hover:file:bg-sky-200 truncate border border-slate-300">
                         @error('attachment')
-                            <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
             </div>
 
-            <hr class="border-slate-800/80">
+            <hr class="border-slate-200">
 
             <div>
-                <label for="notes" class="block text-xs font-medium text-slate-300 mb-1.5">
+                <label for="notes" class="block text-xs font-medium text-slate-700 mb-1.5">
                     Catatan / Keterangan Tambahan
                 </label>
-                <textarea id="notes" name="notes" rows="3" placeholder="Informasi tambahan seperti nomor kursi, kelas penerbangan, atau keperluan dinas..." class="w-full glass-input rounded-xl p-4 text-sm placeholder-slate-600">{{ old('notes') }}</textarea>
+                <textarea id="notes" name="notes" rows="3" placeholder="Informasi tambahan seperti nomor kursi, kelas penerbangan, atau keperluan dinas..." class="w-full glass-input rounded-xl p-4 text-sm placeholder-slate-400">{{ old('notes') }}</textarea>
             </div>
 
             <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4">
-                <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-center text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
+                <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-center text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-colors">
                     Batal
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-center text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition-all">
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-center text-white bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 shadow-md shadow-sky-500/25 transition-all">
                     <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Tiket
                 </button>
             </div>

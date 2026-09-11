@@ -23,23 +23,23 @@
     <!-- Header & Action Buttons -->
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <a href="{{ route('hotels.index') }}" class="text-xs font-medium text-amber-400 hover:text-amber-300 inline-flex items-center gap-1.5 mb-2">
+            <a href="{{ route('hotels.index') }}" class="text-xs font-medium text-amber-700 hover:text-amber-800 inline-flex items-center gap-1.5 mb-2">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Histori Hotel
             </a>
-            <h1 class="font-display text-2xl sm:text-3xl font-bold text-white leading-tight">Edit Histori Hotel</h1>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1">Perbarui data reservasi <span class="font-mono text-amber-400 font-semibold">{{ $hotel->booking_code ?: '-' }}</span></p>
+            <h1 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 leading-tight">Edit Histori Hotel</h1>
+            <p class="text-slate-600 text-xs sm:text-sm mt-1">Perbarui data reservasi <span class="font-mono text-amber-700 font-semibold">{{ $hotel->booking_code ?: '-' }}</span></p>
         </div>
 
         <!-- Tombol Preview HTML & Cetak PDF / Hapus di Header -->
         <div class="flex items-center gap-2">
-            <button type="button" @click="showModal = true" class="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-amber-600 hover:bg-amber-500 shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2">
+            <button type="button" @click="showModal = true" class="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 shadow-md shadow-amber-500/20 transition-all flex items-center justify-center gap-2">
                 <i class="fa-solid fa-file-pdf text-sm"></i> Preview & Cetak Voucher Hotel
             </button>
             @can('delete', $hotel)
                 <form action="{{ route('hotels.destroy', $hotel->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data hotel ini? Data yang dihapus tidak dapat dikembalikan.');" class="inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-rose-300 bg-rose-500/20 hover:bg-rose-600 hover:text-white border border-rose-500/30 shadow-lg transition-all flex items-center justify-center gap-2">
+                    <button type="submit" class="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 shadow-sm transition-all flex items-center justify-center gap-2">
                         <i class="fa-solid fa-trash-can text-sm"></i> Hapus
                     </button>
                 </form>
@@ -48,10 +48,10 @@
     </div>
 
     <!-- Form Container -->
-    <div class="glass-card p-4 sm:p-8 rounded-2xl shadow-2xl overflow-hidden">
+    <div class="glass-card p-4 sm:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white overflow-hidden">
         @if($isBookerLunas)
-            <div class="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-3">
-                <i class="fa-solid fa-lock text-xl text-amber-400 shrink-0"></i>
+            <div class="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-3">
+                <i class="fa-solid fa-lock text-xl text-amber-700 shrink-0"></i>
                 <div>
                     <span class="font-bold block text-sm">Reservasi Hotel Berstatus Lunas — Mode Pembatasan Akses (Finance)</span>
                     <span>Data hotel, tamu, dan biaya telah dikunci karena pembayaran sudah <strong>Lunas</strong>. Sebagai Finance, Anda diperbolehkan mengedit <strong>Tanggal Pembayaran</strong> atau mengubah status menjadi <strong>Dibatalkan</strong>.</span>
@@ -79,7 +79,7 @@
             @endif
 
             @if ($errors->any())
-                <div class="p-4 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 text-xs space-y-1">
+                <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs space-y-1">
                     <div class="font-bold flex items-center gap-2">
                         <i class="fa-solid fa-triangle-exclamation"></i> Terdapat kesalahan pengisian formulir:
                     </div>
@@ -93,64 +93,64 @@
 
             <!-- Section 1: Informasi Reservasi & Hotel -->
             <div>
-                <h3 class="text-xs sm:text-sm font-semibold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-amber-700 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-hotel"></i> Data Reservasi & Hotel
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-5">
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Booking <span class="text-rose-400">*</span></label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1.5">Tanggal Booking <span class="text-rose-600">*</span></label>
                         <input type="date" name="booking_date" value="{{ old('booking_date', $hotel->booking_date ? $hotel->booking_date->format('Y-m-d') : '') }}" required {{ $isDataLocked ? 'disabled' : '' }} onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Kode Booking Hotel <span class="text-slate-500">(Opsional)</span></label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1.5">Kode Booking Hotel <span class="text-slate-500">(Opsional)</span></label>
                         <input type="text" name="booking_code" value="{{ old('booking_code', $hotel->booking_code) }}" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Kode Invoice <span class="text-rose-400">*</span></label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1.5">Kode Invoice <span class="text-rose-600">*</span></label>
                         <input type="text" name="invoice_code" value="{{ old('invoice_code', $hotel->invoice_code) }}" required {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
 
                     <div class="md:col-span-2"></div>
 
                     <div class="md:col-span-3">
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama Hotel <span class="text-rose-400">*</span></label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1.5">Nama Hotel <span class="text-rose-600">*</span></label>
                         <input type="text" name="hotel_name" value="{{ old('hotel_name', $hotel->hotel_name) }}" required {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
 
                     <div class="md:col-span-1">
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Jumlah Kamar <span class="text-rose-400">*</span></label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1.5">Jumlah Kamar <span class="text-rose-600">*</span></label>
                         <input type="number" name="room_count" value="{{ old('room_count', $hotel->room_count) }}" min="1" required {{ $isDataLocked ? 'disabled' : '' }} placeholder="Jumlah kamar..." class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Check-in <span class="text-rose-400">*</span></label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1.5">Tanggal Check-in <span class="text-rose-600">*</span></label>
                         <input type="date" name="check_in_date" value="{{ old('check_in_date', $hotel->check_in_date ? $hotel->check_in_date->format('Y-m-d') : '') }}" required {{ $isDataLocked ? 'disabled' : '' }} onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Check-out <span class="text-rose-400">*</span></label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1.5">Tanggal Check-out <span class="text-rose-600">*</span></label>
                         <input type="date" name="check_out_date" value="{{ old('check_out_date', $hotel->check_out_date ? $hotel->check_out_date->format('Y-m-d') : '') }}" required {{ $isDataLocked ? 'disabled' : '' }} onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
                 </div>
             </div>
 
-            <hr class="border-slate-800/80">
+            <hr class="border-slate-200">
 
             <!-- Section 2: Daftar Tamu Menginap -->
             <div>
-                <h3 class="text-xs sm:text-sm font-semibold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-users"></i> Tamu yang Menginap <span class="text-rose-400">*</span>
+                <h3 class="text-xs sm:text-sm font-semibold text-amber-700 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-users"></i> Tamu yang Menginap <span class="text-rose-600">*</span>
                 </h3>
 
                 <div class="space-y-3">
                     <template x-for="(guest, index) in guests" :key="index">
                         <div class="flex items-center gap-2">
-                            <div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-mono text-xs font-bold text-slate-400 shrink-0" x-text="index + 1"></div>
+                            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-300 flex items-center justify-center font-mono text-xs font-bold text-slate-700 shrink-0" x-text="index + 1"></div>
                             <input type="text" :name="'guest_names[' + index + ']'" x-model="guests[index]" required placeholder="Contoh: Adley" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input flex-1 px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
                             @if(!$isDataLocked)
-                                <button type="button" @click="removeGuest(index)" x-show="guests.length > 1" class="w-10 h-10 shrink-0 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/30 transition-all flex items-center justify-center">
+                                <button type="button" @click="removeGuest(index)" x-show="guests.length > 1" class="w-10 h-10 shrink-0 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-all flex items-center justify-center">
                                     <i class="fa-solid fa-trash-can text-sm"></i>
                                 </button>
                             @endif
@@ -160,38 +160,38 @@
 
                 @if(!$isDataLocked)
                     <div class="mt-3">
-                        <button type="button" @click="addGuest()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-all shadow-sm">
+                        <button type="button" @click="addGuest()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-300 transition-all shadow-sm">
                             <i class="fa-solid fa-plus text-xs"></i> Tambah Tamu
                         </button>
                     </div>
                 @endif
             </div>
 
-            <hr class="border-slate-800/80">
+            <hr class="border-slate-200">
 
             <!-- Section 3: Pemesan & Pembayaran -->
             <div>
-                <h3 class="text-xs sm:text-sm font-semibold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-semibold text-amber-700 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-wallet"></i> Detail Pemesan & Pembayaran
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama Pemesan (Booked By) <span class="text-rose-400">*</span></label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1.5">Nama Pemesan (Booked By) <span class="text-rose-600">*</span></label>
                         <input type="text" name="booked_by" value="{{ old('booked_by', $hotel->booked_by) }}" required placeholder="Contoh: Martha" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">
                         <input type="hidden" name="booked_by_user_id" value="{{ old('booked_by_user_id', $hotel->booked_by_user_id ?: Auth::id()) }}">
                     </div>
 
                     @if($isFinance)
-                        <div class="md:col-span-2 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex items-center gap-2.5 shadow-inner">
-                            <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0">
+                        <div class="md:col-span-2 bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-center gap-2.5 shadow-inner">
+                            <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs shrink-0">
                                 <i class="fa-solid fa-credit-card"></i>
                             </div>
                             <div class="min-w-0 flex-1">
-                                <div class="text-[10px] text-amber-400 font-semibold uppercase tracking-wider truncate">Pembayaran Oleh (Finance)</div>
-                                <div class="text-xs font-bold text-white flex items-center gap-1.5 truncate">
+                                <div class="text-[10px] text-amber-800 font-semibold uppercase tracking-wider truncate">Pembayaran Oleh (Finance)</div>
+                                <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5 truncate">
                                     <span class="truncate">{{ $hotel->paid_by && $hotel->paid_by !== '-' ? $hotel->paid_by : Auth::user()->name }}</span>
-                                    <span class="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 shrink-0">
+                                    <span class="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 border border-amber-300 shrink-0">
                                         Finance
                                     </span>
                                 </div>
@@ -201,26 +201,26 @@
                         </div>
 
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Pembayaran <span class="text-slate-400">(Wajib jika status Lunas)</span></label>
+                            <label class="block text-xs font-medium text-slate-700 mb-1.5">Tanggal Pembayaran <span class="text-slate-500">(Wajib jika status Lunas)</span></label>
                             <input type="date" name="payment_date" value="{{ old('payment_date', $hotel->payment_date ? $hotel->payment_date->format('Y-m-d') : '') }}" onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer">
                         </div>
                     @else
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Pembayaran Oleh</label>
+                            <label class="block text-xs font-medium text-slate-700 mb-1.5">Pembayaran Oleh</label>
                             <input type="text" name="paid_by" value="{{ old('paid_by', $hotel->paid_by) }}" placeholder="Contoh: PT Corporate Finance" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
                         </div>
 
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Tanggal Bayar</label>
+                            <label class="block text-xs font-medium text-slate-700 mb-1.5">Tanggal Bayar</label>
                             <input type="date" name="payment_date" value="{{ old('payment_date', $hotel->payment_date ? $hotel->payment_date->format('Y-m-d') : '') }}" onclick="this.showPicker?.()" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono cursor-pointer">
                         </div>
 
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Linkkan dengan User Pembayar (Sistem)</label>
-                            <select name="paid_by_user_id" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm bg-slate-900">
+                            <label class="block text-xs font-medium text-slate-700 mb-1.5">Linkkan dengan User Pembayar (Sistem)</label>
+                            <select name="paid_by_user_id" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm bg-white text-slate-900 border border-slate-300">
                                 <option value="">-- Pilih User Pembayar --</option>
                                 @foreach($users as $user)
-                                    <option value="{{ $user->id }}" {{ old('paid_by_user_id', $hotel->paid_by_user_id) == $user->id ? 'selected' : '' }} class="bg-slate-900 text-white">
+                                    <option value="{{ $user->id }}" {{ old('paid_by_user_id', $hotel->paid_by_user_id) == $user->id ? 'selected' : '' }}>
                                         {{ $user->name }} ({{ ucfirst($user->role) }})
                                     </option>
                                 @endforeach
@@ -229,27 +229,27 @@
                     @endif
 
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Biaya Hotel (IDR) <span class="text-rose-400">*</span></label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1.5">Biaya Hotel (IDR) <span class="text-rose-600">*</span></label>
                         <input type="number" step="0.01" min="0" name="amount" value="{{ old('amount', $hotel->amount) }}" required {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm font-mono disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Status Pembayaran <span class="text-rose-400">*</span></label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1.5">Status Pembayaran <span class="text-rose-600">*</span></label>
                         @if($isFinance)
-                            <select name="status" x-model="status" required class="glass-input w-full px-4 py-2.5 rounded-xl text-sm bg-slate-900">
+                            <select name="status" x-model="status" required class="glass-input w-full px-4 py-2.5 rounded-xl text-sm bg-white text-slate-900 border border-slate-300">
                                 @if($hotel->status === 'Lunas')
-                                    <option value="Lunas" {{ old('status', $hotel->status) == 'Lunas' ? 'selected' : '' }} class="bg-slate-900 text-white">Lunas (Status Saat Ini)</option>
-                                    <option value="Dibatalkan" {{ old('status', $hotel->status) == 'Dibatalkan' ? 'selected' : '' }} class="bg-slate-900 text-white">Dibatalkan</option>
+                                    <option value="Lunas" {{ old('status', $hotel->status) == 'Lunas' ? 'selected' : '' }}>Lunas (Status Saat Ini)</option>
+                                    <option value="Dibatalkan" {{ old('status', $hotel->status) == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
                                 @else
-                                    <option value="Belum Bayar" {{ old('status', $hotel->status) == 'Belum Bayar' ? 'selected' : '' }} class="bg-slate-900 text-white">Belum Bayar</option>
-                                    <option value="Lunas" {{ old('status', $hotel->status) == 'Lunas' ? 'selected' : '' }} class="bg-slate-900 text-white">Lunas (Konfirmasi Pembayaran)</option>
-                                    <option value="Dibatalkan" {{ old('status', $hotel->status) == 'Dibatalkan' ? 'selected' : '' }} class="bg-slate-900 text-white">Dibatalkan</option>
+                                    <option value="Belum Bayar" {{ old('status', $hotel->status) == 'Belum Bayar' ? 'selected' : '' }}>Belum Bayar</option>
+                                    <option value="Lunas" {{ old('status', $hotel->status) == 'Lunas' ? 'selected' : '' }}>Lunas (Konfirmasi Pembayaran)</option>
+                                    <option value="Dibatalkan" {{ old('status', $hotel->status) == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
                                 @endif
                             </select>
                         @else
-                            <select name="status" x-model="status" required class="glass-input w-full px-4 py-2.5 rounded-xl text-sm bg-slate-900">
+                            <select name="status" x-model="status" required class="glass-input w-full px-4 py-2.5 rounded-xl text-sm bg-white text-slate-900 border border-slate-300">
                                 @foreach($statusOptions as $opt)
-                                    <option value="{{ $opt }}" class="bg-slate-900 text-white" {{ old('status', $hotel->status) === $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                    <option value="{{ $opt }}" {{ old('status', $hotel->status) === $opt ? 'selected' : '' }}>{{ $opt }}</option>
                                 @endforeach
                             </select>
                         @endif
@@ -257,16 +257,16 @@
                 </div>
             </div>
 
-            <hr class="border-slate-800/80">
+            <hr class="border-slate-200">
 
             <!-- Section 4: Catatan & Lampiran -->
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1.5">File Lampiran Bukti / Invoice (Kosongkan jika tidak diubah)</label>
-                    <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs text-slate-400 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500 hover:file:text-slate-950">
+                    <label class="block text-xs font-medium text-slate-700 mb-1.5">File Lampiran Bukti / Invoice (Kosongkan jika tidak diubah)</label>
+                    <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-xs text-slate-600 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200">
                     @if($hotel->attachment_path)
                         <div class="mt-2 text-xs">
-                            <a href="{{ asset('storage/' . $hotel->attachment_path) }}" target="_blank" class="text-amber-400 hover:underline flex items-center gap-1">
+                            <a href="{{ asset('storage/' . $hotel->attachment_path) }}" target="_blank" class="text-amber-700 hover:underline flex items-center gap-1">
                                 <i class="fa-solid fa-paperclip"></i> Lihat File Lampiran Saat Ini
                             </a>
                         </div>
@@ -274,15 +274,15 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1.5">Catatan Tambahan</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1.5">Catatan Tambahan</label>
                     <textarea name="notes" rows="3" {{ $isDataLocked ? 'disabled' : '' }} class="glass-input w-full px-4 py-2.5 rounded-xl text-sm disabled:opacity-60 disabled:cursor-not-allowed">{{ old('notes', $hotel->notes) }}</textarea>
                 </div>
             </div>
 
             <!-- Submit Button -->
-            <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
-                <a href="{{ route('hotels.index') }}" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all">Batal</a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2">
+            <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-200">
+                <a href="{{ route('hotels.index') }}" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-semibold transition-all">Batal</a>
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2">
                     <i class="fa-solid fa-floppy-disk"></i> Perbarui Data Hotel
                 </button>
             </div>
@@ -292,11 +292,11 @@
     <!-- HTML Preview Modal for Voucher Hotel -->
     <div x-cloak x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showModal = false" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md transition-opacity no-print"></div>
+            <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showModal = false" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity no-print"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-            <div id="modal-hotel-voucher-card" x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-800 relative printable-card">
+            <div id="modal-hotel-voucher-card" x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-200 relative printable-card">
                 <div class="p-0">
                     <!-- HTML Voucher Header Banner -->
                     <div class="bg-gradient-to-r from-amber-600 via-amber-700 to-indigo-800 p-6 text-white relative overflow-hidden">
@@ -310,13 +310,13 @@
                                     <i class="fa-solid fa-hotel"></i>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-amber-200 uppercase font-mono tracking-wider">HOTEL RESERVATION VOUCHER</p>
+                                    <p class="text-xs text-amber-100 uppercase font-mono tracking-wider">HOTEL RESERVATION VOUCHER</p>
                                     <h3 class="font-mono font-bold text-lg">{{ $hotel->hotel_name }}</h3>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 no-print">
                                 <!-- Stream / Download PDF Button -->
-                                <a href="{{ route('hotels.pdf', $hotel->id) }}" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-colors shadow-sm" title="Download PDF Voucher Hotel">
+                                <a href="{{ route('hotels.pdf', $hotel->id) }}" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-1.5 transition-colors shadow-sm" title="Download PDF Voucher Hotel">
                                     <i class="fa-solid fa-file-pdf"></i> Download PDF
                                 </a>
 
@@ -328,33 +328,33 @@
 
                         <div class="mt-6 pt-4 border-t border-white/20 grid grid-cols-3 gap-3">
                             <div>
-                                <span class="text-xs text-amber-200 block uppercase">Check In</span>
+                                <span class="text-xs text-amber-100 block uppercase">Check In</span>
                                 <span class="font-display text-lg font-bold text-white block mt-0.5">{{ $hotel->check_in_date ? $hotel->check_in_date->format('d M Y') : '-' }}</span>
                             </div>
                             <div class="text-center">
-                                <span class="text-xs text-amber-200 block uppercase">Durasi & Kamar</span>
-                                <span class="font-display text-lg font-bold text-amber-300 block mt-0.5">{{ $hotel->night_count }} Malam • {{ $hotel->room_count }} Kamar</span>
+                                <span class="text-xs text-amber-100 block uppercase">Durasi & Kamar</span>
+                                <span class="font-display text-lg font-bold text-amber-200 block mt-0.5">{{ $hotel->night_count }} Malam • {{ $hotel->room_count }} Kamar</span>
                             </div>
                             <div class="text-right">
-                                <span class="text-xs text-amber-200 block uppercase">Check Out</span>
+                                <span class="text-xs text-amber-100 block uppercase">Check Out</span>
                                 <span class="font-display text-lg font-bold text-white block mt-0.5">{{ $hotel->check_out_date ? $hotel->check_out_date->format('d M Y') : '-' }}</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- HTML Voucher Body -->
-                    <div class="p-6 space-y-5 bg-slate-900 text-xs">
+                    <div class="p-6 space-y-5 bg-white text-xs text-slate-800">
                         <!-- Guest List Section -->
-                        <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
-                                    <i class="fa-solid fa-users text-amber-400"></i> Daftar Tamu Menginap
+                                <span class="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
+                                    <i class="fa-solid fa-users text-amber-600"></i> Daftar Tamu Menginap
                                 </span>
-                                <span class="text-xs font-mono font-semibold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30">{{ $hotel->guest_count }} Tamu ({{ $hotel->room_count }} Kamar)</span>
+                                <span class="text-xs font-mono font-semibold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300">{{ $hotel->guest_count }} Tamu ({{ $hotel->room_count }} Kamar)</span>
                             </div>
                             <div class="space-y-1">
                                 @foreach($hotel->guests_list as $idx => $gName)
-                                    <div class="flex items-center gap-2 text-sm text-slate-100 font-medium py-1 border-b border-slate-800/40 last:border-0">
+                                    <div class="flex items-center gap-2 text-sm text-slate-800 font-medium py-1 border-b border-slate-200 last:border-0">
                                         <span class="text-xs font-mono text-slate-500">{{ $idx + 1 }}.</span>
                                         <span>{{ $gName }}</span>
                                     </div>
@@ -363,62 +363,62 @@
                         </div>
 
                         <!-- Core Details Grid -->
-                        <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                             <div>
-                                <span class="text-xs text-slate-400 block">Kode Booking</span>
-                                <span class="text-sm font-semibold font-mono text-amber-400 mt-0.5 block">{{ $hotel->booking_code ?: '-' }}</span>
+                                <span class="text-xs text-slate-600 block">Kode Booking</span>
+                                <span class="text-sm font-semibold font-mono text-amber-700 mt-0.5 block">{{ $hotel->booking_code ?: '-' }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-slate-400 block">Kode Invoice</span>
-                                <span class="text-sm font-semibold font-mono text-indigo-300 mt-0.5 block">{{ $hotel->invoice_code }}</span>
+                                <span class="text-xs text-slate-600 block">Kode Invoice</span>
+                                <span class="text-sm font-semibold font-mono text-indigo-800 mt-0.5 block">{{ $hotel->invoice_code }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-slate-400 block">Status Pembayaran</span>
+                                <span class="text-xs text-slate-600 block">Status Pembayaran</span>
                                 <span class="inline-block mt-1 px-2.5 py-0.5 text-xs font-semibold rounded-full border {{ $hotel->status_badge_class }}">{{ $hotel->status }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-slate-400 block">Biaya Reservasi</span>
-                                <span class="text-base font-bold text-emerald-400 font-mono mt-0.5 block">{{ $hotel->formatted_amount }}</span>
+                                <span class="text-xs text-slate-600 block">Biaya Reservasi</span>
+                                <span class="text-base font-bold text-emerald-700 font-mono mt-0.5 block">{{ $hotel->formatted_amount }}</span>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                             <div>
-                                <span class="text-xs text-slate-400 block">Pemesan Hotel</span>
-                                <span class="text-xs font-semibold text-indigo-300 mt-0.5 block">{{ $hotel->booked_by }}</span>
+                                <span class="text-xs text-slate-600 block">Pemesan Hotel</span>
+                                <span class="text-xs font-semibold text-indigo-800 mt-0.5 block">{{ $hotel->booked_by }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-slate-400 block">Pembayaran Oleh</span>
-                                <span class="text-xs font-semibold text-emerald-300 mt-0.5 block">{{ $hotel->paid_by }}</span>
+                                <span class="text-xs text-slate-600 block">Pembayaran Oleh</span>
+                                <span class="text-xs font-semibold text-emerald-800 mt-0.5 block">{{ $hotel->paid_by }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-slate-400 block">Tanggal Booking</span>
-                                <span class="text-xs font-semibold font-mono text-slate-200 mt-0.5 block">{{ $hotel->booking_date ? $hotel->booking_date->format('d M Y') : '-' }}</span>
+                                <span class="text-xs text-slate-600 block">Tanggal Booking</span>
+                                <span class="text-xs font-semibold font-mono text-slate-800 mt-0.5 block">{{ $hotel->booking_date ? $hotel->booking_date->format('d M Y') : '-' }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-slate-400 block">Tanggal Bayar</span>
-                                <span class="text-xs font-semibold font-mono text-slate-200 mt-0.5 block">{{ $hotel->payment_date ? $hotel->payment_date->format('d M Y') : '-' }}</span>
+                                <span class="text-xs text-slate-600 block">Tanggal Bayar</span>
+                                <span class="text-xs font-semibold font-mono text-slate-800 mt-0.5 block">{{ $hotel->payment_date ? $hotel->payment_date->format('d M Y') : '-' }}</span>
                             </div>
                         </div>
 
                         @if($hotel->notes)
-                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-                                <span class="text-xs text-slate-400 block mb-1">Catatan</span>
-                                <p class="text-slate-300 italic">{{ $hotel->notes }}</p>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                                <span class="text-xs text-slate-600 block mb-1">Catatan</span>
+                                <p class="text-slate-700 italic">{{ $hotel->notes }}</p>
                             </div>
                         @endif
 
                         <!-- Activity Timeline Logs in HTML Preview -->
                         @if($hotel->statusLogs->count() > 0)
-                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-2">
-                                <span class="text-xs font-bold text-slate-400 block uppercase tracking-wider mb-2">Riwayat Log Aktivitas Status</span>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                                <span class="text-xs font-bold text-slate-600 block uppercase tracking-wider mb-2">Riwayat Log Aktivitas Status</span>
                                 @foreach($hotel->statusLogs as $log)
-                                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
+                                    <div class="p-2.5 rounded-xl bg-slate-100 border border-slate-200 text-xs">
                                         <div class="flex items-center justify-between">
-                                            <span class="font-semibold text-amber-400">{{ $log->to_status }}</span>
+                                            <span class="font-semibold text-amber-700">{{ $log->to_status }}</span>
                                             <span class="text-[10px] font-mono text-slate-500">{{ $log->created_at->format('d M Y, H:i') }}</span>
                                         </div>
-                                        <p class="text-slate-400 text-[11px] mt-0.5">{{ $log->notes }}</p>
+                                        <p class="text-slate-700 text-[11px] mt-0.5">{{ $log->notes }}</p>
                                         <div class="text-[10px] text-slate-500 font-mono mt-1">{{ $log->user_name }} ({{ ucfirst($log->user_role ?? 'user') }})</div>
                                     </div>
                                 @endforeach
