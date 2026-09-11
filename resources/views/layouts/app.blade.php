@@ -456,11 +456,14 @@
                     const { method = 'GET', body = null, pushHistory = true } = options;
                     const mainEl = document.querySelector('main');
 
-                    startProgress();
-                    if (mainEl) {
-                        mainEl.style.transition = 'opacity 0.15s ease';
-                        mainEl.style.opacity = '0.4';
+                    if (!mainEl) {
+                        window.location.href = url;
+                        return;
                     }
+
+                    startProgress();
+                    mainEl.style.transition = 'opacity 0.15s ease';
+                    mainEl.style.opacity = '0.3';
 
                     try {
                         const fetchOptions = {
@@ -483,7 +486,8 @@
                         }
 
                         if (!response.ok) {
-                            console.warn('SPA Response error status:', response.status);
+                            window.location.href = url;
+                            return;
                         }
 
                         const html = await response.text();
@@ -493,14 +497,12 @@
                         const newMain = doc.querySelector('main');
                         const newTitle = doc.querySelector('title');
 
-                        if (newMain && mainEl) {
-                            // Safely destroy existing Alpine tree before DOM swap
-                            if (window.Alpine && typeof Alpine.destroyTree === 'function') {
-                                try { Alpine.destroyTree(mainEl); } catch(e){}
-                            }
-
+                        if (newMain) {
                             mainEl.innerHTML = newMain.innerHTML;
-                            if (newTitle) document.title = newTitle.innerText;
+
+                            if (newTitle) {
+                                document.title = newTitle.innerText;
+                            }
 
                             const targetUrl = response.url || url;
                             if (pushHistory && window.location.href !== targetUrl) {
@@ -509,37 +511,47 @@
 
                             updateActiveSidebarLinks(new URL(targetUrl, window.location.origin).pathname);
 
-                            // Re-initialize Alpine JS components on newly swapped HTML
-                            if (window.Alpine && typeof Alpine.initTree === 'function') {
-                                try { Alpine.initTree(mainEl); } catch(e){}
-                            } else if (window.Alpine && typeof Alpine.discoverUninitializedComponents === 'function') {
-                                try { Alpine.discoverUninitializedComponents(el => Alpine.initializeComponent(el)); } catch(e){}
-                            }
-
-                            // Re-execute scripts inside newly loaded content
-                            const scripts = mainEl.querySelectorAll('script');
-                            scripts.forEach(script => {
+                            // Re-execute inline scripts inside newly loaded content
+                            const scripts = Array.from(mainEl.querySelectorAll('script'));
+                            for (const oldScript of scripts) {
                                 try {
                                     const newScript = document.createElement('script');
-                                    Array.from(script.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                                    newScript.appendChild(document.createTextNode(script.innerHTML));
-                                    script.parentNode.replaceChild(newScript, script);
+                                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                                    newScript.textContent = oldScript.textContent;
+                                    oldScript.parentNode.replaceChild(newScript, oldScript);
                                 } catch(e){}
-                            });
+                            }
 
-                            mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+                            // Re-initialize Alpine.js on the swapped main element
+                            if (window.Alpine) {
+                                delete mainEl._x_dataStack;
+                                setTimeout(() => {
+                                    try {
+                                        if (typeof Alpine.initTree === 'function') {
+                                            Alpine.initTree(mainEl);
+                                        }
+                                    } catch(e) {
+                                        console.warn('Alpine re-init:', e);
+                                    }
+                                }, 20);
+                            }
+
+                            mainEl.scrollTo({ top: 0, behavior: 'instant' });
                             window.dispatchEvent(new CustomEvent('spa:loaded', { detail: { url: targetUrl } }));
+                        } else {
+                            window.location.href = url;
                         }
                     } catch (err) {
-                        console.error('SPA Navigation Error:', err);
+                        console.error('SPA Load Error, fallback to full navigate:', err);
+                        window.location.href = url;
                     } finally {
                         if (mainEl) mainEl.style.opacity = '1';
                         finishProgress();
                     }
                 }
 
-                // Intercept internal link clicks at capture phase
-                window.addEventListener('click', function(e) {
+                // Intercept internal link clicks
+                document.addEventListener('click', function(e) {
                     const link = e.target.closest('a');
                     if (!link) return;
 
@@ -555,13 +567,12 @@
                         if (targetUrl.origin !== window.location.origin) return;
 
                         e.preventDefault();
-                        e.stopPropagation();
                         loadSpaPage(targetUrl.href);
                     } catch(err) {}
-                }, true);
+                });
 
-                // Intercept form submissions at capture phase
-                window.addEventListener('submit', function(e) {
+                // Intercept form submissions
+                document.addEventListener('submit', function(e) {
                     const form = e.target;
                     if (!form || form.hasAttribute('data-no-spa') || form.getAttribute('target') === '_blank') return;
 
@@ -573,7 +584,6 @@
                         if (targetUrl.origin !== window.location.origin) return;
 
                         e.preventDefault();
-                        e.stopPropagation();
 
                         const formData = new FormData(form);
 
@@ -588,7 +598,7 @@
                             });
                         }
                     } catch(err) {}
-                }, true);
+                });
 
                 // Handle browser back/forward history buttons
                 window.addEventListener('popstate', function(e) {
